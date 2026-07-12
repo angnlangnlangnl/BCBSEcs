@@ -2,54 +2,101 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AIGC / BCBSE DApp</title>
-    <!-- 引入 ethers.js -->
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
     <style>
-        /* 全局样式 */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0b0e1a; color: #e0e0e0; padding: 20px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0b0e1a; color: #e0e0e0; padding: 16px; }
         .container { max-width: 1200px; margin: 0 auto; }
-        /* 头部 */
-        .header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; padding: 20px 0; border-bottom: 1px solid #2a2f45; }
-        .logo { font-size: 24px; font-weight: 700; color: #ffd700; }
-        .wallet-btn { background: #2a2f45; border: none; padding: 10px 20px; border-radius: 8px; color: #fff; cursor: pointer; font-size: 16px; transition: 0.3s; }
+        /* 头部导航 */
+        .header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; padding: 16px 0; border-bottom: 1px solid #2a2f45; }
+        .logo { font-size: 22px; font-weight: 700; color: #ffd700; }
+        .wallet-btn { background: #2a2f45; border: none; padding: 12px 20px; border-radius: 10px; color: #fff; cursor: pointer; font-size: 16px; transition: 0.3s; min-height: 48px; touch-action: manipulation; }
         .wallet-btn:hover { background: #3d445f; }
-        /* 卡片网格 */
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 30px; }
-        .card { background: #151a2b; border-radius: 16px; padding: 20px; border: 1px solid #2a2f45; box-shadow: 0 8px 16px rgba(0,0,0,0.4); }
-        .card h3 { color: #8892b0; font-weight: 400; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
-        .card .value { font-size: 28px; font-weight: 600; color: #fff; }
-        .card .sub { font-size: 14px; color: #8892b0; margin-top: 4px; }
+        .wallet-btn:disabled { opacity: 0.6; cursor: default; }
+
+        /* 个人信息卡片 */
+        .profile-card { background: #151a2b; border-radius: 20px; padding: 20px; margin-top: 20px; border: 1px solid #2a2f45; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
+        .profile-header { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+        .avatar { font-size: 40px; background: #2a2f45; width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .wallet-info { flex: 1; }
+        .address { font-size: 18px; font-weight: 600; color: #fff; }
+        .network { font-size: 13px; color: #8892b0; }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+        .stat-item { background: #0f1422; padding: 12px; border-radius: 12px; text-align: center; }
+        .stat-label { display: block; font-size: 12px; color: #8892b0; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-value { display: block; font-size: 22px; font-weight: 700; color: #fff; margin-top: 4px; }
+        .level-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+        .level-badge { background: #2a2f45; padding: 4px 14px; border-radius: 20px; font-size: 14px; color: #e0e0e0; }
+        .reward-row { display: flex; justify-content: space-between; font-size: 14px; color: #8892b0; padding: 6px 0; border-bottom: 1px solid #1e2337; }
+        .reward-row:last-child { border: none; }
+        .reward-row strong { color: #fff; }
+
+        /* 网格卡片 */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 20px; }
+        .card { background: #151a2b; border-radius: 16px; padding: 18px; border: 1px solid #2a2f45; }
+        .card h3 { color: #8892b0; font-weight: 400; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+        .card .value { font-size: 26px; font-weight: 600; color: #fff; }
+        .card .sub { font-size: 13px; color: #8892b0; margin-top: 4px; }
+
         /* 表单 */
-        .form-group { margin-bottom: 16px; }
+        .form-group { margin-bottom: 14px; }
         .form-group label { display: block; font-size: 14px; color: #8892b0; margin-bottom: 4px; }
-        .form-group input, .form-group select { width: 100%; padding: 10px 14px; border-radius: 8px; border: 1px solid #2a2f45; background: #0f1422; color: #fff; font-size: 16px; }
-        .form-group input:focus, .form-group select:focus { outline: none; border-color: #ffd700; }
-        .btn { background: #ffd700; color: #0b0e1a; border: none; padding: 10px 18px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; width: 100%; font-size: 16px; }
+        .form-group input { width: 100%; padding: 14px; border-radius: 10px; border: 1px solid #2a2f45; background: #0f1422; color: #fff; font-size: 16px; min-height: 48px; }
+        .form-group input:focus { outline: none; border-color: #ffd700; }
+
+        /* 自定义下拉 */
+        .custom-select { position: relative; width: 100%; }
+        .custom-select .selected { width: 100%; padding: 14px; border-radius: 10px; border: 1px solid #2a2f45; background: #0f1422; color: #fff; font-size: 16px; min-height: 48px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; touch-action: manipulation; }
+        .custom-select .selected:after { content: '▾'; margin-left: 8px; color: #8892b0; }
+        .custom-select .options { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: #1e2337; border-radius: 16px 16px 0 0; padding: 16px 0; max-height: 50vh; overflow-y: auto; z-index: 1000; box-shadow: 0 -4px 20px rgba(0,0,0,0.6); border-top: 1px solid #2a2f45; }
+        .custom-select .options.open { display: block; }
+        .custom-select .options .option { padding: 16px 20px; border-bottom: 1px solid #2a2f45; font-size: 16px; color: #fff; cursor: pointer; touch-action: manipulation; }
+        .custom-select .options .option:last-child { border: none; }
+        .custom-select .options .option:active { background: #2a2f45; }
+        .custom-select .options .option.selected-opt { background: #2a2f45; color: #ffd700; }
+        .overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 999; }
+        .overlay.open { display: block; }
+
+        /* 按钮 */
+        .btn { background: #ffd700; color: #0b0e1a; border: none; padding: 14px 18px; border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.3s; width: 100%; font-size: 16px; min-height: 48px; touch-action: manipulation; }
         .btn:hover { opacity: 0.85; }
         .btn-secondary { background: #2a2f45; color: #fff; }
         .btn-danger { background: #e74c3c; color: #fff; }
         .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .flex { display: flex; gap: 10px; flex-wrap: wrap; }
+        .flex .btn { flex: 1; min-width: 120px; }
+        .btn-group { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+        .btn-group .btn { flex: 1; min-width: 80px; padding: 10px; font-size: 14px; min-height: 40px; }
+
+        /* 状态 */
         .status { margin-top: 10px; padding: 10px; border-radius: 6px; font-size: 14px; }
         .status.success { background: #1e3a2f; color: #7bed9f; }
         .status.error { background: #3a1e1e; color: #ff6b6b; }
         .status.pending { background: #3a3a1e; color: #ffd93d; }
-        .flex { display: flex; gap: 10px; }
-        .flex .btn { flex: 1; }
-        .badge { display: inline-block; background: #ffd700; color: #0b0e1a; padding: 2px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
-        .list-item { padding: 8px 0; border-bottom: 1px solid #1e2337; display: flex; justify-content: space-between; }
+
+        /* 列表 */
+        .list-item { padding: 10px 0; border-bottom: 1px solid #1e2337; }
         .list-item:last-child { border: none; }
         .mt-10 { margin-top: 10px; }
         .mb-10 { margin-bottom: 10px; }
         .text-center { text-align: center; }
-        @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } .header { flex-direction: column; align-items: stretch; } }
+
+        @media (max-width: 600px) {
+            .grid { grid-template-columns: 1fr; }
+            .header { flex-direction: column; align-items: stretch; }
+            .flex .btn { min-width: 100px; }
+            .stats-grid { grid-template-columns: repeat(3, 1fr); }
+            .profile-card { padding: 14px; }
+            .stat-value { font-size: 20px; }
+            .address { font-size: 16px; }
+        }
     </style>
 </head>
 <body>
 <div class="container" id="app">
-    <!-- 头部 -->
+    <!-- 导航 -->
     <div class="header">
         <div class="logo">🚀 AIGC · BCBSE</div>
         <div>
@@ -58,125 +105,157 @@
         </div>
     </div>
 
-    <!-- 仪表盘卡片 -->
-    <div class="grid" id="dashboard">
-        <div class="card">
-            <h3>AIGC 余额</h3>
-            <div class="value" id="aigcBalance">--</div>
-            <div class="sub">AIGC</div>
+    <!-- 个人信息卡片 -->
+    <div class="profile-card" id="profileCard">
+        <div class="profile-header">
+            <div class="avatar">👤</div>
+            <div class="wallet-info">
+                <div class="address" id="profileAddress">未连接</div>
+                <div class="network">BSC 主网</div>
+            </div>
         </div>
-        <div class="card">
-            <h3>BCBSE 余额</h3>
-            <div class="value" id="bcbseBalance">--</div>
-            <div class="sub">BCBSE</div>
-        </div>
-        <div class="card">
-            <h3>USDT 余额</h3>
-            <div class="value" id="usdtBalance">--</div>
-            <div class="sub">USDT</div>
-        </div>
-        <div class="card">
-            <h3>节点等级</h3>
-            <div class="value" id="nodeLevel">--</div>
-            <div class="sub" id="nodeSub">直推: --</div>
-        </div>
-        <div class="card">
-            <h3>AIGC 待领取收益</h3>
-            <div class="value" id="pendingReward">--</div>
-            <div class="sub">下次提币最低: <span id="minClaim">--</span></div>
-        </div>
-        <div class="card">
-            <h3>USDT 分红待领取</h3>
-            <div class="value" id="totalDividend">--</div>
-            <div class="sub"><span id="dividendDetail">点击刷新</span></div>
+        <div class="profile-body">
+            <div class="stats-grid">
+                <div class="stat-item"><span class="stat-label">AIGC</span><span class="stat-value" id="pAigc">--</span></div>
+                <div class="stat-item"><span class="stat-label">BCBSE</span><span class="stat-value" id="pBcbse">--</span></div>
+                <div class="stat-item"><span class="stat-label">USDT</span><span class="stat-value" id="pUsdt">--</span></div>
+            </div>
+            <div class="level-row">
+                <span class="level-badge" id="pNodeLevel">普通</span>
+                <span class="level-badge" id="pIdentity">身份: 0</span>
+                <span class="level-badge" id="pDirect">直推: 0</span>
+            </div>
+            <div class="reward-row">
+                <span>待领取 AIGC: <strong id="pPending">--</strong></span>
+                <span>每日收益: <strong id="pDaily">--</strong></span>
+            </div>
+            <div class="reward-row">
+                <span>USDT 分红: <strong id="pDividend">--</strong></span>
+            </div>
         </div>
     </div>
 
-    <!-- 操作区：充值、质押、领取 -->
+    <!-- 仪表盘卡片（快速查看） -->
+    <div class="grid" id="dashboard">
+        <div class="card"><h3>AIGC 余额</h3><div class="value" id="aigcBalance">--</div><div class="sub">AIGC</div></div>
+        <div class="card"><h3>BCBSE 余额</h3><div class="value" id="bcbseBalance">--</div><div class="sub">BCBSE</div></div>
+        <div class="card"><h3>USDT 余额</h3><div class="value" id="usdtBalance">--</div><div class="sub">USDT</div></div>
+        <div class="card"><h3>节点等级</h3><div class="value" id="nodeLevel">--</div><div class="sub" id="nodeSub">直推: --</div></div>
+        <div class="card"><h3>AIGC 待领取</h3><div class="value" id="pendingReward">--</div><div class="sub">下次最低: <span id="minClaim">--</span></div></div>
+        <div class="card"><h3>USDT 分红待领取</h3><div class="value" id="totalDividend">--</div><div class="sub" id="dividendDetail">点击刷新</div></div>
+    </div>
+
+    <!-- 操作卡片 -->
     <div class="grid" style="margin-top: 20px;">
-        <!-- 充值 USDT -->
         <div class="card">
-            <h3>💎 充值 USDT 升级节点</h3>
-            <div class="form-group">
-                <label>充值数量 (USDT)</label>
-                <input type="number" id="depositAmount" placeholder="例如: 1000" step="0.01" min="0" />
-            </div>
+            <h3>💎 充值 USDT</h3>
+            <div class="form-group"><label>数量 (USDT)</label><input type="number" id="depositAmount" placeholder="例如 1000" step="0.01" min="0" /></div>
             <button class="btn" id="depositBtn">授权并充值</button>
             <div id="depositStatus" class="status" style="display:none;"></div>
         </div>
 
-        <!-- 质押 AIGC 或 USDT -->
         <div class="card">
-            <h3>🔒 质押赚 BCBSE 利息</h3>
+            <h3>🔒 质押赚利息</h3>
             <div class="form-group">
-                <label>质押币种</label>
-                <select id="stakeToken">
-                    <option value="AIGC">AIGC</option>
-                    <option value="USDT">USDT</option>
-                </select>
+                <label>币种</label>
+                <div class="custom-select" id="stakeTokenSelect">
+                    <div class="selected" data-value="AIGC">AIGC</div>
+                    <div class="options">
+                        <div class="option" data-value="AIGC">AIGC</div>
+                        <div class="option" data-value="USDT">USDT</div>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label>数量</label>
-                <input type="number" id="stakeAmount" placeholder="数量" step="0.01" min="0" />
-            </div>
+            <div class="form-group"><label>数量</label><input type="number" id="stakeAmount" placeholder="数量" step="0.01" min="0" /></div>
             <div class="form-group">
                 <label>周期</label>
-                <select id="stakePeriod">
-                    <option value="0">7 天 (0.8%/天)</option>
-                    <option value="1">35 天 (1.3%/天)</option>
-                    <option value="2">180 天 (1.8%/天)</option>
-                    <option value="3">360 天 (2.1%/天)</option>
-                    <option value="4">540 天 (2.3%/天)</option>
-                    <option value="5">720 天 (2.6%/天)</option>
-                </select>
+                <div class="custom-select" id="stakePeriodSelect">
+                    <div class="selected" data-value="0">7 天 (0.8%/天)</div>
+                    <div class="options">
+                        <div class="option" data-value="0">7 天 (0.8%/天)</div>
+                        <div class="option" data-value="1">35 天 (1.3%/天)</div>
+                        <div class="option" data-value="2">180 天 (1.8%/天)</div>
+                        <div class="option" data-value="3">360 天 (2.1%/天)</div>
+                        <div class="option" data-value="4">540 天 (2.3%/天)</div>
+                        <div class="option" data-value="5">720 天 (2.6%/天)</div>
+                    </div>
+                </div>
             </div>
             <button class="btn" id="stakeBtn">授权并质押</button>
             <div id="stakeStatus" class="status" style="display:none;"></div>
         </div>
 
-        <!-- 领取收益 -->
         <div class="card">
             <h3>💰 领取奖励</h3>
-            <div class="flex">
-                <button class="btn btn-secondary" id="claimAigcBtn">领取 AIGC</button>
-                <button class="btn btn-secondary" id="claimInterestBtn">领取 BCBSE 利息</button>
-            </div>
-            <div class="flex mt-10">
-                <button class="btn btn-secondary" id="claimDividendBtn">领取 USDT 分红</button>
-                <button class="btn btn-secondary" id="refreshBtn">刷新数据</button>
-            </div>
+            <div class="flex"><button class="btn btn-secondary" id="claimAigcBtn">领取 AIGC</button><button class="btn btn-secondary" id="claimInterestBtn">领取 BCBSE 利息</button></div>
+            <div class="flex mt-10"><button class="btn btn-secondary" id="claimDividendBtn">领取 USDT 分红</button><button class="btn btn-secondary" id="refreshBtn">刷新</button></div>
             <div id="claimStatus" class="status" style="display:none;"></div>
         </div>
     </div>
 
-    <!-- 我的质押列表 -->
+    <!-- 质押列表 -->
     <div class="card" style="margin-top: 20px;">
         <h3>📋 我的质押</h3>
         <div id="stakeList">暂无质押记录</div>
-        <div style="margin-top: 10px;">
-            <button class="btn btn-secondary" id="refreshStakesBtn">刷新质押列表</button>
-        </div>
+        <div style="margin-top: 10px;"><button class="btn btn-secondary" id="refreshStakesBtn">刷新质押列表</button></div>
     </div>
 
-    <!-- 底部 -->
-    <div style="margin-top: 30px; text-align: center; color: #2a2f45; font-size: 12px;">
-        Powered by AIGC / BCBSE | 合约地址在代码中配置
-    </div>
+    <div style="margin-top: 30px; text-align: center; color: #2a2f45; font-size: 12px;">Powered by AIGC / BCBSE</div>
 </div>
 
+<!-- 遮罩 -->
+<div class="overlay" id="overlay"></div>
+
 <script>
+    // ======================== 自定义下拉 ========================
+    document.querySelectorAll('.custom-select').forEach(container => {
+        const selected = container.querySelector('.selected');
+        const options = container.querySelector('.options');
+        const overlay = document.getElementById('overlay');
+
+        selected.addEventListener('click', function(e) {
+            e.stopPropagation();
+            document.querySelectorAll('.options.open').forEach(el => {
+                if (el !== options) el.classList.remove('open');
+            });
+            overlay.classList.toggle('open');
+            options.classList.toggle('open');
+        });
+
+        options.querySelectorAll('.option').forEach(opt => {
+            opt.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const val = this.dataset.value;
+                const text = this.textContent;
+                selected.textContent = text;
+                selected.dataset.value = val;
+                options.classList.remove('open');
+                overlay.classList.remove('open');
+                const ev = new Event('change', { bubbles: true });
+                container.dispatchEvent(ev);
+            });
+        });
+
+        overlay.addEventListener('click', function() {
+            options.classList.remove('open');
+            overlay.classList.remove('open');
+        });
+    });
+
+    function getCustomSelectValue(id) {
+        const container = document.getElementById(id);
+        return container.querySelector('.selected').dataset.value;
+    }
+
     // ======================== 配置 ========================
     const CONFIG = {
-        // BSC 主网
         chainId: 56,
         rpcUrl: 'https://bsc-dataseed.binance.org/',
-        // 合约地址（请替换为实际部署地址）
         addresses: {
             AIGC: '0x1b1e18338dbA3F1C3b9Ad3C7A232e0E7168Dc958',
-            BCBSE: '0xcF7cDF278551fA637641a8d8bf5C3b18C48E34bc', // 占位
+            BCBSE: '0xcF7cDF278551fA637641a8d8bf5C3b18C48E34bc',
             USDT: '0x55d398326f99059fF775485246999027B3197955',
         },
-        // ABI 仅包含需要的方法（完整版可外部导入）
         abis: {
             AIGC: [
                 'function depositUSDT(uint256 amount) external',
@@ -227,36 +306,16 @@
     let aigcContract, bcbseContract, usdtContract;
     let isConnected = false;
 
-    // DOM 元素
     const $ = id => document.getElementById(id);
     const connectBtn = $('connectBtn');
     const accountDisplay = $('accountDisplay');
     const refreshBtn = $('refreshBtn');
 
-    // ======================== 工具函数 ========================
-    function formatUnits(value, decimals = 18) {
-        if (!value) return '0';
-        return ethers.utils.formatUnits(value, decimals);
-    }
-
-    function parseUnits(value, decimals = 18) {
-        return ethers.utils.parseUnits(value, decimals);
-    }
-
-    function shortAddr(addr) {
-        if (!addr) return '';
-        return addr.slice(0, 6) + '...' + addr.slice(-4);
-    }
-
-    function showStatus(el, message, type = 'info') {
-        el.style.display = 'block';
-        el.textContent = message;
-        el.className = 'status ' + type;
-    }
-
-    function hideStatus(el) {
-        el.style.display = 'none';
-    }
+    function formatUnits(value, decimals = 18) { if (!value) return '0'; return ethers.utils.formatUnits(value, decimals); }
+    function parseUnits(value, decimals = 18) { return ethers.utils.parseUnits(value, decimals); }
+    function shortAddr(addr) { if (!addr) return ''; return addr.slice(0,6)+'...'+addr.slice(-4); }
+    function showStatus(el, message, type='info') { el.style.display='block'; el.textContent=message; el.className='status '+type; }
+    function hideStatus(el) { el.style.display='none'; }
 
     // ======================== 初始化合约 ========================
     function initContracts() {
@@ -273,10 +332,7 @@
 
     // ======================== 连接钱包 ========================
     async function connectWallet() {
-        if (typeof window.ethereum === 'undefined') {
-            alert('请安装 MetaMask 或支持 EIP-1193 的钱包');
-            return;
-        }
+        if (typeof window.ethereum === 'undefined') { alert('请安装 MetaMask'); return; }
         try {
             provider = new ethers.providers.Web3Provider(window.ethereum);
             await provider.send("eth_requestAccounts", []);
@@ -284,11 +340,11 @@
             userAddress = await signer.getAddress();
             isConnected = true;
             accountDisplay.textContent = shortAddr(userAddress);
+            $('profileAddress').textContent = shortAddr(userAddress);
             connectBtn.textContent = '已连接';
             connectBtn.disabled = true;
             initContracts();
             await refreshAll();
-            // 监听账户变化
             window.ethereum.on('accountsChanged', () => { location.reload(); });
         } catch (error) {
             console.error(error);
@@ -296,11 +352,46 @@
         }
     }
 
-    // ======================== 读取数据 ========================
+    // ======================== 更新个人信息卡片 ========================
+    async function updateProfile() {
+        if (!isConnected || !userAddress) return;
+        try {
+            const aigcBal = await aigcContract.balanceOf(userAddress);
+            $('pAigc').textContent = formatUnits(aigcBal, 18);
+            const bcbseBal = await bcbseContract.balanceOf(userAddress);
+            $('pBcbse').textContent = formatUnits(bcbseBal, 18);
+            const usdtBal = await usdtContract.balanceOf(userAddress);
+            $('pUsdt').textContent = formatUnits(usdtBal, 18);
+
+            const info = await aigcContract.getUserInfo(userAddress);
+            const level = info[1];
+            const levelNames = ['普通', '首富', '星链', '创世'];
+            $('pNodeLevel').textContent = levelNames[level] || '普通';
+            $('pIdentity').textContent = `身份: ${info[6]}`;
+            $('pDirect').textContent = `直推: ${info[5]}`;
+
+            const pending = await aigcContract.pendingReward(userAddress);
+            $('pPending').textContent = formatUnits(pending, 18);
+            const daily = await aigcContract.getDailyReward(userAddress);
+            $('pDaily').textContent = formatUnits(daily, 18);
+
+            let totalDiv = 0;
+            for (let i = 0; i < 8; i++) {
+                const amount = await aigcContract.getPendingDividend(userAddress, i);
+                totalDiv += parseFloat(ethers.utils.formatUnits(amount, 18));
+            }
+            $('pDividend').textContent = totalDiv.toFixed(4) + ' USDT';
+        } catch (e) { console.error('更新个人信息失败', e); }
+    }
+
+    // ======================== 全局刷新 ========================
     async function refreshAll() {
         if (!isConnected || !userAddress) return;
         try {
-            // 1. 余额
+            // 更新个人信息卡片
+            await updateProfile();
+
+            // 更新仪表盘卡片
             const aigcBal = await aigcContract.balanceOf(userAddress);
             $('aigcBalance').textContent = formatUnits(aigcBal, 18);
             const bcbseBal = await bcbseContract.balanceOf(userAddress);
@@ -308,30 +399,19 @@
             const usdtBal = await usdtContract.balanceOf(userAddress);
             $('usdtBalance').textContent = formatUnits(usdtBal, 18);
 
-            // 2. 用户信息
             const info = await aigcContract.getUserInfo(userAddress);
-            // info: deposit, level, pendingReward, dailyAIGC, lastClaimAmount, directNodes, identity
-            const deposit = info[0];
-            const level = info[1]; // 0=NONE,1=FIRST,2=STAR,3=GENESIS
-            const pendingReward = info[2];
-            const dailyAIGC = info[3];
-            const lastClaim = info[4];
-            const directNodes = info[5];
-            const identity = info[6];
-
+            const level = info[1];
             const levelNames = ['普通', '首富', '星链', '创世'];
             $('nodeLevel').textContent = levelNames[level] || '--';
-            $('nodeSub').textContent = `直推: ${directNodes} 人 | 身份: ${identity}`;
+            $('nodeSub').textContent = `直推: ${info[5]} 人 | 身份: ${info[6]}`;
 
             const pending = await aigcContract.pendingReward(userAddress);
             $('pendingReward').textContent = formatUnits(pending, 18);
             const minClaim = await aigcContract.getMinClaimRequirement(userAddress);
             $('minClaim').textContent = formatUnits(minClaim, 18);
 
-            // 3. 分红池总额
-            let totalDiv = 0;
-            let detail = '';
-            const poolNames = ['首富', '星链', '创世', 'S4', 'S5', 'S6', 'S7', 'S8'];
+            let totalDiv = 0, detail = '';
+            const poolNames = ['首富','星链','创世','S4','S5','S6','S7','S8'];
             for (let i = 0; i < 8; i++) {
                 const amount = await aigcContract.getPendingDividend(userAddress, i);
                 if (amount.gt(0)) {
@@ -342,27 +422,20 @@
             $('totalDividend').textContent = totalDiv.toFixed(4);
             $('dividendDetail').textContent = detail || '暂无分红';
 
-            // 4. 质押列表（简单显示）
             await refreshStakes();
-
-        } catch (error) {
-            console.error('刷新数据失败', error);
-        }
+        } catch (error) { console.error('刷新失败', error); }
     }
 
+    // ======================== 刷新质押列表 ========================
     async function refreshStakes() {
         if (!isConnected) return;
         try {
             const stakeIds = await bcbseContract.getUserStakeIds(userAddress);
             const listDiv = $('stakeList');
-            if (stakeIds.length === 0) {
-                listDiv.innerHTML = '暂无质押记录';
-                return;
-            }
+            if (stakeIds.length === 0) { listDiv.innerHTML = '暂无质押记录'; return; }
             let html = '';
             for (let id of stakeIds) {
                 const info = await bcbseContract.getStakeInfo(id);
-                // 返回: id,user,tokenType,amount,startTime,period,redeemed,lastClaimTime,accumulatedClaimed
                 const tokenType = info[2] === 0 ? 'AIGC' : 'USDT';
                 const amount = formatUnits(info[3], 18);
                 const start = new Date(info[4].toNumber() * 1000).toLocaleDateString();
@@ -370,9 +443,9 @@
                 const redeemed = info[6];
                 const pendingInterest = await bcbseContract.getPendingInterest(id);
                 html += `<div class="list-item">
-                    <span>#${id} ${tokenType} ${amount} | ${start} | 周期: ${period}</span>
-                    <span>${redeemed ? '✅ 已赎回' : '⏳ 未赎回'} 利息: ${formatUnits(pendingInterest, 18)} BCBSE</span>
-                    <div class="flex" style="margin-top:4px;">
+                    <div>#${id} ${tokenType} ${amount} | ${start} | 周期: ${period}</div>
+                    <div>${redeemed ? '✅ 已赎回' : '⏳ 未赎回'} 利息: ${formatUnits(pendingInterest, 18)} BCBSE</div>
+                    <div class="btn-group">
                         <button class="btn btn-secondary" onclick="claimInterest(${id})">领取利息</button>
                         ${!redeemed ? `<button class="btn btn-secondary" onclick="redeemStake(${id})">赎回</button>` : ''}
                         ${!redeemed ? `<button class="btn btn-danger" onclick="earlyRedeem(${id})">提前赎回</button>` : ''}
@@ -380,13 +453,10 @@
                 </div>`;
             }
             listDiv.innerHTML = html;
-        } catch (error) {
-            console.error('刷新质押列表失败', error);
-        }
+        } catch (error) { console.error('刷新质押列表失败', error); }
     }
 
     // ======================== 操作函数 ========================
-    // 授权 USDT
     async function approveUSDT(amount) {
         const allowance = await usdtContract.allowance(userAddress, CONFIG.addresses.AIGC);
         if (allowance.gte(parseUnits(amount, 18))) return true;
@@ -419,9 +489,9 @@
     // 质押
     $('stakeBtn').addEventListener('click', async function() {
         if (!isConnected) { alert('请先连接钱包'); return; }
-        const tokenType = $('stakeToken').value;
+        const tokenType = getCustomSelectValue('stakeTokenSelect');
         const amount = $('stakeAmount').value;
-        const period = parseInt($('stakePeriod').value);
+        const period = parseInt(getCustomSelectValue('stakePeriodSelect'));
         if (!amount || parseFloat(amount) <= 0) { alert('请输入有效数量'); return; }
         const status = $('stakeStatus');
         showStatus(status, `正在授权 ${tokenType}...`, 'pending');
@@ -430,7 +500,7 @@
             const tokenAddr = tokenType === 'AIGC' ? CONFIG.addresses.AIGC : CONFIG.addresses.USDT;
             const tokenContract = new ethers.Contract(tokenAddr, CONFIG.abis.ERC20, signer);
             const allowance = await tokenContract.allowance(userAddress, CONFIG.addresses.BCBSE);
-            const parsedAmount = parseUnits(amount, tokenType === 'USDT' ? 18 : 18);
+            const parsedAmount = parseUnits(amount, 18);
             if (allowance.lt(parsedAmount)) {
                 const txApprove = await tokenContract.approve(CONFIG.addresses.BCBSE, parsedAmount);
                 await txApprove.wait();
@@ -459,7 +529,7 @@
         this.disabled = true;
         try {
             const pending = await aigcContract.pendingReward(userAddress);
-            if (pending.eq(0)) { showStatus(status, '没有可领取的收益', 'error'); this.disabled = false; return; }
+            if (pending.eq(0)) { showStatus(status, '没有可领取的收益', 'error'); this.disabled=false; return; }
             const bnbRequired = await aigcContract.getBnbRequiredForClaim(pending);
             const overrides = { value: bnbRequired };
             showStatus(status, `需支付 ${formatUnits(bnbRequired, 18)} BNB，请确认...`, 'pending');
@@ -473,7 +543,7 @@
         this.disabled = false;
     });
 
-    // 领取 BCBSE 利息（需要用户输入 stakeId，简化：遍历所有质押）
+    // 领取 BCBSE 利息（全局函数供按钮调用）
     window.claimInterest = async function(stakeId) {
         if (!isConnected) { alert('请先连接钱包'); return; }
         try {
@@ -486,7 +556,6 @@
         }
     };
 
-    // 赎回
     window.redeemStake = async function(stakeId) {
         if (!isConnected) { alert('请先连接钱包'); return; }
         if (!confirm('确认赎回本金？')) return;
@@ -500,7 +569,6 @@
         }
     };
 
-    // 提前赎回
     window.earlyRedeem = async function(stakeId) {
         if (!isConnected) { alert('请先连接钱包'); return; }
         if (!confirm('提前赎回将扣除30%本金，确认？')) return;
@@ -514,7 +582,7 @@
         }
     };
 
-    // 领取分红
+    // 领取 USDT 分红
     $('claimDividendBtn').addEventListener('click', async function() {
         if (!isConnected) { alert('请先连接钱包'); return; }
         const status = $('claimStatus');
@@ -532,24 +600,16 @@
     });
 
     // 刷新按钮
-    refreshBtn.addEventListener('click', async function() {
-        await refreshAll();
-    });
-    $('refreshStakesBtn').addEventListener('click', async function() {
-        await refreshStakes();
-    });
-
-    // 连接按钮
+    refreshBtn.addEventListener('click', async function() { await refreshAll(); });
+    $('refreshStakesBtn').addEventListener('click', async function() { await refreshStakes(); });
     connectBtn.addEventListener('click', connectWallet);
 
-    // 页面加载自动连接
+    // 自动连接
     window.addEventListener('load', async () => {
         if (window.ethereum) {
             try {
                 const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-                if (accounts.length > 0) {
-                    await connectWallet();
-                }
+                if (accounts.length > 0) await connectWallet();
             } catch (e) {}
         }
     });
