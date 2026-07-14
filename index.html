@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SpaceX Web3 App</title>
     <style>
-        /* --- 全局重置与基础样式 --- */
         * {
             margin: 0;
             padding: 0;
@@ -18,28 +17,36 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
+            height: 100dvh;           /* 占满整个屏幕高度 */
+            overflow: hidden;        /* 禁止 body 滚动 */
             color: #ffffff;
         }
 
-        /* --- 手机容器 --- */
         .app-container {
             width: 100%;
             max-width: 420px;
+            height: 100dvh;          /* 手机容器占满屏幕高度 */
             background: radial-gradient(circle at center, #111 0%, #030303 100%);
             background-image: 
                 radial-gradient(circle at 10% 20%, rgba(255, 170, 0, 0.05) 0%, transparent 20%),
                 radial-gradient(circle at 90% 80%, rgba(255, 170, 0, 0.05) 0%, transparent 20%);
-            padding: 15px;
-            /* 关键修改：增加底部内边距，防止悬浮导航遮挡内容 */
-            padding-bottom: 90px; 
             border-radius: 20px;
             box-shadow: 0 0 30px rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;  /* 垂直弹性布局 */
             position: relative;
             overflow: hidden;
         }
 
-        /* --- 顶部导航栏 --- */
+        /* 可滚动内容区域 */
+        .scroll-area {
+            flex: 1;                 /* 占据除底部导航外的所有高度 */
+            overflow-y: auto;        /* 只有这个区域可以滚动 */
+            padding: 15px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* 顶部导航栏 */
         .header {
             display: flex;
             justify-content: space-between;
@@ -86,7 +93,7 @@
             box-shadow: 0 0 10px rgba(255, 153, 0, 0.1);
         }
 
-        /* --- 通用卡片样式 (发光边框) --- */
+        /* 通用卡片样式 */
         .panel {
             background: rgba(20, 20, 30, 0.6);
             border-radius: 12px;
@@ -110,7 +117,6 @@
             pointer-events: none;
         }
 
-        /* --- 面板1: 持仓价值 --- */
         .value-panel {
             padding: 20px 15px;
             display: flex;
@@ -132,33 +138,11 @@
             box-shadow: 0 0 20px rgba(255, 200, 0, 0.3);
         }
 
-        .value-info {
-            flex: 1;
-        }
-
-        .value-title {
-            font-size: 12px;
-            color: #f90;
-            font-weight: 500;
-        }
-
-        .value-number {
-            font-size: 28px;
-            font-weight: 700;
-            color: #fff;
-            margin: 2px 0;
-        }
-
-        .value-number small {
-            font-size: 16px;
-            font-weight: 400;
-            color: #aaa;
-        }
-
-        .value-sub {
-            font-size: 14px;
-            color: #ccc;
-        }
+        .value-info { flex: 1; }
+        .value-title { font-size: 12px; color: #f90; font-weight: 500; }
+        .value-number { font-size: 28px; font-weight: 700; color: #fff; margin: 2px 0; }
+        .value-number small { font-size: 16px; font-weight: 400; color: #aaa; }
+        .value-sub { font-size: 14px; color: #ccc; }
 
         .chart-area {
             display: flex;
@@ -187,18 +171,8 @@
             font-weight: bold;
         }
 
-        /* --- 面板2: 邀请好友 --- */
-        .title {
-            color: #f90;
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-        .desc {
-            color: #aaa;
-            font-size: 12px;
-            margin-bottom: 12px;
-        }
+        .title { color: #f90; font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+        .desc { color: #aaa; font-size: 12px; margin-bottom: 12px; }
 
         .input-box {
             background: rgba(0,0,0,0.4);
@@ -223,7 +197,6 @@
             box-shadow: 0 4px 15px rgba(255, 170, 0, 0.2);
         }
 
-        /* --- 面板3: 每日签到 (特殊紫色背景) --- */
         .check-in-panel {
             background: linear-gradient(135deg, rgba(60, 10, 90, 0.4), rgba(10, 10, 30, 0.6));
             border: 1px solid rgba(150, 50, 200, 0.3);
@@ -238,19 +211,18 @@
         .check-text { display: flex; flex-direction: column; gap: 5px; }
         .check-text h3 { color: #fff; font-size: 18px; margin: 0; }
         .check-text p { color: #ccc; font-size: 11px; margin: 0; }
-        .btn-check { 
-            background: linear-gradient(90deg, #ffaa00, #ffdd00); 
-            border: none; 
-            padding: 8px 25px; 
-            border-radius: 20px; 
-            font-weight: 700; 
-            color: #222; 
+        .btn-check {
+            background: linear-gradient(90deg, #ffaa00, #ffdd00);
+            border: none;
+            padding: 8px 25px;
+            border-radius: 20px;
+            font-weight: 700;
+            color: #222;
             box-shadow: 0 0 15px rgba(255, 200, 0, 0.3);
             cursor: pointer;
         }
         .last-time { font-size: 11px; color: #aaa; text-align: right; margin-top: 5px;}
 
-        /* --- 面板4: 资产明细 --- */
         .stats-grid-3 {
             display: flex;
             justify-content: space-between;
@@ -261,7 +233,6 @@
         .stat-item .val { font-size: 20px; color: #fff; font-weight: 600; }
         .stat-item .sub-val { font-size: 12px; color: #888; }
 
-        /* --- 面板5: 推广数据 --- */
         .stats-grid-2 {
             display: flex;
             justify-content: space-between;
@@ -273,28 +244,22 @@
         .stat-item-2 .num-big { font-size: 28px; color: #fff; font-weight: 600; margin-left: 10px; }
         .stat-item-2 h4 { font-size: 11px; color: #f90; margin: 0; }
 
-        /* --- 底部导航栏 (悬浮固定窗，框架不变) --- */
+        /* 底部导航栏 —— 固定在 flex 容器底部，不会滚动 */
         .bottom-nav {
-            position: absolute;
-            bottom: 15px;
-            left: 15px;
-            right: 15px;
-            width: auto;
-            z-index: 100; 
-
+            flex-shrink: 0;          /* 不允许压缩 */
             background: rgba(15, 15, 30, 0.85);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 153, 0, 0.15);
             border-radius: 20px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.9);
-            
             display: flex;
             justify-content: space-around;
             padding: 12px 0;
+            margin: 0 15px 15px 15px;  /* 与两侧及底部留白 */
+            position: relative;
         }
 
-        /* 底部导航栏的发光边框 */
         .bottom-nav::before {
             content: '';
             position: absolute;
@@ -320,8 +285,7 @@
             transition: all 0.2s ease;
         }
         .nav-item .icon { font-size: 20px; }
-        
-        /* 默认选中第一个 */
+
         .nav-item.active {
             color: #f90;
             position: relative;
@@ -344,101 +308,104 @@
 
     <div class="app-container">
         
-        <!-- 顶部栏 -->
-        <div class="header">
-            <div class="logo-area">🚀 <span>SPACEX</span></div>
-            <div class="header-controls">
-                <button class="lang-btn">🇺🇸 EN ⌄</button>
-                <button class="connect-btn">Connect wallet</button>
-            </div>
-        </div>
-
-        <!-- 持仓价值 -->
-        <div class="panel value-panel">
-            <div class="coin-icon">D</div>
-            <div class="value-info">
-                <div class="value-title">CURRENT HOLDING VALUE</div>
-                <div class="value-number">$0.0000 <small>USD</small></div>
-                <div class="value-sub">0.0000 DOGE</div>
-            </div>
-            <div class="chart-area">
-                <div class="chart-placeholder">
-                    <div style="position:absolute; bottom:0; left:0; width:100%; height:100%; border-left: 1px solid #f90; background: linear-gradient(to top, rgba(255,153,0,0.3), transparent);"></div>
-                </div>
-                <div class="doge-badge">$DOGE</div>
-            </div>
-        </div>
-
-        <!-- 邀请好友 -->
-        <div class="panel">
-            <div class="title">INVITE FRIENDS</div>
-            <div class="desc">Invite more friends and earn more DOGE!</div>
-            <div class="input-box">No data</div>
-            <button class="btn-primary">Copy Invite Link</button>
-        </div>
-
-        <!-- 每日签到 -->
-        <div class="panel check-in-panel">
-            <div class="check-left">
-                <div class="check-icon">📅</div>
-                <div class="check-text">
-                    <h3>DAILY CHECK-IN</h3>
-                    <p>TOTAL CHECK-IN TIMES: 0</p>
+        <!-- 可滚动内容区域 -->
+        <div class="scroll-area">
+            
+            <!-- 顶部栏 -->
+            <div class="header">
+                <div class="logo-area">🚀 <span>SPACEX</span></div>
+                <div class="header-controls">
+                    <button class="lang-btn">🇺🇸 EN ⌄</button>
+                    <button class="connect-btn">Connect wallet</button>
                 </div>
             </div>
-            <div>
-                <button class="btn-check">CHECK IN NOW</button>
-                <div class="last-time">LAST TIME<br>--</div>
-            </div>
-        </div>
 
-        <!-- 数据资产 -->
-        <div class="panel">
-            <div class="stats-grid-3">
-                <div class="stat-item">
-                    <h4>🔓 UNLOCKED</h4>
-                    <div class="val">0.00</div>
-                    <div class="sub-val">DOGE</div>
-                    <div class="sub-val">≈$0.00</div>
+            <!-- 持仓价值 -->
+            <div class="panel value-panel">
+                <div class="coin-icon">D</div>
+                <div class="value-info">
+                    <div class="value-title">CURRENT HOLDING VALUE</div>
+                    <div class="value-number">$0.0000 <small>USD</small></div>
+                    <div class="value-sub">0.0000 DOGE</div>
                 </div>
-                <div class="stat-item">
-                    <h4>👥 REFERRAL</h4>
-                    <div class="val">0.00</div>
-                    <div class="sub-val">DOGE</div>
-                    <div class="sub-val">≈$0.00</div>
-                </div>
-                <div class="stat-item">
-                    <h4>🔒 LOCK</h4>
-                    <div class="val">0.00</div>
-                    <div class="sub-val">DOGE</div>
-                    <div class="sub-val">≈$0.00</div>
+                <div class="chart-area">
+                    <div class="chart-placeholder">
+                        <div style="position:absolute; bottom:0; left:0; width:100%; height:100%; border-left: 1px solid #f90; background: linear-gradient(to top, rgba(255,153,0,0.3), transparent);"></div>
+                    </div>
+                    <div class="doge-badge">$DOGE</div>
                 </div>
             </div>
-        </div>
 
-        <!-- 推广进度 -->
-        <div class="panel">
-            <div class="stats-grid-2">
-                <div class="stat-item-2">
-                    <div class="icon-big">👤</div>
-                    <div>
-                        <h4>REFERRAL PEOPLE</h4>
-                        <div class="num-big">0</div>
+            <!-- 邀请好友 -->
+            <div class="panel">
+                <div class="title">INVITE FRIENDS</div>
+                <div class="desc">Invite more friends and earn more DOGE!</div>
+                <div class="input-box">No data</div>
+                <button class="btn-primary">Copy Invite Link</button>
+            </div>
+
+            <!-- 每日签到 -->
+            <div class="panel check-in-panel">
+                <div class="check-left">
+                    <div class="check-icon">📅</div>
+                    <div class="check-text">
+                        <h3>DAILY CHECK-IN</h3>
+                        <p>TOTAL CHECK-IN TIMES: 0</p>
                     </div>
                 </div>
-                <div class="stat-item-2">
-                    <div class="icon-big">👥</div>
-                    <div>
-                        <h4>TEAM MEMBERS</h4>
-                        <div class="num-big">0</div>
+                <div>
+                    <button class="btn-check">CHECK IN NOW</button>
+                    <div class="last-time">LAST TIME<br>--</div>
+                </div>
+            </div>
+
+            <!-- 数据资产 -->
+            <div class="panel">
+                <div class="stats-grid-3">
+                    <div class="stat-item">
+                        <h4>🔓 UNLOCKED</h4>
+                        <div class="val">0.00</div>
+                        <div class="sub-val">DOGE</div>
+                        <div class="sub-val">≈$0.00</div>
+                    </div>
+                    <div class="stat-item">
+                        <h4>👥 REFERRAL</h4>
+                        <div class="val">0.00</div>
+                        <div class="sub-val">DOGE</div>
+                        <div class="sub-val">≈$0.00</div>
+                    </div>
+                    <div class="stat-item">
+                        <h4>🔒 LOCK</h4>
+                        <div class="val">0.00</div>
+                        <div class="sub-val">DOGE</div>
+                        <div class="sub-val">≈$0.00</div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- ========================================== -->
-        <!-- 底部导航 (仅变更了菜单项和图标，框架及样式不变) -->
-        <!-- ========================================== -->
+            <!-- 推广进度 -->
+            <div class="panel">
+                <div class="stats-grid-2">
+                    <div class="stat-item-2">
+                        <div class="icon-big">👤</div>
+                        <div>
+                            <h4>REFERRAL PEOPLE</h4>
+                            <div class="num-big">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-item-2">
+                        <div class="icon-big">👥</div>
+                        <div>
+                            <h4>TEAM MEMBERS</h4>
+                            <div class="num-big">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div><!-- /scroll-area -->
+
+        <!-- 底部导航栏（不再绝对定位，而是放在 flex 容器末尾，永远固定在底部） -->
         <div class="bottom-nav">
             <div class="nav-item active">
                 <span class="icon">💼</span>
