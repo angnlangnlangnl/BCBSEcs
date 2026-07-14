@@ -17,43 +17,52 @@
         .lang-btn { background: transparent; border: 1px solid #333; color: #aaa; padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer; }
         .connect-btn { background: transparent; border: 1px solid #f90; color: #f90; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; box-shadow: 0 0 10px rgba(255,153,0,0.1); transition: all 0.2s; white-space: nowrap; }
         .connect-btn.connected { background: rgba(255,153,0,0.2); border-color: #ffaa00; color: #ffd700; }
+
+        /* 面板与发光边框 */
         .panel { background: rgba(20,20,30,0.6); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #333; position: relative; box-shadow: inset 0 0 20px rgba(255,170,0,0.02); }
         .panel::before { content: ''; position: absolute; top: -1px; left: -1px; right: -1px; bottom: -1px; border-radius: 12px; padding: 1px; background: linear-gradient(135deg, #f90, transparent, #f90); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
-        .value-panel { padding: 20px 15px; display: flex; align-items: center; gap: 15px; }
-        .coin-icon { width: 60px; height: 60px; background: linear-gradient(135deg, #f3a900, #ffd700); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; font-weight: 900; color: #fff; box-shadow: 0 0 20px rgba(255,200,0,0.3); }
-        .value-info { flex: 1; }
-        .value-title { font-size: 12px; color: #f90; font-weight: 500; }
-        .value-number { font-size: 28px; font-weight: 700; color: #fff; margin: 2px 0; }
-        .value-number small { font-size: 16px; font-weight: 400; color: #aaa; }
-        .value-sub { font-size: 14px; color: #ccc; }
-        .chart-area { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
-        .chart-placeholder { width: 50px; height: 25px; border-bottom: 1px solid #f90; background: linear-gradient(to right, transparent, #f90); opacity: 0.5; border-radius: 2px; position: relative; }
-        .coin-badge { background: #1a3a1a; color: #4caf50; border: 1px solid #4caf50; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; }
-        .title { color: #f90; font-size: 14px; font-weight: 600; margin-bottom: 4px; }
-        .desc { color: #aaa; font-size: 12px; margin-bottom: 12px; }
-        .input-box { background: rgba(0,0,0,0.4); border: 1px solid #333; border-radius: 6px; padding: 12px; text-align: center; color: #f90; font-size: 14px; margin-bottom: 12px; }
-        .btn-primary { width: 100%; background: linear-gradient(90deg, #f4a200, #ffd700); border: none; border-radius: 8px; padding: 12px; font-weight: bold; color: #111; cursor: pointer; box-shadow: 0 4px 15px rgba(255,170,0,0.2); }
-        .check-in-panel { background: linear-gradient(135deg, rgba(60,10,90,0.4), rgba(10,10,30,0.6)); border: 1px solid rgba(150,50,200,0.3); display: flex; align-items: center; justify-content: space-between; }
-        .check-in-panel::before { background: linear-gradient(135deg, #b14bff, transparent, #b14bff); }
-        .check-left { display: flex; align-items: center; gap: 15px; }
-        .check-icon { font-size: 40px; }
-        .check-text { display: flex; flex-direction: column; gap: 5px; }
-        .check-text h3 { color: #fff; font-size: 18px; margin: 0; }
-        .check-text p { color: #ccc; font-size: 11px; margin: 0; }
-        .btn-check { background: linear-gradient(90deg, #ffaa00, #ffdd00); border: none; padding: 8px 25px; border-radius: 20px; font-weight: 700; color: #222; box-shadow: 0 0 15px rgba(255,200,0,0.3); cursor: pointer; }
-        .last-time { font-size: 11px; color: #aaa; text-align: right; margin-top: 5px;}
+
+        .page-title { font-size: 24px; color: #f90; text-align: center; margin: 10px 0 20px; }
+
+        /* 币种切换标签 */
+        .tab-container { display: flex; gap: 10px; margin-bottom: 15px; }
+        .tab-btn { flex: 1; padding: 10px; background: rgba(30,30,40,0.8); border: 1px solid #444; border-radius: 8px; color: #aaa; font-size: 14px; cursor: pointer; text-align: center; transition: all 0.2s; }
+        .tab-btn.active { background: linear-gradient(135deg, rgba(255,170,0,0.2), rgba(255,170,0,0.05)); border-color: #f90; color: #f90; box-shadow: 0 0 10px rgba(255,170,0,0.2); }
+
+        /* 金额输入 */
+        .amount-input-wrapper { background: rgba(0,0,0,0.3); border: 1px solid #444; border-radius: 8px; padding: 12px; display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+        .amount-input-wrapper input { flex: 1; background: transparent; border: none; color: #fff; font-size: 18px; outline: none; }
+        .amount-input-wrapper .currency { color: #f90; font-size: 14px; font-weight: 600; }
+        .balance-info { display: flex; justify-content: space-between; color: #aaa; font-size: 12px; margin-bottom: 5px; }
+        .balance-info .max-btn { color: #f90; cursor: pointer; }
+
+        /* 周期选择 */
+        .period-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px; }
+        .period-btn { padding: 10px 5px; background: rgba(30,30,40,0.8); border: 1px solid #444; border-radius: 8px; color: #aaa; font-size: 13px; cursor: pointer; text-align: center; transition: all 0.2s; }
+        .period-btn.active { background: linear-gradient(135deg, rgba(255,170,0,0.3), rgba(255,170,0,0.1)); border-color: #f90; color: #f90; box-shadow: 0 0 10px rgba(255,170,0,0.2); }
+        .period-btn .rate-label { display: block; font-size: 10px; color: #f90; margin-top: 3px; }
+
+        /* 收益预览 */
+        .reward-preview { background: rgba(255,170,0,0.05); border-radius: 8px; padding: 10px; margin: 15px 0; display: flex; justify-content: space-between; }
+        .reward-preview span { color: #ccc; font-size: 13px; }
+        .reward-preview strong { color: #f90; font-size: 16px; }
+
+        /* 质押按钮 */
+        .stake-btn { width: 100%; background: linear-gradient(90deg, #f4a200, #ffd700); border: none; border-radius: 8px; padding: 14px; font-weight: bold; color: #111; cursor: pointer; box-shadow: 0 4px 15px rgba(255,170,0,0.3); font-size: 16px; }
+
+        /* 底部导航 */
         .bottom-nav { flex-shrink: 0; background: rgba(15,15,30,0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,153,0,0.15); border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.9); display: flex; justify-content: space-around; padding: 12px 0; margin: 0 15px 15px 15px; position: relative; }
         .bottom-nav::before { content: ''; position: absolute; top: -1px; left: -1px; right: -1px; bottom: -1px; border-radius: 20px; padding: 1px; background: linear-gradient(135deg, #f90, transparent, #f90); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: #666; font-size: 11px; gap: 4px; cursor: pointer; padding: 5px 10px; transition: all 0.2s ease; text-decoration: none; }
         .nav-item .icon { font-size: 20px; }
         .nav-item.active { color: #f90; position: relative; }
         .nav-item.active::after { content: ''; position: absolute; top: -6px; left: 50%; transform: translateX(-50%); width: 20px; height: 2px; background: #f90; border-radius: 5px; box-shadow: 0 0 10px #f90; }
-        .page-title { font-size: 24px; color: #f90; text-align: center; margin: 30px 0; }
     </style>
 </head>
 <body>
     <div class="app-container">
         <div class="scroll-area">
+            <!-- 头部 -->
             <div class="header">
                 <div class="logo-area">🚀 <span>SPACEX</span></div>
                 <div class="header-controls">
@@ -61,14 +70,50 @@
                     <button id="connectWalletBtn" class="connect-btn">Connect wallet</button>
                 </div>
             </div>
-            <div class="page-title">🔒 质押</div>
+
+            <div class="page-title">🔒 质押挖矿</div>
+
+            <!-- 质押卡片 -->
             <div class="panel">
-                <div class="title">质押 DOGE 获取收益</div>
-                <div class="desc">锁定您的资产，赚取高额年化收益</div>
-                <div class="input-box">可质押余额: 0.00 DOGE</div>
-                <button class="btn-primary">立即质押</button>
+                <!-- 币种切换 -->
+                <div class="tab-container">
+                    <div class="tab-btn active" data-coin="AIGC">AIGC</div>
+                    <div class="tab-btn" data-coin="USDT">USDT</div>
+                </div>
+
+                <!-- 金额输入 -->
+                <div class="balance-info">
+                    <span>可质押余额: <span id="availableBalance">0.00</span> <span id="coinLabel">AIGC</span></span>
+                    <span class="max-btn" id="maxBtn">MAX</span>
+                </div>
+                <div class="amount-input-wrapper">
+                    <input type="number" id="stakeAmount" placeholder="0.00" value="0">
+                    <span class="currency" id="currencyDisplay">AIGC</span>
+                </div>
+
+                <!-- 周期选择 -->
+                <div style="color: #ccc; font-size: 13px; margin-bottom: 8px;">选择质押周期（日利率）</div>
+                <div class="period-grid" id="periodGrid">
+                    <div class="period-btn" data-days="7">7天<span class="rate-label">日利率 0.8%</span></div>
+                    <div class="period-btn" data-days="35">35天<span class="rate-label">日利率 1.3%</span></div>
+                    <div class="period-btn active" data-days="180">180天<span class="rate-label">日利率 1.8%</span></div>
+                    <div class="period-btn" data-days="360">360天<span class="rate-label">日利率 2.1%</span></div>
+                    <div class="period-btn" data-days="540">540天<span class="rate-label">日利率 2.3%</span></div>
+                    <div class="period-btn" data-days="720">720天<span class="rate-label">日利率 2.6%</span></div>
+                </div>
+
+                <!-- 收益预览 -->
+                <div class="reward-preview">
+                    <span>预计到期收益</span>
+                    <strong id="estimatedReward">0.00 <span id="rewardCoin">AIGC</span></strong>
+                </div>
+
+                <!-- 质押按钮 -->
+                <button class="stake-btn" id="stakeSubmitBtn">立即质押</button>
             </div>
         </div>
+
+        <!-- 底部导航 -->
         <div class="bottom-nav">
             <a href="index.html" class="nav-item"><span class="icon">💼</span><span>资产</span></a>
             <a href="stake.html" class="nav-item active"><span class="icon">🔒</span><span>质押</span></a>
@@ -77,10 +122,12 @@
             <a href="ecosystem.html" class="nav-item"><span class="icon">🌐</span><span>生态</span></a>
         </div>
     </div>
+
     <script>
+        // 钱包连接（与其他页面一致）
         let provider, signer, currentAccount;
         const connectBtn = document.getElementById('connectWalletBtn');
-        async function init() {
+        async function initWallet() {
             if (typeof window.ethereum !== 'undefined') {
                 provider = new ethers.providers.Web3Provider(window.ethereum);
                 try {
@@ -89,11 +136,15 @@
                         currentAccount = accounts[0];
                         signer = provider.getSigner();
                         updateUIForConnected(currentAccount);
+                        updateBalances();
                     } else { setDisconnectedUI(); }
                 } catch (err) { setDisconnectedUI(); }
                 window.ethereum.on('accountsChanged', handleAccountsChanged);
                 window.ethereum.on('chainChanged', () => window.location.reload());
-            } else { connectBtn.textContent = 'No Wallet'; connectBtn.disabled = true; }
+            } else {
+                connectBtn.textContent = 'No Wallet';
+                connectBtn.disabled = true;
+            }
         }
         function setDisconnectedUI() {
             connectBtn.textContent = 'Connect wallet';
@@ -108,6 +159,7 @@
                 provider = new ethers.providers.Web3Provider(window.ethereum);
                 signer = provider.getSigner();
                 updateUIForConnected(currentAccount);
+                updateBalances();
             } catch (err) { console.error(err); }
         }
         function updateUIForConnected(account) {
@@ -116,12 +168,91 @@
             connectBtn.classList.add('connected');
             connectBtn.onclick = disconnectWallet;
         }
-        function disconnectWallet() { currentAccount = null; signer = null; setDisconnectedUI(); }
+        function disconnectWallet() {
+            currentAccount = null; signer = null; setDisconnectedUI();
+            document.getElementById('availableBalance').textContent = '0.00';
+        }
         function handleAccountsChanged(accounts) {
             if (accounts.length === 0) { disconnectWallet(); }
-            else { currentAccount = accounts[0]; provider = new ethers.providers.Web3Provider(window.ethereum); signer = provider.getSigner(); updateUIForConnected(currentAccount); }
+            else {
+                currentAccount = accounts[0];
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                signer = provider.getSigner();
+                updateUIForConnected(currentAccount);
+                updateBalances();
+            }
         }
-        window.addEventListener('load', init);
+        async function updateBalances() {
+            const coin = document.querySelector('.tab-btn.active')?.dataset.coin || 'AIGC';
+            document.getElementById('availableBalance').textContent = coin === 'AIGC' ? '10000' : '5000';
+        }
+
+        // 质押逻辑
+        let currentCoin = 'AIGC';
+        let currentDays = 180;
+        // 日利率映射（小数形式）
+        const dailyRateMap = { 7: 0.008, 35: 0.013, 180: 0.018, 360: 0.021, 540: 0.023, 720: 0.026 };
+
+        // 币种切换
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentCoin = this.dataset.coin;
+                document.getElementById('coinLabel').textContent = currentCoin;
+                document.getElementById('currencyDisplay').textContent = currentCoin;
+                document.getElementById('rewardCoin').textContent = currentCoin;
+                updateBalances();
+                calculateReward();
+            });
+        });
+
+        // 周期选择
+        document.querySelectorAll('.period-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentDays = parseInt(this.dataset.days);
+                calculateReward();
+            });
+        });
+
+        // 金额输入
+        document.getElementById('stakeAmount').addEventListener('input', calculateReward);
+        document.getElementById('maxBtn').addEventListener('click', function() {
+            const balance = parseFloat(document.getElementById('availableBalance').textContent);
+            document.getElementById('stakeAmount').value = balance;
+            calculateReward();
+        });
+
+        // 收益计算：本金 * 日利率 * 天数
+        function calculateReward() {
+            const amount = parseFloat(document.getElementById('stakeAmount').value) || 0;
+            const dailyRate = dailyRateMap[currentDays] || 0;
+            const reward = amount * dailyRate * currentDays;
+            document.getElementById('estimatedReward').innerHTML = `${reward.toFixed(4)} <span id="rewardCoin">${currentCoin}</span>`;
+        }
+
+        // 质押按钮（示例交互）
+        document.getElementById('stakeSubmitBtn').addEventListener('click', function() {
+            const amount = document.getElementById('stakeAmount').value;
+            if (!currentAccount) {
+                alert('请先连接钱包！');
+                return;
+            }
+            if (parseFloat(amount) <= 0) {
+                alert('请输入有效质押金额');
+                return;
+            }
+            alert(`质押请求：${amount} ${currentCoin}，周期 ${currentDays} 天，日利率 ${(dailyRateMap[currentDays]*100).toFixed(1)}%\n预计收益：${(amount * dailyRateMap[currentDays] * currentDays).toFixed(4)} ${currentCoin}`);
+            // 实际调用合约 stake(amount, days)
+        });
+
+        // 初始化
+        window.addEventListener('load', () => {
+            initWallet();
+            calculateReward();
+        });
     </script>
 </body>
 </html>
