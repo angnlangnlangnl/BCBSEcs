@@ -24,6 +24,14 @@
 
         .page-title { font-size: 24px; color: #f90; text-align: center; margin: 10px 0 20px; }
 
+        /* 领币卡片 */
+        .faucet-panel { display: flex; align-items: center; justify-content: space-between; }
+        .faucet-info { display: flex; flex-direction: column; gap: 8px; }
+        .faucet-item { display: flex; align-items: center; gap: 8px; }
+        .faucet-amount { color: #f90; font-size: 16px; font-weight: 600; }
+        .faucet-btn { background: linear-gradient(90deg, #ffaa00, #ffdd00); border: none; padding: 12px 20px; border-radius: 25px; font-weight: 700; color: #222; cursor: pointer; box-shadow: 0 0 15px rgba(255,170,0,0.3); font-size: 14px; white-space: nowrap; }
+        .faucet-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
         /* 币种切换标签 */
         .tab-container { display: flex; gap: 10px; margin-bottom: 15px; }
         .tab-btn { flex: 1; padding: 10px; background: rgba(30,30,40,0.8); border: 1px solid #444; border-radius: 8px; color: #aaa; font-size: 14px; cursor: pointer; text-align: center; transition: all 0.2s; }
@@ -83,6 +91,23 @@
 
             <div class="page-title">🔒 质押挖矿</div>
 
+            <!-- ========== 领币卡片（重新设计） ========== -->
+            <div class="panel faucet-panel">
+                <div class="faucet-info">
+                    <div class="faucet-item">
+                        <span style="font-size: 20px;">🪙</span>
+                        <span style="color: #ccc;">AIGC</span>
+                        <span class="faucet-amount" id="claimableAIGC">100</span>
+                    </div>
+                    <div class="faucet-item">
+                        <span style="font-size: 20px;">💵</span>
+                        <span style="color: #ccc;">USDT</span>
+                        <span class="faucet-amount" id="claimableUSDT">100</span>
+                    </div>
+                </div>
+                <button id="claimAllBtn" class="faucet-btn">领取测试币</button>
+            </div>
+
             <!-- 质押卡片 -->
             <div class="panel">
                 <div class="tab-container">
@@ -121,7 +146,7 @@
             <div class="panel">
                 <div class="order-list-title">📋 我的质押订单</div>
                 <div id="orderListContainer">
-                    <!-- 动态填充订单列表或空状态 -->
+                    <!-- 动态填充 -->
                 </div>
             </div>
         </div>
@@ -137,7 +162,7 @@
     </div>
 
     <script>
-        // ==================== 钱包连接（与各页面统一） ====================
+        // ==================== 钱包连接 ====================
         let provider, signer, currentAccount;
         const connectBtn = document.getElementById('connectWalletBtn');
         async function initWallet() {
@@ -150,7 +175,7 @@
                         signer = provider.getSigner();
                         updateUIForConnected(currentAccount);
                         updateBalances();
-                        loadStakeOrders();   // 加载质押订单
+                        loadStakeOrders();
                     } else { setDisconnectedUI(); }
                 } catch (err) { setDisconnectedUI(); }
                 window.ethereum.on('accountsChanged', handleAccountsChanged);
@@ -204,6 +229,16 @@
             document.getElementById('availableBalance').textContent = coin === 'AIGC' ? '10000' : '5000';
         }
 
+        // ==================== 领币逻辑 ====================
+        const claimAllBtn = document.getElementById('claimAllBtn');
+        claimAllBtn.addEventListener('click', async () => {
+            if (!currentAccount) { alert('请先连接钱包'); return; }
+            // 模拟领取，实际应调用合约水龙头领取 AIGC 和 USDT
+            alert('成功领取 100 AIGC 和 100 USDT 测试币！（模拟）');
+            // 可在此处调用合约，并更新可用余额
+            updateBalances();
+        });
+
         // ==================== 质押卡片交互 ====================
         let currentCoin = 'AIGC';
         let currentDays = 180;
@@ -250,9 +285,6 @@
             if (!currentAccount) { alert('请先连接钱包！'); return; }
             if (parseFloat(amount) <= 0) { alert('请输入有效质押金额'); return; }
             alert(`质押请求：${amount} ${currentCoin}，周期 ${currentDays} 天\n日利率 ${(dailyRateMap[currentDays]*100).toFixed(1)}%\n（此处应调用合约 stake 方法）`);
-            // 实际调用合约 stake(amount, period) 后，重新加载订单列表
-            // await stakeContract.stake(parseEther(amount), periodEnum);
-            // loadStakeOrders();
         });
 
         // ==================== 质押订单列表 ====================
@@ -260,28 +292,20 @@
         function getDaysByPeriod(period) { return periodDaysMap[period] || 0; }
         function getDailyRateByPeriod(period) { return dailyRateMap[period] || 0; }
 
-        // 模拟获取用户质押ID列表（实际应调用合约 getUserStakeIds(address)）
         async function fetchUserStakeIds(address) {
-            // 模拟数据：两个质押订单，一个活跃，一个已赎回
-            // return [1, 2];
-            // 实际调用示例：
-            // const contract = new ethers.Contract(stakeAddress, stakeABI, provider);
-            // return await contract.getUserStakeIds(address);
-            return [1, 2];  // 模拟有两个订单
+            // 模拟数据
+            return [1, 2];
         }
 
-        // 模拟获取单个质押详情（调用 getStakeInfo）
         async function fetchStakeInfo(stakeId) {
-            // 实际调用：return await contract.getStakeInfo(stakeId);
-            // 模拟返回结构体：
             if (stakeId === 1) {
                 return {
                     id: 1,
                     user: '0x1234567890123456789012345678901234567890',
-                    tokenType: 0,       // 0=AIGC
+                    tokenType: 0,
                     amount: ethers.utils.parseEther('1000'),
-                    startTime: Math.floor(Date.now() / 1000) - 86400 * 2,  // 2天前
-                    period: 2,          // 180天
+                    startTime: Math.floor(Date.now() / 1000) - 86400 * 2,
+                    period: 2,
                     redeemed: false,
                     lastClaimTime: Math.floor(Date.now() / 1000) - 86400,
                     accumulatedClaimed: ethers.utils.parseEther('5'),
@@ -290,10 +314,10 @@
                 return {
                     id: 2,
                     user: '0x1234567890123456789012345678901234567890',
-                    tokenType: 1,       // 1=USDT
+                    tokenType: 1,
                     amount: ethers.utils.parseEther('500'),
-                    startTime: Math.floor(Date.now() / 1000) - 86400 * 30, // 30天前
-                    period: 4,          // 540天
+                    startTime: Math.floor(Date.now() / 1000) - 86400 * 30,
+                    period: 4,
                     redeemed: true,
                     lastClaimTime: Math.floor(Date.now() / 1000) - 86400 * 10,
                     accumulatedClaimed: ethers.utils.parseEther('25.5'),
@@ -301,13 +325,10 @@
             }
         }
 
-        // 模拟获取待领取利息
         async function fetchPendingInterest(stakeId) {
-            // 实际调用：return await contract.getPendingInterest(stakeId);
             return stakeId === 1 ? ethers.utils.parseEther('12.34') : ethers.utils.parseEther('0');
         }
 
-        // 加载并渲染订单列表
         async function loadStakeOrders() {
             const container = document.getElementById('orderListContainer');
             if (!currentAccount) {
@@ -328,7 +349,7 @@
                     const amount = ethers.utils.formatEther(stake.amount);
                     const startDate = new Date(stake.startTime * 1000).toLocaleString('zh-CN');
                     const periodDays = getDaysByPeriod(stake.period);
-                    const expireTime = stake.startTime + periodDays * 60; // 测试版用分钟模拟天数
+                    const expireTime = stake.startTime + periodDays * 60;
                     const expireDate = new Date(expireTime * 1000).toLocaleString('zh-CN');
                     const dailyRate = (getDailyRateByPeriod(stake.period) * 100).toFixed(1);
                     const claimed = ethers.utils.formatEther(stake.accumulatedClaimed);
