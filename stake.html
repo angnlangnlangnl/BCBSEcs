@@ -50,6 +50,16 @@
         /* 质押按钮 */
         .stake-btn { width: 100%; background: linear-gradient(90deg, #f4a200, #ffd700); border: none; border-radius: 8px; padding: 14px; font-weight: bold; color: #111; cursor: pointer; box-shadow: 0 4px 15px rgba(255,170,0,0.3); font-size: 16px; }
 
+        /* 订单列表样式 */
+        .order-list-title { font-size: 16px; color: #f90; margin-bottom: 12px; }
+        .empty-state { text-align: center; color: #888; padding: 20px 0; }
+        .order-item { background: rgba(30,30,40,0.5); border: 1px solid #333; border-radius: 8px; padding: 12px; margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 8px; }
+        .order-item .field { flex: 1 1 45%; min-width: 120px; }
+        .order-item .field-label { font-size: 10px; color: #888; margin-bottom: 2px; }
+        .order-item .field-value { font-size: 13px; color: #fff; word-break: break-all; }
+        .order-item .status-active { color: #4caf50; font-weight: 600; }
+        .order-item .status-redeemed { color: #ff5252; font-weight: 600; }
+
         /* 底部导航 */
         .bottom-nav { flex-shrink: 0; background: rgba(15,15,30,0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,153,0,0.15); border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.9); display: flex; justify-content: space-around; padding: 12px 0; margin: 0 15px 15px 15px; position: relative; }
         .bottom-nav::before { content: ''; position: absolute; top: -1px; left: -1px; right: -1px; bottom: -1px; border-radius: 20px; padding: 1px; background: linear-gradient(135deg, #f90, transparent, #f90); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
@@ -75,13 +85,11 @@
 
             <!-- 质押卡片 -->
             <div class="panel">
-                <!-- 币种切换 -->
                 <div class="tab-container">
                     <div class="tab-btn active" data-coin="AIGC">AIGC</div>
                     <div class="tab-btn" data-coin="USDT">USDT</div>
                 </div>
 
-                <!-- 金额输入 -->
                 <div class="balance-info">
                     <span>可质押余额: <span id="availableBalance">0.00</span> <span id="coinLabel">AIGC</span></span>
                     <span class="max-btn" id="maxBtn">MAX</span>
@@ -91,7 +99,6 @@
                     <span class="currency" id="currencyDisplay">AIGC</span>
                 </div>
 
-                <!-- 周期选择 -->
                 <div style="color: #ccc; font-size: 13px; margin-bottom: 8px;">选择质押周期（日利率）</div>
                 <div class="period-grid" id="periodGrid">
                     <div class="period-btn" data-days="7">7天<span class="rate-label">日利率 0.8%</span></div>
@@ -102,14 +109,20 @@
                     <div class="period-btn" data-days="720">720天<span class="rate-label">日利率 2.6%</span></div>
                 </div>
 
-                <!-- 收益预览 -->
                 <div class="reward-preview">
                     <span>预计到期收益</span>
                     <strong id="estimatedReward">0.00 <span id="rewardCoin">AIGC</span></strong>
                 </div>
 
-                <!-- 质押按钮 -->
                 <button class="stake-btn" id="stakeSubmitBtn">立即质押</button>
+            </div>
+
+            <!-- 我的质押订单列表 -->
+            <div class="panel">
+                <div class="order-list-title">📋 我的质押订单</div>
+                <div id="orderListContainer">
+                    <!-- 动态填充订单列表或空状态 -->
+                </div>
             </div>
         </div>
 
@@ -124,7 +137,7 @@
     </div>
 
     <script>
-        // 钱包连接（与其他页面一致）
+        // ==================== 钱包连接（与各页面统一） ====================
         let provider, signer, currentAccount;
         const connectBtn = document.getElementById('connectWalletBtn');
         async function initWallet() {
@@ -137,6 +150,7 @@
                         signer = provider.getSigner();
                         updateUIForConnected(currentAccount);
                         updateBalances();
+                        loadStakeOrders();   // 加载质押订单
                     } else { setDisconnectedUI(); }
                 } catch (err) { setDisconnectedUI(); }
                 window.ethereum.on('accountsChanged', handleAccountsChanged);
@@ -150,6 +164,7 @@
             connectBtn.textContent = 'Connect wallet';
             connectBtn.classList.remove('connected');
             connectBtn.onclick = connectWallet;
+            clearOrders();
         }
         async function connectWallet() {
             if (typeof window.ethereum === 'undefined') { alert('请安装 MetaMask！'); return; }
@@ -160,6 +175,7 @@
                 signer = provider.getSigner();
                 updateUIForConnected(currentAccount);
                 updateBalances();
+                loadStakeOrders();
             } catch (err) { console.error(err); }
         }
         function updateUIForConnected(account) {
@@ -180,6 +196,7 @@
                 signer = provider.getSigner();
                 updateUIForConnected(currentAccount);
                 updateBalances();
+                loadStakeOrders();
             }
         }
         async function updateBalances() {
@@ -187,13 +204,11 @@
             document.getElementById('availableBalance').textContent = coin === 'AIGC' ? '10000' : '5000';
         }
 
-        // 质押逻辑
+        // ==================== 质押卡片交互 ====================
         let currentCoin = 'AIGC';
         let currentDays = 180;
-        // 日利率映射（小数形式）
         const dailyRateMap = { 7: 0.008, 35: 0.013, 180: 0.018, 360: 0.021, 540: 0.023, 720: 0.026 };
 
-        // 币种切换
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -207,7 +222,6 @@
             });
         });
 
-        // 周期选择
         document.querySelectorAll('.period-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
@@ -217,7 +231,6 @@
             });
         });
 
-        // 金额输入
         document.getElementById('stakeAmount').addEventListener('input', calculateReward);
         document.getElementById('maxBtn').addEventListener('click', function() {
             const balance = parseFloat(document.getElementById('availableBalance').textContent);
@@ -225,7 +238,6 @@
             calculateReward();
         });
 
-        // 收益计算：本金 * 日利率 * 天数
         function calculateReward() {
             const amount = parseFloat(document.getElementById('stakeAmount').value) || 0;
             const dailyRate = dailyRateMap[currentDays] || 0;
@@ -233,20 +245,122 @@
             document.getElementById('estimatedReward').innerHTML = `${reward.toFixed(4)} <span id="rewardCoin">${currentCoin}</span>`;
         }
 
-        // 质押按钮（示例交互）
-        document.getElementById('stakeSubmitBtn').addEventListener('click', function() {
+        document.getElementById('stakeSubmitBtn').addEventListener('click', async function() {
             const amount = document.getElementById('stakeAmount').value;
-            if (!currentAccount) {
-                alert('请先连接钱包！');
-                return;
-            }
-            if (parseFloat(amount) <= 0) {
-                alert('请输入有效质押金额');
-                return;
-            }
-            alert(`质押请求：${amount} ${currentCoin}，周期 ${currentDays} 天，日利率 ${(dailyRateMap[currentDays]*100).toFixed(1)}%\n预计收益：${(amount * dailyRateMap[currentDays] * currentDays).toFixed(4)} ${currentCoin}`);
-            // 实际调用合约 stake(amount, days)
+            if (!currentAccount) { alert('请先连接钱包！'); return; }
+            if (parseFloat(amount) <= 0) { alert('请输入有效质押金额'); return; }
+            alert(`质押请求：${amount} ${currentCoin}，周期 ${currentDays} 天\n日利率 ${(dailyRateMap[currentDays]*100).toFixed(1)}%\n（此处应调用合约 stake 方法）`);
+            // 实际调用合约 stake(amount, period) 后，重新加载订单列表
+            // await stakeContract.stake(parseEther(amount), periodEnum);
+            // loadStakeOrders();
         });
+
+        // ==================== 质押订单列表 ====================
+        const periodDaysMap = { 7: 7, 35: 35, 180: 180, 360: 360, 540: 540, 720: 720 };
+        function getDaysByPeriod(period) { return periodDaysMap[period] || 0; }
+        function getDailyRateByPeriod(period) { return dailyRateMap[period] || 0; }
+
+        // 模拟获取用户质押ID列表（实际应调用合约 getUserStakeIds(address)）
+        async function fetchUserStakeIds(address) {
+            // 模拟数据：两个质押订单，一个活跃，一个已赎回
+            // return [1, 2];
+            // 实际调用示例：
+            // const contract = new ethers.Contract(stakeAddress, stakeABI, provider);
+            // return await contract.getUserStakeIds(address);
+            return [1, 2];  // 模拟有两个订单
+        }
+
+        // 模拟获取单个质押详情（调用 getStakeInfo）
+        async function fetchStakeInfo(stakeId) {
+            // 实际调用：return await contract.getStakeInfo(stakeId);
+            // 模拟返回结构体：
+            if (stakeId === 1) {
+                return {
+                    id: 1,
+                    user: '0x1234567890123456789012345678901234567890',
+                    tokenType: 0,       // 0=AIGC
+                    amount: ethers.utils.parseEther('1000'),
+                    startTime: Math.floor(Date.now() / 1000) - 86400 * 2,  // 2天前
+                    period: 2,          // 180天
+                    redeemed: false,
+                    lastClaimTime: Math.floor(Date.now() / 1000) - 86400,
+                    accumulatedClaimed: ethers.utils.parseEther('5'),
+                };
+            } else {
+                return {
+                    id: 2,
+                    user: '0x1234567890123456789012345678901234567890',
+                    tokenType: 1,       // 1=USDT
+                    amount: ethers.utils.parseEther('500'),
+                    startTime: Math.floor(Date.now() / 1000) - 86400 * 30, // 30天前
+                    period: 4,          // 540天
+                    redeemed: true,
+                    lastClaimTime: Math.floor(Date.now() / 1000) - 86400 * 10,
+                    accumulatedClaimed: ethers.utils.parseEther('25.5'),
+                };
+            }
+        }
+
+        // 模拟获取待领取利息
+        async function fetchPendingInterest(stakeId) {
+            // 实际调用：return await contract.getPendingInterest(stakeId);
+            return stakeId === 1 ? ethers.utils.parseEther('12.34') : ethers.utils.parseEther('0');
+        }
+
+        // 加载并渲染订单列表
+        async function loadStakeOrders() {
+            const container = document.getElementById('orderListContainer');
+            if (!currentAccount) {
+                container.innerHTML = '<div class="empty-state">请先连接钱包</div>';
+                return;
+            }
+            try {
+                const stakeIds = await fetchUserStakeIds(currentAccount);
+                if (!stakeIds || stakeIds.length === 0) {
+                    container.innerHTML = '<div class="empty-state">暂无质押订单</div>';
+                    return;
+                }
+                let html = '';
+                for (const id of stakeIds) {
+                    const stake = await fetchStakeInfo(id);
+                    const pending = await fetchPendingInterest(id);
+                    const tokenName = stake.tokenType === 0 ? 'AIGC' : 'USDT';
+                    const amount = ethers.utils.formatEther(stake.amount);
+                    const startDate = new Date(stake.startTime * 1000).toLocaleString('zh-CN');
+                    const periodDays = getDaysByPeriod(stake.period);
+                    const expireTime = stake.startTime + periodDays * 60; // 测试版用分钟模拟天数
+                    const expireDate = new Date(expireTime * 1000).toLocaleString('zh-CN');
+                    const dailyRate = (getDailyRateByPeriod(stake.period) * 100).toFixed(1);
+                    const claimed = ethers.utils.formatEther(stake.accumulatedClaimed);
+                    const pendingAmount = ethers.utils.formatEther(pending);
+                    const status = stake.redeemed
+                        ? '<span class="status-redeemed">已赎回</span>'
+                        : '<span class="status-active">活跃</span>';
+
+                    html += `
+                        <div class="order-item">
+                            <div class="field"><div class="field-label">订单ID</div><div class="field-value">#${id}</div></div>
+                            <div class="field"><div class="field-label">代币</div><div class="field-value">${tokenName}</div></div>
+                            <div class="field"><div class="field-label">数量</div><div class="field-value">${amount}</div></div>
+                            <div class="field"><div class="field-label">周期</div><div class="field-value">${periodDays}天 (日利率 ${dailyRate}%)</div></div>
+                            <div class="field"><div class="field-label">开始时间</div><div class="field-value">${startDate}</div></div>
+                            <div class="field"><div class="field-label">到期时间</div><div class="field-value">${expireDate}</div></div>
+                            <div class="field"><div class="field-label">已领利息</div><div class="field-value">${claimed} BCBSE</div></div>
+                            <div class="field"><div class="field-label">待领利息</div><div class="field-value">${pendingAmount} BCBSE</div></div>
+                            <div class="field"><div class="field-label">状态</div><div class="field-value">${status}</div></div>
+                        </div>
+                    `;
+                }
+                container.innerHTML = html;
+            } catch (err) {
+                console.error('加载订单失败:', err);
+                container.innerHTML = '<div class="empty-state">订单加载失败</div>';
+            }
+        }
+
+        function clearOrders() {
+            document.getElementById('orderListContainer').innerHTML = '<div class="empty-state">请先连接钱包</div>';
+        }
 
         // 初始化
         window.addEventListener('load', () => {
