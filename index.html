@@ -2,948 +2,450 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AIGC · BCBSE · 科技金融</title>
-    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpaceX Web3 App</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body {
-            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: #080c1a;
-            color: #c8d6e5;
-            padding: 16px;
-            background-image: radial-gradient(circle at 20% 20%, rgba(0, 180, 255, 0.03) 0%, transparent 50%),
-                              radial-gradient(circle at 80% 80%, rgba(120, 0, 255, 0.03) 0%, transparent 50%);
-            min-height: 100vh;
+        /* --- 全局重置与基础样式 --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
-        .container { max-width: 1200px; margin: 0 auto; }
 
-        /* 头部 */
+        body {
+            background-color: #050505;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #ffffff;
+        }
+
+        /* --- 手机容器 --- */
+        .app-container {
+            width: 100%;
+            max-width: 420px;
+            background: radial-gradient(circle at center, #111 0%, #030303 100%);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(255, 170, 0, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(255, 170, 0, 0.05) 0%, transparent 20%);
+            padding: 15px;
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* --- 顶部导航栏 --- */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 12px;
-            padding: 20px 0 16px;
-            border-bottom: 1px solid rgba(0, 180, 255, 0.15);
+            padding-bottom: 20px;
         }
-        .logo {
-            font-size: 24px;
-            font-weight: 700;
-            background: linear-gradient(135deg, #00d4ff, #7b2ffc);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -0.5px;
-        }
-        .logo span { font-weight: 300; color: #4a5a7a; -webkit-text-fill-color: #4a5a7a; }
-        .wallet-btn {
-            background: rgba(0, 180, 255, 0.08);
-            border: 1px solid rgba(0, 180, 255, 0.2);
-            padding: 12px 24px;
-            border-radius: 40px;
-            color: #c8d6e5;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 500;
-            transition: all 0.3s;
-            min-height: 48px;
-            backdrop-filter: blur(4px);
-        }
-        .wallet-btn:hover { background: rgba(0, 180, 255, 0.15); border-color: rgba(0, 180, 255, 0.4); }
-        .wallet-btn:disabled { opacity: 0.5; cursor: default; }
 
-        /* 通用卡片 */
-        .card {
-            background: rgba(16, 26, 46, 0.7);
-            backdrop-filter: blur(8px);
-            border-radius: 20px;
-            padding: 20px;
-            border: 1px solid rgba(0, 180, 255, 0.08);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.02);
-            transition: all 0.25s;
-        }
-        .card:hover { border-color: rgba(0, 180, 255, 0.2); }
-        .card-title {
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: #6a8aae;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-        .card-value { font-size: 28px; font-weight: 600; color: #fff; line-height: 1.2; }
-        .card-sub { font-size: 14px; color: #6a8aae; margin-top: 4px; }
-
-        /* 网格布局 */
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 20px; }
-
-        /* 个人信息卡片（特殊样式） */
-        .profile-card {
-            background: linear-gradient(145deg, rgba(16, 26, 46, 0.85), rgba(8, 14, 30, 0.9));
-            border: 1px solid rgba(0, 180, 255, 0.15);
-            border-radius: 24px;
-            padding: 24px;
-            margin-top: 20px;
-            position: relative;
-            overflow: hidden;
-        }
-        .profile-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at 30% 50%, rgba(0, 180, 255, 0.04), transparent 60%);
-            pointer-events: none;
-        }
-        .profile-header {
+        .logo-area {
             display: flex;
             align-items: center;
-            gap: 16px;
-            margin-bottom: 18px;
-            position: relative;
-            z-index: 1;
+            font-size: 16px;
+            font-weight: bold;
+            background: linear-gradient(to right, #aaa, #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-        .avatar {
-            font-size: 42px;
-            background: linear-gradient(135deg, #00d4ff, #7b2ffc);
+        .logo-area span { margin-left: 5px; }
+
+        .header-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: 1px solid #333;
+            color: #aaa;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .connect-btn {
+            background: transparent;
+            border: 1px solid #f90;
+            color: #f90;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(255, 153, 0, 0.1);
+        }
+
+        /* --- 通用卡片样式 (发光边框) --- */
+        .panel {
+            background: rgba(20, 20, 30, 0.6);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #333;
+            position: relative;
+            box-shadow: inset 0 0 20px rgba(255, 170, 0, 0.02);
+        }
+
+        .panel::before {
+            content: '';
+            position: absolute;
+            top: -1px; left: -1px; right: -1px; bottom: -1px;
+            border-radius: 12px;
+            padding: 1px;
+            background: linear-gradient(135deg, #f90, transparent, #f90);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        /* --- 面板1: 持仓价值 --- */
+        .value-panel {
+            padding: 20px 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .coin-icon {
             width: 60px;
             height: 60px;
+            background: linear-gradient(135deg, #f3a900, #ffd700);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 0 30px rgba(0, 180, 255, 0.2);
-        }
-        .wallet-info { flex: 1; }
-        .address { font-size: 18px; font-weight: 600; color: #fff; }
-        .network { font-size: 13px; color: #6a8aae; }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-bottom: 16px;
-            position: relative;
-            z-index: 1;
-        }
-        .stat-item {
-            background: rgba(0, 0, 0, 0.25);
-            padding: 12px;
-            border-radius: 14px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.03);
-        }
-        .stat-label { display: block; font-size: 11px; text-transform: uppercase; color: #6a8aae; letter-spacing: 0.5px; }
-        .stat-value { display: block; font-size: 22px; font-weight: 700; color: #fff; margin-top: 2px; }
-        .level-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; position: relative; z-index: 1; }
-        .level-badge {
-            background: rgba(0, 180, 255, 0.1);
-            padding: 4px 16px;
-            border-radius: 40px;
-            font-size: 14px;
-            color: #a0c4e8;
-            border: 1px solid rgba(0, 180, 255, 0.08);
-        }
-        .reward-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 14px;
-            color: #6a8aae;
-            padding: 6px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-            position: relative;
-            z-index: 1;
-        }
-        .reward-row:last-child { border: none; }
-        .reward-row strong { color: #fff; }
-
-        /* 团队信息卡片 */
-        .team-card .team-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 14px;
-        }
-        .team-header .icon { font-size: 28px; }
-        .team-header .title { font-size: 18px; font-weight: 600; color: #fff; }
-        .team-info-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.04);
-            font-size: 14px;
-        }
-        .team-info-row .label { color: #6a8aae; }
-        .team-info-row .value { color: #c8d6e5; font-weight: 500; }
-        .referral-list {
-            margin-top: 12px;
-            max-height: 150px;
-            overflow-y: auto;
-            scrollbar-width: thin;
-            scrollbar-color: #2a3a5a transparent;
-        }
-        .referral-list::-webkit-scrollbar { width: 4px; }
-        .referral-list::-webkit-scrollbar-track { background: transparent; }
-        .referral-list::-webkit-scrollbar-thumb { background: #2a3a5a; border-radius: 10px; }
-        .referral-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 6px 0;
-            font-size: 13px;
-            color: #a0c4e8;
-            border-bottom: 1px solid rgba(255,255,255,0.02);
-        }
-        .referral-item .addr { font-family: 'monospace'; }
-
-        /* 表单 */
-        .form-group { margin-bottom: 14px; }
-        .form-group label { display: block; font-size: 13px; color: #6a8aae; margin-bottom: 4px; font-weight: 500; }
-        .form-group input {
-            width: 100%;
-            padding: 14px;
-            border-radius: 12px;
-            border: 1px solid rgba(0, 180, 255, 0.15);
-            background: rgba(0, 0, 0, 0.3);
+            font-size: 30px;
+            font-weight: 900;
             color: #fff;
-            font-size: 16px;
-            min-height: 48px;
-            transition: border 0.2s;
+            box-shadow: 0 0 20px rgba(255, 200, 0, 0.3);
         }
-        .form-group input:focus { outline: none; border-color: #00d4ff; }
 
-        /* 自定义下拉（科技风） */
-        .custom-select { position: relative; width: 100%; }
-        .custom-select .selected {
-            width: 100%;
-            padding: 14px;
-            border-radius: 12px;
-            border: 1px solid rgba(0, 180, 255, 0.15);
-            background: rgba(0, 0, 0, 0.3);
+        .value-info {
+            flex: 1;
+        }
+
+        .value-title {
+            font-size: 12px;
+            color: #f90;
+            font-weight: 500;
+        }
+
+        .value-number {
+            font-size: 28px;
+            font-weight: 700;
             color: #fff;
-            font-size: 16px;
-            min-height: 48px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
+            margin: 2px 0;
         }
-        .custom-select .selected:after { content: '▾'; margin-left: 8px; color: #6a8aae; }
-        .custom-select .options {
-            display: none;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #0f1a2e;
-            border-radius: 20px 20px 0 0;
-            padding: 16px 0;
-            max-height: 50vh;
-            overflow-y: auto;
-            z-index: 1000;
-            box-shadow: 0 -4px 30px rgba(0,0,0,0.8);
-            border-top: 1px solid rgba(0, 180, 255, 0.15);
-        }
-        .custom-select .options.open { display: block; }
-        .custom-select .options .option {
-            padding: 16px 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.04);
-            font-size: 16px;
-            color: #c8d6e5;
-            cursor: pointer;
-        }
-        .custom-select .options .option:active { background: rgba(0, 180, 255, 0.1); }
-        .overlay { display: none; position: fixed; top:0;left:0;right:0;bottom:0; background: rgba(0,0,0,0.6); z-index: 999; }
-        .overlay.open { display: block; }
 
-        /* 按钮 */
-        .btn {
-            background: linear-gradient(135deg, #00d4ff, #7b2ffc);
-            border: none;
-            padding: 14px 18px;
-            border-radius: 12px;
+        .value-number small {
+            font-size: 16px;
+            font-weight: 400;
+            color: #aaa;
+        }
+
+        .value-sub {
+            font-size: 14px;
+            color: #ccc;
+        }
+
+        .chart-area {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 5px;
+        }
+
+        .chart-placeholder {
+            width: 50px;
+            height: 25px;
+            border-bottom: 1px solid #f90;
+            background: linear-gradient(to right, transparent, #f90);
+            opacity: 0.5;
+            border-radius: 2px;
+            position: relative;
+        }
+
+        .doge-badge {
+            background: #1a3a1a;
+            color: #4caf50;
+            border: 1px solid #4caf50;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        /* --- 面板2: 邀请好友 --- */
+        .title {
+            color: #f90;
+            font-size: 14px;
             font-weight: 600;
-            color: #fff;
-            cursor: pointer;
-            transition: all 0.3s;
+            margin-bottom: 4px;
+        }
+        .desc {
+            color: #aaa;
+            font-size: 12px;
+            margin-bottom: 12px;
+        }
+
+        .input-box {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 12px;
+            text-align: center;
+            color: #f90;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .btn-primary {
             width: 100%;
-            font-size: 16px;
-            min-height: 48px;
-            box-shadow: 0 4px 16px rgba(0, 180, 255, 0.15);
+            background: linear-gradient(90deg, #f4a200, #ffd700);
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-weight: bold;
+            color: #111;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 170, 0, 0.2);
         }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0, 180, 255, 0.25); }
-        .btn:active { transform: scale(0.98); }
-        .btn-secondary {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.08);
-            box-shadow: none;
+
+        /* --- 面板3: 每日签到 (特殊紫色背景) --- */
+        .check-in-panel {
+            background: linear-gradient(135deg, rgba(60, 10, 90, 0.4), rgba(10, 10, 30, 0.6));
+            border: 1px solid rgba(150, 50, 200, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
-        .btn-secondary:hover { background: rgba(255,255,255,0.08); box-shadow: none; transform: none; }
-        .btn-danger {
-            background: linear-gradient(135deg, #ff416c, #ff4b2b);
-            box-shadow: 0 4px 16px rgba(255, 65, 108, 0.2);
+        .check-in-panel::before { background: linear-gradient(135deg, #b14bff, transparent, #b14bff); }
+
+        .check-left { display: flex; align-items: center; gap: 15px; }
+        .check-icon { font-size: 40px; }
+        .check-text { display: flex; flex-direction: column; gap: 5px; }
+        .check-text h3 { color: #fff; font-size: 18px; margin: 0; }
+        .check-text p { color: #ccc; font-size: 11px; margin: 0; }
+        .btn-check { 
+            background: linear-gradient(90deg, #ffaa00, #ffdd00); 
+            border: none; 
+            padding: 8px 25px; 
+            border-radius: 20px; 
+            font-weight: 700; 
+            color: #222; 
+            box-shadow: 0 0 15px rgba(255, 200, 0, 0.3);
+            cursor: pointer;
         }
-        .btn-danger:hover { box-shadow: 0 8px 28px rgba(255, 65, 108, 0.3); }
-        .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
+        .last-time { font-size: 11px; color: #aaa; text-align: right; margin-top: 5px;}
 
-        .flex { display: flex; gap: 10px; flex-wrap: wrap; }
-        .flex .btn { flex: 1; min-width: 120px; }
-        .btn-group { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
-        .btn-group .btn { flex: 1; min-width: 80px; padding: 10px; font-size: 14px; min-height: 40px; }
+        /* --- 面板4: 资产明细 --- */
+        .stats-grid-3 {
+            display: flex;
+            justify-content: space-between;
+            text-align: center;
+        }
+        .stat-item { flex: 1; }
+        .stat-item h4 { font-size: 11px; color: #aaa; margin-bottom: 5px; }
+        .stat-item .val { font-size: 20px; color: #fff; font-weight: 600; }
+        .stat-item .sub-val { font-size: 12px; color: #888; }
 
-        .status { margin-top: 10px; padding: 10px; border-radius: 8px; font-size: 14px; }
-        .status.success { background: rgba(0, 230, 118, 0.1); color: #7bed9f; border: 1px solid rgba(0, 230, 118, 0.15); }
-        .status.error { background: rgba(255, 71, 87, 0.1); color: #ff6b6b; border: 1px solid rgba(255, 71, 87, 0.15); }
-        .status.pending { background: rgba(255, 215, 0, 0.08); color: #ffd93d; border: 1px solid rgba(255, 215, 0, 0.12); }
+        /* --- 面板5: 推广数据 --- */
+        .stats-grid-2 {
+            display: flex;
+            justify-content: space-between;
+            text-align: center;
+            padding: 10px 0;
+        }
+        .stat-item-2 { flex: 1; display: flex; align-items: center; justify-content: center; gap: 15px; }
+        .stat-item-2 .icon-big { font-size: 32px; }
+        .stat-item-2 .num-big { font-size: 28px; color: #fff; font-weight: 600; margin-left: 10px; }
+        .stat-item-2 h4 { font-size: 11px; color: #f90; margin: 0; }
 
-        .list-item { padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
-        .list-item:last-child { border: none; }
-        .mt-10 { margin-top: 10px; }
-        .mb-10 { margin-bottom: 10px; }
+        /* --- 底部导航栏 --- */
+        .bottom-nav {
+            background: rgba(20, 20, 30, 0.9);
+            border: 1px solid #333;
+            border-radius: 15px;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            margin-top: 10px;
+            position: relative;
+        }
+        .bottom-nav::before {
+            content: '';
+            position: absolute;
+            top: -1px; left: -1px; right: -1px; bottom: -1px;
+            border-radius: 15px;
+            padding: 1px;
+            background: linear-gradient(135deg, #f90, transparent, #f90);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
 
-        @media (max-width: 600px) {
-            .grid { grid-template-columns: 1fr; }
-            .header { flex-direction: column; align-items: stretch; }
-            .flex .btn { min-width: 100px; }
-            .stats-grid { grid-template-columns: repeat(3, 1fr); }
-            .profile-card { padding: 16px; }
-            .stat-value { font-size: 20px; }
-            .address { font-size: 16px; }
-            .card-value { font-size: 24px; }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #666;
+            font-size: 11px;
+            gap: 4px;
+            cursor: pointer;
+            padding: 5px 10px;
+        }
+        .nav-item .icon { font-size: 20px; }
+        
+        .nav-item.active {
+            color: #f90;
+            position: relative;
+        }
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 2px;
+            background: #f90;
+            border-radius: 5px;
+            box-shadow: 0 0 10px #f90;
         }
     </style>
 </head>
 <body>
-<div class="container" id="app">
-    <!-- 头部 -->
-    <div class="header">
-        <div class="logo">AIGC <span>·</span> BCBSE</div>
-        <div>
-            <button class="wallet-btn" id="connectBtn">🔗 连接钱包</button>
-            <span id="accountDisplay" style="margin-left: 12px; font-size: 14px; color: #6a8aae;"></span>
-        </div>
-    </div>
 
-    <!-- 个人信息卡片 -->
-    <div class="profile-card">
-        <div class="profile-header">
-            <div class="avatar">⚡</div>
-            <div class="wallet-info">
-                <div class="address" id="profileAddress">未连接</div>
-                <div class="network">BSC 主网 · 科技金融</div>
+    <div class="app-container">
+        
+        <!-- 顶部栏 -->
+        <div class="header">
+            <div class="logo-area">🚀 <span>SPACEX</span></div>
+            <div class="header-controls">
+                <button class="lang-btn">🇺🇸 EN ⌄</button>
+                <button class="connect-btn">Connect wallet</button>
             </div>
         </div>
-        <div class="stats-grid">
-            <div class="stat-item"><span class="stat-label">AIGC</span><span class="stat-value" id="pAigc">--</span></div>
-            <div class="stat-item"><span class="stat-label">BCBSE</span><span class="stat-value" id="pBcbse">--</span></div>
-            <div class="stat-item"><span class="stat-label">USDT</span><span class="stat-value" id="pUsdt">--</span></div>
-        </div>
-        <div class="level-row">
-            <span class="level-badge" id="pNodeLevel">普通</span>
-            <span class="level-badge" id="pIdentity">身份: 0</span>
-            <span class="level-badge" id="pDirect">直推: 0</span>
-        </div>
-        <div class="reward-row">
-            <span>待领取 AIGC: <strong id="pPending">--</strong></span>
-            <span>每日收益: <strong id="pDaily">--</strong></span>
-        </div>
-        <div class="reward-row">
-            <span>USDT 分红: <strong id="pDividend">--</strong></span>
-        </div>
-    </div>
 
-    <!-- 团队信息卡片 -->
-    <div class="card team-card" style="margin-top: 20px;">
-        <div class="team-header">
-            <span class="icon">👥</span>
-            <span class="title">团队信息</span>
-        </div>
-        <div class="team-info-row">
-            <span class="label">我的推荐人</span>
-            <span class="value" id="myReferrer">--</span>
-        </div>
-        <div class="team-info-row">
-            <span class="label">层级身份</span>
-            <span class="value" id="teamIdentity">--</span>
-        </div>
-        <div class="team-info-row">
-            <span class="label">直推节点数</span>
-            <span class="value" id="teamDirectCount">--</span>
-        </div>
-        <div class="team-info-row">
-            <span class="label">个人 BCBSE 持币价值 (USDT)</span>
-            <span class="value" id="teamHolding">--</span>
-        </div>
-        <div class="team-info-row">
-            <span class="label">最小直推人团队业绩 (USDT)</span>
-            <span class="value" id="teamMinPerformance">--</span>
-        </div>
-        <div class="team-info-row">
-            <span class="label">当前利率档位</span>
-            <span class="value" id="teamRate">--</span>
-        </div>
-        <div style="margin-top: 12px;">
-            <div style="display:flex; justify-content:space-between; color:#6a8aae; font-size:13px; margin-bottom:6px;">
-                <span>直推地址列表</span>
-                <span id="refCount">0 人</span>
+        <!-- 持仓价值 -->
+        <div class="panel value-panel">
+            <div class="coin-icon">D</div>
+            <div class="value-info">
+                <div class="value-title">CURRENT HOLDING VALUE</div>
+                <div class="value-number">$0.0000 <small>USD</small></div>
+                <div class="value-sub">0.0000 DOGE</div>
             </div>
-            <div class="referral-list" id="directReferralList">
-                <div style="color:#4a5a7a; padding:8px 0; font-size:14px;">暂无直推</div>
+            <div class="chart-area">
+                <div class="chart-placeholder">
+                    <div style="position:absolute; bottom:0; left:0; width:100%; height:100%; border-left: 1px solid #f90; background: linear-gradient(to top, rgba(255,153,0,0.3), transparent);"></div>
+                </div>
+                <div class="doge-badge">$DOGE</div>
             </div>
         </div>
-    </div>
 
-    <!-- 仪表盘 -->
-    <div class="grid" id="dashboard">
-        <div class="card"><div class="card-title">AIGC 余额</div><div class="card-value" id="aigcBalance">--</div><div class="card-sub">AIGC</div></div>
-        <div class="card"><div class="card-title">BCBSE 余额</div><div class="card-value" id="bcbseBalance">--</div><div class="card-sub">BCBSE</div></div>
-        <div class="card"><div class="card-title">USDT 余额</div><div class="card-value" id="usdtBalance">--</div><div class="card-sub">USDT</div></div>
-        <div class="card"><div class="card-title">节点等级</div><div class="card-value" id="nodeLevel">--</div><div class="card-sub" id="nodeSub">直推: --</div></div>
-        <div class="card"><div class="card-title">AIGC 待领取</div><div class="card-value" id="pendingReward">--</div><div class="card-sub">下次最低: <span id="minClaim">--</span></div></div>
-        <div class="card"><div class="card-title">USDT 分红待领取</div><div class="card-value" id="totalDividend">--</div><div class="card-sub" id="dividendDetail">点击刷新</div></div>
-    </div>
-
-    <!-- 操作区 -->
-    <div class="grid" style="margin-top: 20px;">
-        <div class="card">
-            <div class="card-title">💎 申请节点 USDT</div>
-            <div class="form-group"><label>数量 (USDT)</label><input type="number" id="depositAmount" placeholder="例如 1000" step="0.01" min="0" /></div>
-            <button class="btn" id="depositBtn">授权并充值</button>
-            <div id="depositStatus" class="status" style="display:none;"></div>
+        <!-- 邀请好友 -->
+        <div class="panel">
+            <div class="title">INVITE FRIENDS</div>
+            <div class="desc">Invite more friends and earn more DOGE!</div>
+            <div class="input-box">No data</div>
+            <button class="btn-primary">Copy Invite Link</button>
         </div>
 
-        <div class="card">
-            <div class="card-title">🔒 质押赚利息</div>
-            <div class="form-group">
-                <label>币种</label>
-                <div class="custom-select" id="stakeTokenSelect">
-                    <div class="selected" data-value="AIGC">AIGC</div>
-                    <div class="options">
-                        <div class="option" data-value="AIGC">AIGC</div>
-                        <div class="option" data-value="USDT">USDT</div>
+        <!-- 每日签到 -->
+        <div class="panel check-in-panel">
+            <div class="check-left">
+                <div class="check-icon">📅</div>
+                <div class="check-text">
+                    <h3>DAILY CHECK-IN</h3>
+                    <p>TOTAL CHECK-IN TIMES: 0</p>
+                </div>
+            </div>
+            <div>
+                <button class="btn-check">CHECK IN NOW</button>
+                <div class="last-time">LAST TIME<br>--</div>
+            </div>
+        </div>
+
+        <!-- 数据资产 -->
+        <div class="panel">
+            <div class="stats-grid-3">
+                <div class="stat-item">
+                    <h4>🔓 UNLOCKED</h4>
+                    <div class="val">0.00</div>
+                    <div class="sub-val">DOGE</div>
+                    <div class="sub-val">≈$0.00</div>
+                </div>
+                <div class="stat-item">
+                    <h4>👥 REFERRAL</h4>
+                    <div class="val">0.00</div>
+                    <div class="sub-val">DOGE</div>
+                    <div class="sub-val">≈$0.00</div>
+                </div>
+                <div class="stat-item">
+                    <h4>🔒 LOCK</h4>
+                    <div class="val">0.00</div>
+                    <div class="sub-val">DOGE</div>
+                    <div class="sub-val">≈$0.00</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 推广进度 -->
+        <div class="panel">
+            <div class="stats-grid-2">
+                <div class="stat-item-2">
+                    <div class="icon-big">👤</div>
+                    <div>
+                        <h4>REFERRAL PEOPLE</h4>
+                        <div class="num-big">0</div>
+                    </div>
+                </div>
+                <div class="stat-item-2">
+                    <div class="icon-big">👥</div>
+                    <div>
+                        <h4>TEAM MEMBERS</h4>
+                        <div class="num-big">0</div>
                     </div>
                 </div>
             </div>
-            <div class="form-group"><label>数量</label><input type="number" id="stakeAmount" placeholder="数量" step="0.01" min="0" /></div>
-            <div class="form-group">
-                <label>周期</label>
-                <div class="custom-select" id="stakePeriodSelect">
-                    <div class="selected" data-value="0">7 天 (0.8%/天)</div>
-                    <div class="options">
-                        <div class="option" data-value="0">7 天 (0.8%/天)</div>
-                        <div class="option" data-value="1">35 天 (1.3%/天)</div>
-                        <div class="option" data-value="2">180 天 (1.8%/天)</div>
-                        <div class="option" data-value="3">360 天 (2.1%/天)</div>
-                        <div class="option" data-value="4">540 天 (2.3%/天)</div>
-                        <div class="option" data-value="5">720 天 (2.6%/天)</div>
-                    </div>
-                </div>
+        </div>
+
+        <!-- 底部导航 -->
+        <div class="bottom-nav">
+            <div class="nav-item">
+                <span class="icon">⛏️</span>
+                <span>Mint</span>
             </div>
-            <button class="btn" id="stakeBtn">授权并质押</button>
-            <div id="stakeStatus" class="status" style="display:none;"></div>
+            <div class="nav-item active">
+                <span class="icon">🎁</span>
+                <span>Airdrop</span>
+            </div>
+            <div class="nav-item">
+                <span class="icon">📋</span>
+                <span>Task</span>
+            </div>
+            <div class="nav-item">
+                <span class="icon">🖼️</span>
+                <span>NFTs</span>
+            </div>
+            <div class="nav-item">
+                <span class="icon">🌍</span>
+                <span>Ecology</span>
+            </div>
         </div>
 
-        <div class="card">
-            <div class="card-title">💰 领取奖励</div>
-            <div class="flex"><button class="btn btn-secondary" id="claimAigcBtn">领取 AIGC</button><button class="btn btn-secondary" id="claimInterestBtn">领取 BCBSE 利息</button></div>
-            <div class="flex mt-10"><button class="btn btn-secondary" id="claimDividendBtn">领取 USDT 分红</button><button class="btn btn-secondary" id="refreshBtn">⟳ 刷新</button></div>
-            <div id="claimStatus" class="status" style="display:none;"></div>
-        </div>
     </div>
 
-    <!-- 质押列表 -->
-    <div class="card" style="margin-top: 20px;">
-        <div class="card-title">📋 我的质押</div>
-        <div id="stakeList">暂无质押记录</div>
-        <div style="margin-top: 10px;"><button class="btn btn-secondary" id="refreshStakesBtn">刷新质押列表</button></div>
-    </div>
-
-    <div style="margin-top: 40px; text-align: center; color: #2a3a5a; font-size: 12px;">⚡ 去中心化科技金融 · 数据实时上链</div>
-</div>
-
-<!-- 遮罩 -->
-<div class="overlay" id="overlay"></div>
-
-<script>
-    // ======================== 自定义下拉 ========================
-    document.querySelectorAll('.custom-select').forEach(container => {
-        const selected = container.querySelector('.selected');
-        const options = container.querySelector('.options');
-        const overlay = document.getElementById('overlay');
-
-        selected.addEventListener('click', function(e) {
-            e.stopPropagation();
-            document.querySelectorAll('.options.open').forEach(el => {
-                if (el !== options) el.classList.remove('open');
-            });
-            overlay.classList.toggle('open');
-            options.classList.toggle('open');
-        });
-
-        options.querySelectorAll('.option').forEach(opt => {
-            opt.addEventListener('click', function(e) {
-                e.stopPropagation();
-                const val = this.dataset.value;
-                const text = this.textContent;
-                selected.textContent = text;
-                selected.dataset.value = val;
-                options.classList.remove('open');
-                overlay.classList.remove('open');
-                const ev = new Event('change', { bubbles: true });
-                container.dispatchEvent(ev);
-            });
-        });
-
-        overlay.addEventListener('click', function() {
-            options.classList.remove('open');
-            overlay.classList.remove('open');
-        });
-    });
-
-    function getCustomSelectValue(id) {
-        const container = document.getElementById(id);
-        return container.querySelector('.selected').dataset.value;
-    }
-
-    // ======================== 配置 ========================
-    const CONFIG = {
-        chainId: 56,
-        rpcUrl: 'https://bsc-dataseed.binance.org/',
-        addresses: {
-            AIGC: '0xa4136A30c1A5008fD08E18adebDa9d5fB4952DE4',
-            BCBSE: '0x509f87Aa2De24DAB0d8b6E95235D5A1105003d2F',
-            USDT: '0x55d398326f99059fF775485246999027B3197955',
-        },
-        abis: {
-            AIGC: [
-                'function depositUSDT(uint256 amount) external',
-                'function claimReward() external payable',
-                'function claimDividend(uint8 pool) external',
-                'function claimAllDividends() external',
-                'function getUserInfo(address) view returns (uint256,uint8,uint256,uint256,uint256,uint256,uint256)',
-                'function pendingReward(address) view returns (uint256)',
-                'function getBnbRequiredForClaim(uint256) view returns (uint256)',
-                'function getMinClaimRequirement(address) view returns (uint256)',
-                'function getDailyReward(address) view returns (uint256)',
-                'function referrer(address) view returns (address)',
-                'function identityLevel(address) view returns (uint256)',
-                'function directNodeCount(address) view returns (uint256)',
-                'function getPendingDividend(address,uint8) view returns (uint256)',
-                'function poolUsers(uint8) view returns (address[])',
-                'function balanceOf(address) view returns (uint256)',
-            ],
-            BCBSE: [
-                'function stakeAIGC(uint256 amount, uint8 period) external',
-                'function stakeUSDT(uint256 amount, uint8 period) external',
-                'function claimInterest(uint256 stakeId) external',
-                'function redeemPrincipal(uint256 stakeId) external',
-                'function redeemPrincipalEarly(uint256 stakeId) external',
-                'function getPendingInterest(uint256) view returns (uint256)',
-                'function getUserStakeIds(address) view returns (uint256[])',
-                'function getStakeInfo(uint256) view returns (uint256,address,uint8,uint256,uint256,uint8,bool,uint256,uint256)',
-                'function getRateLevel(address) view returns (uint256)',
-                'function balanceOf(address) view returns (uint256)',
-                'function getDirectReferrals(address) view returns (address[])',
-                'function teamPerformance(address) view returns (uint256)',
-            ],
-            ERC20: [
-                'function approve(address spender, uint256 amount) returns (bool)',
-                'function allowance(address owner, address spender) view returns (uint256)',
-                'function balanceOf(address) view returns (uint256)',
-                'function decimals() view returns (uint8)',
-            ],
-            USDT: [
-                'function approve(address spender, uint256 amount) returns (bool)',
-                'function allowance(address owner, address spender) view returns (uint256)',
-                'function balanceOf(address) view returns (uint256)',
-                'function decimals() view returns (uint8)',
-            ]
-        }
-    };
-
-    // ======================== 状态 ========================
-    let provider, signer, userAddress;
-    let aigcContract, bcbseContract, usdtContract;
-    let isConnected = false;
-
-    const $ = id => document.getElementById(id);
-    const connectBtn = $('connectBtn');
-    const accountDisplay = $('accountDisplay');
-    const refreshBtn = $('refreshBtn');
-
-    function formatUnits(value, decimals = 18) { if (!value) return '0'; return ethers.utils.formatUnits(value, decimals); }
-    function parseUnits(value, decimals = 18) { return ethers.utils.parseUnits(value, decimals); }
-    function shortAddr(addr) { if (!addr) return ''; return addr.slice(0,6)+'...'+addr.slice(-4); }
-    function showStatus(el, message, type='info') { el.style.display='block'; el.textContent=message; el.className='status '+type; }
-    function hideStatus(el) { el.style.display='none'; }
-
-    // ======================== 初始化 ========================
-    function initContracts() {
-        if (!provider) return;
-        aigcContract = new ethers.Contract(CONFIG.addresses.AIGC, CONFIG.abis.AIGC, provider);
-        bcbseContract = new ethers.Contract(CONFIG.addresses.BCBSE, CONFIG.abis.BCBSE, provider);
-        usdtContract = new ethers.Contract(CONFIG.addresses.USDT, CONFIG.abis.USDT, provider);
-        if (signer) {
-            aigcContract = aigcContract.connect(signer);
-            bcbseContract = bcbseContract.connect(signer);
-            usdtContract = usdtContract.connect(signer);
-        }
-    }
-
-    // ======================== 连接钱包 ========================
-    async function connectWallet() {
-        if (typeof window.ethereum === 'undefined') { alert('请安装 MetaMask 或兼容钱包'); return; }
-        try {
-            provider = new ethers.providers.Web3Provider(window.ethereum);
-            await provider.send("eth_requestAccounts", []);
-            signer = provider.getSigner();
-            userAddress = await signer.getAddress();
-            isConnected = true;
-            accountDisplay.textContent = shortAddr(userAddress);
-            $('profileAddress').textContent = shortAddr(userAddress);
-            connectBtn.textContent = '✅ 已连接';
-            connectBtn.disabled = true;
-            initContracts();
-            await refreshAll();
-            window.ethereum.on('accountsChanged', () => { location.reload(); });
-        } catch (error) {
-            console.error(error);
-            alert('连接失败: ' + error.message);
-        }
-    }
-
-    // ======================== 更新个人信息 ========================
-    async function updateProfile() {
-        if (!isConnected || !userAddress) return;
-        try {
-            const aigcBal = await aigcContract.balanceOf(userAddress);
-            $('pAigc').textContent = formatUnits(aigcBal, 18);
-            const bcbseBal = await bcbseContract.balanceOf(userAddress);
-            $('pBcbse').textContent = formatUnits(bcbseBal, 18);
-            const usdtBal = await usdtContract.balanceOf(userAddress);
-            $('pUsdt').textContent = formatUnits(usdtBal, 18);
-
-            const info = await aigcContract.getUserInfo(userAddress);
-            const level = info[1];
-            const levelNames = ['普通', '首富', '星链', '创世'];
-            $('pNodeLevel').textContent = levelNames[level] || '普通';
-            $('pIdentity').textContent = `身份: ${info[6]}`;
-            $('pDirect').textContent = `直推: ${info[5]}`;
-
-            const pending = await aigcContract.pendingReward(userAddress);
-            $('pPending').textContent = formatUnits(pending, 18);
-            const daily = await aigcContract.getDailyReward(userAddress);
-            $('pDaily').textContent = formatUnits(daily, 18);
-
-            let totalDiv = 0;
-            for (let i = 0; i < 8; i++) {
-                const amount = await aigcContract.getPendingDividend(userAddress, i);
-                totalDiv += parseFloat(ethers.utils.formatUnits(amount, 18));
-            }
-            $('pDividend').textContent = totalDiv.toFixed(4) + ' USDT';
-        } catch (e) { console.error('updateProfile error', e); }
-    }
-
-    // ======================== 更新团队卡片 ========================
-    async function updateTeamCard() {
-        if (!isConnected || !userAddress) return;
-        try {
-            // 推荐人
-            const referrer = await aigcContract.referrer(userAddress);
-            $('myReferrer').textContent = referrer === '0x0000000000000000000000000000000000000000' ? '无' : shortAddr(referrer);
-
-            // 身份等级
-            const identity = await aigcContract.identityLevel(userAddress);
-            $('teamIdentity').textContent = identity.toString();
-
-            // 直推节点数
-            const directCount = await aigcContract.directNodeCount(userAddress);
-            $('teamDirectCount').textContent = directCount.toString();
-
-            // 个人 BCBSE 持币价值 (USDT)
-            const bcbseBal = await bcbseContract.balanceOf(userAddress);
-            // 价格需要从BCBSE合约读取 priceBCBSE_USDT，但合约未提供getter？我们假设有，但前端可简化：直接显示余额，不换算价值
-            // 为了准确，调用合约的 priceBCBSE_USDT 方法（需ABI增加）
-            // 如果合约没有该getter，可忽略。我们尝试读取，若有则显示。
-            let holdingValue = '--';
-            try {
-                const price = await bcbseContract.priceBCBSE_USDT();
-                const value = parseFloat(formatUnits(bcbseBal, 18)) * parseFloat(formatUnits(price, 18));
-                holdingValue = value.toFixed(2) + ' USDT';
-            } catch (e) {
-                holdingValue = formatUnits(bcbseBal, 18) + ' BCBSE';
-            }
-            $('teamHolding').textContent = holdingValue;
-
-            // 最小直推人团队业绩
-            // 需要调用 teamPerformance 并遍历直推列表取最小，但合约未直接提供，我们简化显示为从BCBSE读取，但可能无getter
-            // 若BCBSE合约有 teamPerformance 映射，可以直接读取，但需要用户地址。
-            // 实际业务中，这是计算出来的，我们可显示参考值：先从BCBSE获取直推列表，再逐个读取团队业绩取最小
-            try {
-                const refs = await bcbseContract.getDirectReferrals(userAddress);
-                let minPerf = Infinity;
-                for (let addr of refs) {
-                    const perf = await bcbseContract.teamPerformance(addr);
-                    const perfNum = parseFloat(ethers.utils.formatUnits(perf, 18));
-                    if (perfNum < minPerf) minPerf = perfNum;
-                }
-                if (refs.length === 0) minPerf = 0;
-                $('teamMinPerformance').textContent = minPerf.toFixed(2) + ' USDT';
-            } catch (e) {
-                $('teamMinPerformance').textContent = '--';
-            }
-
-            // 当前利率档位
-            try {
-                const rate = await bcbseContract.getRateLevel(userAddress);
-                const ratePercent = (parseFloat(ethers.utils.formatUnits(rate, 18)) * 100).toFixed(1);
-                $('teamRate').textContent = ratePercent + '%';
-            } catch (e) {
-                $('teamRate').textContent = '--';
-            }
-
-            // 直推列表
-            const refs = await bcbseContract.getDirectReferrals(userAddress);
-            const listDiv = $('directReferralList');
-            $('refCount').textContent = refs.length + ' 人';
-            if (refs.length === 0) {
-                listDiv.innerHTML = '<div style="color:#4a5a7a; padding:8px 0; font-size:14px;">暂无直推</div>';
-            } else {
-                let html = '';
-                for (let addr of refs) {
-                    const short = shortAddr(addr);
-                    html += `<div class="referral-item"><span class="addr">${short}</span><span>✅ 已绑定</span></div>`;
-                }
-                listDiv.innerHTML = html;
-            }
-
-        } catch (e) { console.error('updateTeamCard error', e); }
-    }
-
-    // ======================== 全局刷新 ========================
-    async function refreshAll() {
-        if (!isConnected || !userAddress) return;
-        try {
-            await updateProfile();
-            await updateTeamCard();
-
-            // 仪表盘
-            const aigcBal = await aigcContract.balanceOf(userAddress);
-            $('aigcBalance').textContent = formatUnits(aigcBal, 18);
-            const bcbseBal = await bcbseContract.balanceOf(userAddress);
-            $('bcbseBalance').textContent = formatUnits(bcbseBal, 18);
-            const usdtBal = await usdtContract.balanceOf(userAddress);
-            $('usdtBalance').textContent = formatUnits(usdtBal, 18);
-
-            const info = await aigcContract.getUserInfo(userAddress);
-            const level = info[1];
-            const levelNames = ['普通', '首富', '星链', '创世'];
-            $('nodeLevel').textContent = levelNames[level] || '--';
-            $('nodeSub').textContent = `直推: ${info[5]} 人 | 身份: ${info[6]}`;
-
-            const pending = await aigcContract.pendingReward(userAddress);
-            $('pendingReward').textContent = formatUnits(pending, 18);
-            const minClaim = await aigcContract.getMinClaimRequirement(userAddress);
-            $('minClaim').textContent = formatUnits(minClaim, 18);
-
-            let totalDiv = 0, detail = '';
-            const poolNames = ['首富','星链','创世','S4','S5','S6','S7','S8'];
-            for (let i = 0; i < 8; i++) {
-                const amount = await aigcContract.getPendingDividend(userAddress, i);
-                if (amount.gt(0)) {
-                    totalDiv += parseFloat(ethers.utils.formatUnits(amount, 18));
-                    detail += `${poolNames[i]}: ${ethers.utils.formatUnits(amount, 18)} USDT  `;
-                }
-            }
-            $('totalDividend').textContent = totalDiv.toFixed(4);
-            $('dividendDetail').textContent = detail || '暂无分红';
-
-            await refreshStakes();
-        } catch (error) { console.error('refreshAll error', error); }
-    }
-
-    // ======================== 质押列表 ========================
-    async function refreshStakes() {
-        if (!isConnected) return;
-        try {
-            const stakeIds = await bcbseContract.getUserStakeIds(userAddress);
-            const listDiv = $('stakeList');
-            if (stakeIds.length === 0) { listDiv.innerHTML = '暂无质押记录'; return; }
-            let html = '';
-            for (let id of stakeIds) {
-                const info = await bcbseContract.getStakeInfo(id);
-                const tokenType = info[2] === 0 ? 'AIGC' : 'USDT';
-                const amount = formatUnits(info[3], 18);
-                const start = new Date(info[4].toNumber() * 1000).toLocaleDateString();
-                const period = info[5];
-                const redeemed = info[6];
-                const pendingInterest = await bcbseContract.getPendingInterest(id);
-                html += `<div class="list-item">
-                    <div>#${id} ${tokenType} ${amount} | ${start} | 周期: ${period}</div>
-                    <div>${redeemed ? '✅ 已赎回' : '⏳ 未赎回'} 利息: ${formatUnits(pendingInterest, 18)} BCBSE</div>
-                    <div class="btn-group">
-                        <button class="btn btn-secondary" onclick="claimInterest(${id})">领取利息</button>
-                        ${!redeemed ? `<button class="btn btn-secondary" onclick="redeemStake(${id})">赎回</button>` : ''}
-                        ${!redeemed ? `<button class="btn btn-danger" onclick="earlyRedeem(${id})">提前赎回</button>` : ''}
-                    </div>
-                </div>`;
-            }
-            listDiv.innerHTML = html;
-        } catch (error) { console.error('refreshStakes error', error); }
-    }
-
-    // ======================== 操作函数 ========================
-    async function approveUSDT(amount) {
-        const allowance = await usdtContract.allowance(userAddress, CONFIG.addresses.AIGC);
-        if (allowance.gte(parseUnits(amount, 18))) return true;
-        const tx = await usdtContract.approve(CONFIG.addresses.AIGC, parseUnits(amount, 18));
-        await tx.wait();
-        return true;
-    }
-
-    $('depositBtn').addEventListener('click', async function() {
-        if (!isConnected) { alert('请先连接钱包'); return; }
-        const amount = $('depositAmount').value;
-        if (!amount || parseFloat(amount) <= 0) { alert('请输入有效数量'); return; }
-        const status = $('depositStatus');
-        showStatus(status, '正在授权 USDT...', 'pending');
-        this.disabled = true;
-        try {
-            await approveUSDT(amount);
-            showStatus(status, '授权成功，正在充值...', 'pending');
-            const tx = await aigcContract.depositUSDT(parseUnits(amount, 18));
-            await tx.wait();
-            showStatus(status, `充值 ${amount} USDT 成功！`, 'success');
-            await refreshAll();
-        } catch (e) {
-            showStatus(status, '错误: ' + e.message, 'error');
-        }
-        this.disabled = false;
-    });
-
-    $('stakeBtn').addEventListener('click', async function() {
-        if (!isConnected) { alert('请先连接钱包'); return; }
-        const tokenType = getCustomSelectValue('stakeTokenSelect');
-        const amount = $('stakeAmount').value;
-        const period = parseInt(getCustomSelectValue('stakePeriodSelect'));
-        if (!amount || parseFloat(amount) <= 0) { alert('请输入有效数量'); return; }
-        const status = $('stakeStatus');
-        showStatus(status, `正在授权 ${tokenType}...`, 'pending');
-        this.disabled = true;
-        try {
-            const tokenAddr = tokenType === 'AIGC' ? CONFIG.addresses.AIGC : CONFIG.addresses.USDT;
-            const tokenContract = new ethers.Contract(tokenAddr, CONFIG.abis.ERC20, signer);
-            const allowance = await tokenContract.allowance(userAddress, CONFIG.addresses.BCBSE);
-            const parsedAmount = parseUnits(amount, 18);
-            if (allowance.lt(parsedAmount)) {
-                const txApprove = await tokenContract.approve(CONFIG.addresses.BCBSE, parsedAmount);
-                await txApprove.wait();
-            }
-            showStatus(status, `正在质押 ${tokenType}...`, 'pending');
-            let tx;
-            if (tokenType === 'AIGC') {
-                tx = await bcbseContract.stakeAIGC(parsedAmount, period);
-            } else {
-                tx = await bcbseContract.stakeUSDT(parsedAmount, period);
-            }
-            await tx.wait();
-            showStatus(status, `质押 ${amount} ${tokenType} 成功！`, 'success');
-            await refreshAll();
-        } catch (e) {
-            showStatus(status, '错误: ' + e.message, 'error');
-        }
-        this.disabled = false;
-    });
-
-    $('claimAigcBtn').addEventListener('click', async function() {
-        if (!isConnected) { alert('请先连接钱包'); return; }
-        const status = $('claimStatus');
-        showStatus(status, '计算所需 BNB...', 'pending');
-        this.disabled = true;
-        try {
-            const pending = await aigcContract.pendingReward(userAddress);
-            if (pending.eq(0)) { showStatus(status, '没有可领取的收益', 'error'); this.disabled=false; return; }
-            const bnbRequired = await aigcContract.getBnbRequiredForClaim(pending);
-            const overrides = { value: bnbRequired };
-            showStatus(status, `需支付 ${formatUnits(bnbRequired, 18)} BNB，请确认...`, 'pending');
-            const tx = await aigcContract.claimReward(overrides);
-            await tx.wait();
-            showStatus(status, '领取 AIGC 成功！', 'success');
-            await refreshAll();
-        } catch (e) {
-            showStatus(status, '错误: ' + e.message, 'error');
-        }
-        this.disabled = false;
-    });
-
-    window.claimInterest = async function(stakeId) {
-        if (!isConnected) { alert('请先连接钱包'); return; }
-        try {
-            const tx = await bcbseContract.claimInterest(stakeId);
-            await tx.wait();
-            alert('领取利息成功！');
-            await refreshAll();
-        } catch (e) {
-            alert('领取利息失败: ' + e.message);
-        }
-    };
-
-    window.redeemStake = async function(stakeId) {
-        if (!isConnected) { alert('请先连接钱包'); return; }
-        if (!confirm('确认赎回本金？')) return;
-        try {
-            const tx = await bcbseContract.redeemPrincipal(stakeId);
-            await tx.wait();
-            alert('赎回成功！');
-            await refreshAll();
-        } catch (e) {
-            alert('赎回失败: ' + e.message);
-        }
-    };
-
-    window.earlyRedeem = async function(stakeId) {
-        if (!isConnected) { alert('请先连接钱包'); return; }
-        if (!confirm('提前赎回将扣除30%本金，确认？')) return;
-        try {
-            const tx = await bcbseContract.redeemPrincipalEarly(stakeId);
-            await tx.wait();
-            alert('提前赎回成功！');
-            await refreshAll();
-        } catch (e) {
-            alert('提前赎回失败: ' + e.message);
-        }
-    };
-
-    $('claimDividendBtn').addEventListener('click', async function() {
-        if (!isConnected) { alert('请先连接钱包'); return; }
-        const status = $('claimStatus');
-        showStatus(status, '正在领取所有分红...', 'pending');
-        this.disabled = true;
-        try {
-            const tx = await aigcContract.claimAllDividends();
-            await tx.wait();
-            showStatus(status, '领取分红成功！', 'success');
-            await refreshAll();
-        } catch (e) {
-            showStatus(status, '错误: ' + e.message, 'error');
-        }
-        this.disabled = false;
-    });
-
-    refreshBtn.addEventListener('click', async function() { await refreshAll(); });
-    $('refreshStakesBtn').addEventListener('click', async function() { await refreshStakes(); });
-    connectBtn.addEventListener('click', connectWallet);
-
-    // 自动连接
-    window.addEventListener('load', async () => {
-        if (window.ethereum) {
-            try {
-                const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-                if (accounts.length > 0) await connectWallet();
-            } catch (e) {}
-        }
-    });
-</script>
 </body>
 </html>
