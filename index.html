@@ -23,7 +23,6 @@
         .avatar-circle { width: 50px; height: 50px; background: linear-gradient(135deg, #f3a900, #ffd700); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 900; color: #111; box-shadow: 0 0 15px rgba(255,200,0,0.3); }
         .level-badge { background: #f90; color: #111; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 700; white-space: nowrap; }
         .node-info { font-size: 11px; color: #ccc; margin-top: 4px; line-height: 1.4; }
-        .node-info span { display: block; }
         .total-value { text-align: right; }
         .total-label { font-size: 12px; color: #888; }
         .total-amount { font-size: 22px; font-weight: 700; color: #fff; }
@@ -81,20 +80,21 @@
         </div>
     </div>
 
-    <script>
-        window.ethersReady = false;
-    </script>
-    <script async src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js" 
+    <script async src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"
             onload="window.ethersReady=true; if(typeof initApp==='function') initApp();"></script>
 
     <script>
         const AIGC_ADDRESS = '0x059451F7f591E43a0Ad58616ed403dB64ab5e170';
         const BCBS_ADDRESS = '0xC2ED87266c9F35eeb6715624264A8163A361FCd7';
         const HSBC_ADDRESS = '0x20aD84A60902A91F036bD6bdB85AD1d61B2f65C1';
+        const USDT_ADDRESS = '0x55d398326f99059fF775485246999027B3197955';
 
         const AIGC_ABI = [
             "function getNodeLevel(address user) view returns (uint8)",
             "function identityLevel(address user) view returns (uint256)",
+            "function getRateLevel(address user) view returns (uint256)",
+            "function getPendingDividend(address user, uint8 poolType) view returns (uint256)",
+            "function getUserInfo(address user) view returns (tuple(uint256 totalDeposit, uint256 pendingReward, uint256 lastClaimTime, uint256 accumulatedClaimed))",
             "function balanceOf(address account) view returns (uint256)",
             "function decimals() view returns (uint8)"
         ];
@@ -117,6 +117,8 @@
         const nodeInfoEl = document.getElementById('nodeInfo');
 
         const nodeNames = ['普通用户', '首富节点', '星链节点', '创世节点'];
+        // 查询分红的所有池子类型
+        const dividendPools = [0, 1, 2, 3, 4, 5, 6, 7];
 
         const assets = [
             { symbol: 'BNB', price: 580.25, icon: '💛' },
@@ -128,7 +130,7 @@
 
         function initContracts() {
             if (!provider || !signer) {
-                console.warn('Provider 或 Signer 未就绪，无法初始化合约');
+                console.warn('Provider 或 Signer 未就绪');
                 return false;
             }
             aigcContract = new ethers.Contract(AIGC_ADDRESS, AIGC_ABI, signer);
@@ -138,28 +140,38 @@
             return true;
         }
 
+        // 查询节点等级、身份等级、利率、分红
         async function updateNodeInfo() {
-            const el = userLevelEl;
             if (!currentAccount || !aigcContract) {
-                el.textContent = '普通用户';
+                userLevelEl.textContent = '普通用户';
                 nodeInfoEl.innerHTML = '';
                 return;
             }
             try {
-                console.log('正在查询节点等级...', currentAccount);
                 const nodeLevel = await aigcContract.getNodeLevel(currentAccount);
                 const identity = await aigcContract.identityLevel(currentAccount);
-                console.log('查询结果 - nodeLevel:', nodeLevel, 'identity:', identity);
+                let rateText = '--';
+                let dividendTotal = 0;
+                try {
+                    const rate = await aigcContract.getRateLevel(currentAccount);
+                    rateText = (rate.div(1e16).toNumber() / 100).toFixed(1) + '%';
+                } catch (e) { console.warn('利率查询失败:', e.message); }
+                // 查询各池子待领取分红
+                for (const pool of dividendPools) {
+                    try {
+                        const pending = await aigcContract.getPendingDividend(currentAccount, pool);
+                        dividendTotal += parseFloat(ethers.utils.formatEther(pending));
+                    } catch (e) { /* 忽略单个池子失败 */ }
+                }
+                const dividendText = dividendTotal > 0 ? `$${dividendTotal.toFixed(2)}` : '--';
                 const levelName = nodeNames[nodeLevel] || '普通用户';
                 const identityText = identity && identity > 0 ? 'S' + identity.toString() : '--';
-                el.textContent = levelName;
-                // 修复：当前级别和全球分红分两行显示
-                nodeInfoEl.innerHTML = `<span>当前级别：${identityText}</span><span>全球分红：--</span>`;
+                userLevelEl.textContent = levelName;
+                nodeInfoEl.innerHTML = `当前级别：${identityText} ${rateText}，全球分红：${dividendText}`;
             } catch (e) {
                 console.error('节点信息查询失败:', e.message);
-                el.textContent = '普通用户';
-                // 修复：换行显示
-                nodeInfoEl.innerHTML = '<span>当前级别：--</span><span>全球分红：--</span>';
+                userLevelEl.textContent = '普通用户';
+                nodeInfoEl.innerHTML = '';
             }
         }
 
@@ -184,9 +196,7 @@
                             continue;
                         }
                     }
-                } catch (e) {
-                    console.error(`获取${asset.symbol}余额失败:`, e.message);
-                }
+                } catch (e) { console.error(`获取${asset.symbol}余额失败:`, e.message); }
                 balEl.textContent = '--';
                 valEl.textContent = '--';
             }
@@ -210,8 +220,7 @@
             connectBtn.onclick = connectWallet;
             totalAssetValueEl.innerHTML = '-- <small>USD</small>';
             userLevelEl.textContent = '普通用户';
-            // 修复：换行显示
-            nodeInfoEl.innerHTML = '<span>当前级别：--</span><span>全球分红：--</span>';
+            nodeInfoEl.innerHTML = '';
             document.querySelectorAll('.asset-balance').forEach(el => el.textContent = '--');
             document.querySelectorAll('.asset-usd-value').forEach(el => el.textContent = '--');
         }
@@ -302,10 +311,7 @@
         }
 
         renderAssetSkeleton();
-
-        if (window.ethersReady) {
-            initApp();
-        }
+        if (window.ethersReady) initApp();
     </script>
 </body>
 </html>
