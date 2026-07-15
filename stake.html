@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>质押 - SpaceX Web3</title>
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
         body { background-color: #050505; display: flex; justify-content: center; align-items: center; height: 100dvh; overflow: hidden; color: #ffffff; }
@@ -100,7 +101,7 @@
             </div>
             <div class="panel">
                 <div class="order-list-title">📋 我的质押订单</div>
-                <div id="orderListContainer"><div style="text-align:center;color:#888;">加载中...</div></div>
+                <div id="orderListContainer"><div style="text-align:center;color:#888;">请先连接钱包</div></div>
             </div>
         </div>
         <div class="bottom-nav">
@@ -134,10 +135,7 @@
         }
 
         async function refreshAll() {
-            if (!currentAccount) {
-                document.getElementById('orderListContainer').innerHTML = '<div style="text-align:center;color:#888;">请先连接钱包</div>';
-                return;
-            }
+            if (!currentAccount) return;
             updateBalance();
             loadOrders();
         }
@@ -267,15 +265,13 @@
         }
         async function connectWallet() {
             if (typeof window.ethereum === 'undefined') { alert('请安装MetaMask'); return; }
-            try {
-                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                currentAccount = accounts[0];
-                provider = new ethers.providers.Web3Provider(window.ethereum);
-                signer = provider.getSigner();
-                initContracts();
-                updateUIForConnected(currentAccount);
-                refreshAll();
-            } catch (e) { console.error(e); }
+            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            currentAccount = accounts[0];
+            provider = new ethers.providers.Web3Provider(window.ethereum);
+            signer = provider.getSigner();
+            initContracts();
+            updateUIForConnected(currentAccount);
+            refreshAll();
         }
         function disconnectWallet() { currentAccount = null; signer = null; setDisconnectedUI(); }
         function handleAccountsChanged(accounts) {
@@ -290,27 +286,26 @@
             }
         }
 
-        async function initAfterEthers() {
-            if (typeof window.ethereum === 'undefined') {
-                connectBtn.textContent = 'No Wallet';
-                connectBtn.disabled = true;
-                return;
-            }
-            provider = new ethers.providers.Web3Provider(window.ethereum);
-            try {
-                const accounts = await provider.listAccounts();
-                if (accounts.length > 0) {
-                    currentAccount = accounts[0];
-                    signer = provider.getSigner();
-                    initContracts();
-                    updateUIForConnected(currentAccount);
-                    refreshAll();
-                } else setDisconnectedUI();
-            } catch (e) { setDisconnectedUI(); }
-            window.ethereum.on('accountsChanged', handleAccountsChanged);
-            window.ethereum.on('chainChanged', () => window.location.reload());
+        // ========== 自动连接 ==========
+        async function autoConnect() {
+            if (typeof window.ethereum !== 'undefined') {
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                try {
+                    const accounts = await provider.listAccounts();
+                    if (accounts.length > 0) {
+                        currentAccount = accounts[0];
+                        signer = provider.getSigner();
+                        initContracts();
+                        updateUIForConnected(currentAccount);
+                        refreshAll();
+                    } else setDisconnectedUI();
+                } catch (e) { setDisconnectedUI(); }
+                window.ethereum.on('accountsChanged', handleAccountsChanged);
+                window.ethereum.on('chainChanged', () => window.location.reload());
+            } else { connectBtn.textContent = 'No Wallet'; connectBtn.disabled = true; }
         }
+        window.addEventListener('load', autoConnect);
     </script>
-    <script async src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js" onload="initAfterEthers"></script>
+    <script async src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js" onload="autoConnect"></script>
 </body>
 </html>
