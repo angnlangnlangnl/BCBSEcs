@@ -22,11 +22,6 @@
 
         .page-title { font-size: 24px; color: #f90; text-align: center; margin: 10px 0 20px; }
 
-        .title { color: #f90; font-size: 14px; font-weight: 600; margin-bottom: 4px; }
-        .desc { color: #aaa; font-size: 12px; margin-bottom: 12px; }
-        .input-box { background: rgba(0,0,0,0.4); border: 1px solid #333; border-radius: 6px; padding: 12px; text-align: center; color: #f90; font-size: 14px; margin-bottom: 12px; }
-        .btn-primary { width: 100%; background: linear-gradient(90deg, #f4a200, #ffd700); border: none; border-radius: 8px; padding: 12px; font-weight: bold; color: #111; cursor: pointer; box-shadow: 0 4px 15px rgba(255,170,0,0.2); }
-
         /* 空投卡片 */
         .airdrop-card { background: linear-gradient(135deg, rgba(255,170,0,0.15), rgba(255,170,0,0.02)); border: 1px solid rgba(255,170,0,0.3); }
         .airdrop-card .airdrop-header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
@@ -95,13 +90,13 @@
             border-radius: 10px;
         }
 
-        /* 立即申请按钮 —— 线框宽度缩小一半（2px → 1px） */
+        /* 立即申请按钮 */
         .node-apply-btn {
             width: 100%;
             background: 
                 linear-gradient(135deg, #1a1a1a, #2d2d2d) padding-box,
                 linear-gradient(90deg, #f90, #ffcc00) border-box;
-            border: 1px solid transparent;   /* 由2px改为1px */
+            border: 1px solid transparent;
             border-radius: 8px;
             padding: 12px;
             font-weight: bold;
@@ -306,14 +301,7 @@
                 </div>
                 <div id="recordListContainer"></div>
             </div>
-
-            <!-- 邀请链接 -->
-            <div class="panel">
-                <div class="title">邀请链接</div>
-                <div class="desc">每邀请一位好友，双方各得 10 DOGE</div>
-                <div class="input-box">https://spacex.app/ref/0x1234...abcd</div>
-                <button class="btn-primary">复制邀请链接</button>
-            </div>
+            <!-- 邀请链接卡片已完全移除 -->
         </div>
 
         <div class="bottom-nav">
@@ -432,12 +420,6 @@
             if (!currentAccount) { alert('请先连接钱包！'); return; }
             alert('🎉 领取成功！获得 100 HSBC 空投奖励！');
             loadClaimRecords();
-        });
-
-        // ==================== 邀请链接复制 ====================
-        document.querySelector('.btn-primary').addEventListener('click', () => {
-            const link = document.querySelector('.input-box').textContent;
-            navigator.clipboard.writeText(link).then(() => alert('邀请链接已复制！'));
         });
 
         // ==================== 初始化 ====================
