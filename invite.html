@@ -61,26 +61,50 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
             transition: transform 0.2s;
         }
         .node-card:active { transform: scale(0.98); }
 
         .node-title { font-size: 20px; font-weight: 700; color: #f90; letter-spacing: 1px; }
-        .node-reward { font-size: 16px; color: #ffd700; background: rgba(255,170,0,0.1); padding: 6px 16px; border-radius: 20px; border: 1px solid #f90; }
+        .node-reward { font-size: 16px; color: #ffd700; }
+        .node-rights {
+            font-size: 14px;
+            color: #ffffff;
+            background: rgba(255,170,0,0.1);
+            padding: 2px 10px;
+            border-radius: 10px;
+        }
+        .node-dividend {
+            font-size: 14px;
+            color: #4caf50;
+            background: rgba(76,175,80,0.1);
+            padding: 2px 10px;
+            border-radius: 10px;
+        }
+
+        /* 立即申请按钮 —— 高级金属黑色 + 黄渐变线框 */
         .node-apply-btn {
             width: 100%;
-            background: linear-gradient(90deg, #ffaa00, #ffdd00);
-            border: none;
+            /* 金属黑渐变背景 + 黄色渐变边框 */
+            background: 
+                linear-gradient(135deg, #1a1a1a, #2d2d2d) padding-box,
+                linear-gradient(90deg, #f90, #ffcc00) border-box;
+            border: 2px solid transparent;
             border-radius: 8px;
             padding: 12px;
             font-weight: bold;
-            color: #111;
+            color: #f90;                /* 亮金色文字 */
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(255,170,0,0.3);
             font-size: 15px;
             margin-top: 5px;
+            transition: all 0.2s;
+        }
+        .node-apply-btn:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 10px rgba(255,170,0,0.4);
         }
 
         /* 提取收益按钮 */
@@ -186,16 +210,22 @@
                     <div class="node-card">
                         <div class="node-title">首富节点</div>
                         <div class="node-reward">收益3倍</div>
+                        <div class="node-rights">S2权益 极差2%-10%</div>
+                        <div class="node-dividend">全球分红1%</div>
                         <button class="node-apply-btn" data-node="rich">立即申请</button>
                     </div>
                     <div class="node-card">
                         <div class="node-title">星链节点</div>
                         <div class="node-reward">收益5倍</div>
+                        <div class="node-rights">S3权益 极差4%-15%</div>
+                        <div class="node-dividend">全球分红1.6%</div>
                         <button class="node-apply-btn" data-node="starlink">立即申请</button>
                     </div>
                     <div class="node-card">
                         <div class="node-title">创世节点</div>
                         <div class="node-reward">收益10倍</div>
+                        <div class="node-rights">S8权益 极差15%-40%</div>
+                        <div class="node-dividend">全球分红2.4%</div>
                         <button class="node-apply-btn" data-node="genesis">立即申请</button>
                     </div>
                 </div>
@@ -300,7 +330,6 @@
                 const nodeType = this.dataset.node;
                 const nodeNames = { rich: '首富节点 (收益3倍)', starlink: '星链节点 (收益5倍)', genesis: '创世节点 (收益10倍)' };
                 alert(`申请 ${nodeNames[nodeType]} 成功！（模拟）`);
-                // 实际调用合约
             });
         });
 
@@ -311,7 +340,6 @@
                 return;
             }
             alert('提取收益成功！（模拟）');
-            // 实际调用合约
         });
 
         // ==================== 节点进度条 ====================
