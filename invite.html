@@ -16,28 +16,84 @@
         .lang-btn { background: transparent; border: 1px solid #333; color: #aaa; padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer; }
         .connect-btn { background: transparent; border: 1px solid #f90; color: #f90; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; box-shadow: 0 0 10px rgba(255,153,0,0.1); transition: all 0.2s; white-space: nowrap; }
         .connect-btn.connected { background: rgba(255,153,0,0.2); border-color: #ffaa00; color: #ffd700; }
+
         .panel { background: rgba(20,20,30,0.6); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #333; position: relative; box-shadow: inset 0 0 20px rgba(255,170,0,0.02); }
         .panel::before { content: ''; position: absolute; top: -1px; left: -1px; right: -1px; bottom: -1px; border-radius: 12px; padding: 1px; background: linear-gradient(135deg, #f90, transparent, #f90); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
+
         .page-title { font-size: 24px; color: #f90; text-align: center; margin: 10px 0 20px; }
-        .process-panel { background: rgba(20,20,30,0.6); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #333; }
+
+        .title { color: #f90; font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+        .desc { color: #aaa; font-size: 12px; margin-bottom: 12px; }
+        .input-box { background: rgba(0,0,0,0.4); border: 1px solid #333; border-radius: 6px; padding: 12px; text-align: center; color: #f90; font-size: 14px; margin-bottom: 12px; }
+        .btn-primary { width: 100%; background: linear-gradient(90deg, #f4a200, #ffd700); border: none; border-radius: 8px; padding: 12px; font-weight: bold; color: #111; cursor: pointer; box-shadow: 0 4px 15px rgba(255,170,0,0.2); }
+
+        /* 空投卡片 */
+        .airdrop-card { background: linear-gradient(135deg, rgba(255,170,0,0.15), rgba(255,170,0,0.02)); border: 1px solid rgba(255,170,0,0.3); }
+        .airdrop-card .airdrop-header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+        .airdrop-card .airdrop-icon { font-size: 36px; }
+        .airdrop-card .airdrop-title { color: #f90; font-size: 18px; font-weight: 700; }
+        .airdrop-card .airdrop-amount-box { background: rgba(0,0,0,0.4); border: 1px solid #333; border-radius: 6px; padding: 12px; text-align: center; color: #ffffff; font-size: 24px; font-weight: 700; margin: 8px 0 12px 0; }
+        .airdrop-card .airdrop-desc { color: #ccc; font-size: 12px; margin-bottom: 12px; }
+        .airdrop-btn { width: 100%; background: linear-gradient(90deg, #ff6600, #ff9900); border: none; border-radius: 8px; padding: 12px; font-weight: bold; color: #fff; cursor: pointer; box-shadow: 0 0 15px rgba(255,102,0,0.3); font-size: 15px; }
+
+        /* 记录切换 */
+        .tab-switch { display: flex; gap: 10px; margin-bottom: 15px; }
+        .tab-btn { flex: 1; padding: 10px; background: rgba(30,30,40,0.8); border: 1px solid #444; border-radius: 8px; color: #aaa; font-size: 14px; cursor: pointer; text-align: center; transition: all 0.2s; }
+        .tab-btn.active { background: linear-gradient(135deg, rgba(255,170,0,0.2), rgba(255,170,0,0.05)); border-color: #f90; color: #f90; box-shadow: 0 0 10px rgba(255,170,0,0.2); }
+
+        .record-item { background: rgba(30,30,40,0.5); border: 1px solid #333; border-radius: 8px; padding: 12px; margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 8px; }
+        .record-item .field { flex: 1 1 45%; min-width: 120px; }
+        .record-item .field-label { font-size: 10px; color: #888; margin-bottom: 2px; }
+        .record-item .field-value { font-size: 13px; color: #fff; word-break: break-all; }
+
+        /* 交易考核 */
+        .header-row { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .header-title { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #888; }
+        .header-title span { color: #ccc; }
+        .stats-row { display: flex; margin-bottom: 20px; }
+        .stat-box { flex: 1; padding: 0 10px; }
+        .stat-box:first-child { border-right: 1px solid #333; padding-left: 0; }
+        .stat-box:last-child { padding-right: 0; }
+        .stat-label { font-size: 11px; color: #888; margin-bottom: 5px; }
+        .stat-val { font-size: 24px; font-weight: 600; letter-spacing: 0.5px; }
+
+        .progress-area { background: rgba(0,0,0,0.3); border-radius: 8px; padding: 10px; }
+        .progress-header { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; }
+        .progress-header .right { color: #f90; }
+        .progress-track { height: 12px; background: #1a1a2e; border-radius: 6px; overflow: hidden; margin-bottom: 6px; position: relative; }
+        .progress-fill { height: 100%; width: 0%; background: repeating-linear-gradient(45deg, #ff8c00, #ff8c00 10px, #ffaa00 10px, #ffaa00 20px); border-radius: 6px; box-shadow: 0 0 10px rgba(255,153,0,0.2); }
+        .progress-footer { display: flex; justify-content: space-between; font-size: 11px; color: #aaa; }
+
+        /* 直推任务样式 */
+        .direct-row { display: flex; justify-content: space-between; font-size: 11px; color: #ccc; margin: 6px 0; }
+        .node-progress { display: flex; gap: 4px; margin: 8px 0; align-items: center; flex-wrap: wrap; }
+        .node-item {
+            width: 24px; height: 24px;
+            background: #1a1a2e;
+            border: 1px solid #333;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 10px;
+            color: #555;
+            transition: all 0.3s;
+        }
+        .node-item.active {
+            background: #f90;
+            border-color: #f90;
+            color: #000;
+            font-weight: bold;
+            box-shadow: 0 0 8px #f90, inset 0 0 4px #fff;
+        }
+
+        /* 推广流程 */
+        .process-panel { background: rgba(20,20,30,0.6); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #333; position: relative; }
+        .process-panel::before { content: ''; position: absolute; top: -1px; left: -1px; right: -1px; bottom: -1px; border-radius: 12px; padding: 1px; background: linear-gradient(135deg, #f90, transparent, #f90); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
         .process-flow { display: flex; align-items: center; justify-content: space-around; }
         .process-step { display: flex; flex-direction: column; align-items: center; gap: 6px; color: #ccc; font-size: 12px; }
         .process-step .step-icon { font-size: 28px; }
         .process-arrow { color: #f90; font-size: 22px; margin: 0 -5px; }
-        .airdrop-card { background: linear-gradient(135deg, rgba(255,170,0,0.15), rgba(255,170,0,0.02)); border: 1px solid rgba(255,170,0,0.3); }
-        .airdrop-amount-box { background: rgba(0,0,0,0.4); border: 1px solid #333; border-radius: 6px; padding: 12px; text-align: center; color: #ffffff; font-size: 24px; font-weight: 700; margin: 8px 0 12px 0; }
-        .airdrop-btn { width: 100%; background: linear-gradient(90deg, #ff6600, #ff9900); border: none; border-radius: 8px; padding: 12px; font-weight: bold; color: #fff; cursor: pointer; }
-        .tab-switch { display: flex; gap: 10px; margin-bottom: 15px; }
-        .tab-btn { flex: 1; padding: 10px; background: rgba(30,30,40,0.8); border: 1px solid #444; border-radius: 8px; color: #aaa; font-size: 14px; cursor: pointer; text-align: center; }
-        .tab-btn.active { background: linear-gradient(135deg, rgba(255,170,0,0.2), rgba(255,170,0,0.05)); border-color: #f90; color: #f90; }
-        .record-item { background: rgba(30,30,40,0.5); border: 1px solid #333; border-radius: 8px; padding: 12px; margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 8px; }
-        .header-row { display: flex; justify-content: space-between; margin-bottom: 20px; }
-        .stats-row { display: flex; margin-bottom: 20px; }
-        .stat-box { flex: 1; padding: 0 10px; }
-        .progress-area { background: rgba(0,0,0,0.3); border-radius: 8px; padding: 10px; }
-        .progress-track { height: 12px; background: #1a1a2e; border-radius: 6px; overflow: hidden; }
-        .progress-fill { height: 100%; width: 0%; background: repeating-linear-gradient(45deg, #ff8c00, #ff8c00 10px, #ffaa00 10px, #ffaa00 20px); }
-        .bottom-nav { flex-shrink: 0; background: rgba(15,15,30,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,153,0,0.15); border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.9); display: flex; justify-content: space-around; padding: 12px 0; margin: 0 15px 15px 15px; position: relative; }
+
+        .bottom-nav { flex-shrink: 0; background: rgba(15,15,30,0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,153,0,0.15); border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.9); display: flex; justify-content: space-around; padding: 12px 0; margin: 0 15px 15px 15px; position: relative; }
         .bottom-nav::before { content: ''; position: absolute; top: -1px; left: -1px; right: -1px; bottom: -1px; border-radius: 20px; padding: 1px; background: linear-gradient(135deg, #f90, transparent, #f90); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: #666; font-size: 11px; gap: 4px; cursor: pointer; padding: 5px 10px; transition: all 0.2s ease; text-decoration: none; }
         .nav-item .icon { font-size: 20px; }
@@ -55,32 +111,67 @@
                     <button id="connectWalletBtn" class="connect-btn">Connect wallet</button>
                 </div>
             </div>
+
             <div class="page-title">📨 邀请好友</div>
-            <!-- 空投卡片 -->
+
+            <!-- 空投活动 -->
             <div class="panel airdrop-card">
-                <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
-                    <span style="font-size:36px;">🎁</span>
-                    <div><div style="color:#f90;font-size:18px;font-weight:700;">限量空投活动</div><div style="color:#ccc;font-size:12px;">新用户专享，推荐好友可奖励50HSBC</div></div>
+                <div class="airdrop-header">
+                    <span class="airdrop-icon">🎁</span>
+                    <div>
+                        <div class="airdrop-title">限量空投活动</div>
+                        <div class="airdrop-desc">新用户专享，推荐好友可奖励50HSBC</div>
+                    </div>
                 </div>
                 <div class="airdrop-amount-box">已到账100 HSBC</div>
                 <button class="airdrop-btn" id="claimAirdropBtn">立即领取</button>
             </div>
-            <!-- 交易考核概览 -->
+
+            <!-- 交易考核概览（含直推任务节点） -->
             <div class="panel">
                 <div class="header-row">
-                    <div><span style="color:#888;">📅 最大区总业绩</span></div>
-                    <div><span style="color:#888;">📅 最小区总业绩</span></div>
+                    <div class="header-title">📅 <span>最大区总业绩</span></div>
+                    <div class="header-title">📅 <span>最小区总业绩</span></div>
                 </div>
                 <div class="stats-row">
-                    <div class="stat-box"><div style="color:#888;font-size:11px;">累计交易量($)</div><div style="font-size:24px;">0.00</div></div>
-                    <div class="stat-box"><div style="color:#888;font-size:11px;">累计交易量($)</div><div style="font-size:24px;">0.00</div></div>
+                    <div class="stat-box">
+                        <div class="stat-label">累计交易量($)</div>
+                        <div class="stat-val">0.00</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">累计交易量($)</div>
+                        <div class="stat-val">0.00</div>
+                    </div>
                 </div>
                 <div class="progress-area">
-                    <div style="display:flex;justify-content:space-between;font-size:13px;"><span>考核进度</span><span style="color:#f90;">0.00%</span></div>
-                    <div class="progress-track"><div class="progress-fill" style="width:0%;"></div></div>
-                    <div style="display:flex;justify-content:space-between;font-size:11px;color:#aaa;"><span>个人持币目标: $0.00</span><span>未完成: $0.00</span></div>
+                    <div class="progress-header">
+                        <span>考核进度</span>
+                        <span class="right">0.00%</span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill" style="width: 0%;"></div>
+                    </div>
+                    <div class="progress-footer">
+                        <span>个人持币目标: $0.00</span>
+                        <span>未完成: $0.00</span>
+                    </div>
+                    <!-- 直推任务15节点进度条（新布局） -->
+                    <div style="margin-top: 12px;">
+                        <div class="direct-row">
+                            <span>直推任务：15节点</span>
+                            <span>完成直推目标: <span id="completedNodes">3</span>节点</span>
+                        </div>
+                        <div class="node-progress" id="nodeProgress">
+                            <!-- JS动态生成15个带数字的圆圈 -->
+                        </div>
+                        <div class="direct-row">
+                            <span>当前层级：6层收益</span>
+                            <span>当前利率: 1%</span>
+                        </div>
+                    </div>
                 </div>
             </div>
+
             <!-- 推广流程 -->
             <div class="panel process-panel">
                 <div class="process-flow">
@@ -93,6 +184,7 @@
                     <div class="process-step"><span class="step-icon">✅</span><span>绑定成功</span></div>
                 </div>
             </div>
+
             <!-- 记录面板 -->
             <div class="panel">
                 <div class="tab-switch">
@@ -101,7 +193,16 @@
                 </div>
                 <div id="recordListContainer"></div>
             </div>
+
+            <!-- 邀请链接 -->
+            <div class="panel">
+                <div class="title">邀请链接</div>
+                <div class="desc">每邀请一位好友，双方各得 10 DOGE</div>
+                <div class="input-box">https://spacex.app/ref/0x1234...abcd</div>
+                <button class="btn-primary">复制邀请链接</button>
+            </div>
         </div>
+
         <div class="bottom-nav">
             <a href="index.html" class="nav-item"><span class="icon">💼</span><span>资产</span></a>
             <a href="stake.html" class="nav-item"><span class="icon">🔒</span><span>质押</span></a>
@@ -110,30 +211,53 @@
             <a href="ecosystem.html" class="nav-item"><span class="icon">🌐</span><span>生态</span></a>
         </div>
     </div>
+
     <script>
         let provider, signer, currentAccount;
+        const connectBtn = document.getElementById('connectWalletBtn');
+
+        // 渲染带数字的节点进度条
+        function renderNodeProgress(completed = 3, total = 15) {
+            const container = document.getElementById('nodeProgress');
+            let html = '';
+            for (let i = 1; i <= total; i++) {
+                html += `<div class="node-item ${i <= completed ? 'active' : ''}">${i}</div>`;
+            }
+            container.innerHTML = html;
+        }
+        renderNodeProgress(); // 初始3个完成
+
         function updateUIForConnected(acc) {
-            const btn = document.getElementById('connectWalletBtn');
-            btn.textContent = `${acc.substring(0,6)}...${acc.substring(acc.length-4)}`;
-            btn.classList.add('connected');
-            btn.onclick = disconnectWallet;
+            const short = `${acc.substring(0,6)}...${acc.substring(acc.length-4)}`;
+            connectBtn.textContent = short;
+            connectBtn.classList.add('connected');
+            connectBtn.onclick = disconnectWallet;
         }
+
         function setDisconnectedUI() {
-            const btn = document.getElementById('connectWalletBtn');
-            btn.textContent = 'Connect wallet';
-            btn.classList.remove('connected');
-            btn.onclick = connectWallet;
+            connectBtn.textContent = 'Connect wallet';
+            connectBtn.classList.remove('connected');
+            connectBtn.onclick = connectWallet;
         }
+
         async function connectWallet() {
             if (typeof window.ethereum === 'undefined') { alert('请安装 MetaMask！'); return; }
-            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-            currentAccount = accounts[0];
-            provider = new ethers.providers.Web3Provider(window.ethereum);
-            signer = provider.getSigner();
-            updateUIForConnected(currentAccount);
-            loadClaimRecords();
+            try {
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                currentAccount = accounts[0];
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                signer = provider.getSigner();
+                updateUIForConnected(currentAccount);
+                loadClaimRecords();
+            } catch (e) { console.error(e); }
         }
-        function disconnectWallet() { currentAccount = null; signer = null; setDisconnectedUI(); }
+
+        function disconnectWallet() {
+            currentAccount = null; signer = null;
+            setDisconnectedUI();
+            document.getElementById('recordListContainer').innerHTML = '<div style="text-align:center;color:#888;">请先连接钱包</div>';
+        }
+
         function handleAccountsChanged(accounts) {
             if (accounts.length === 0) disconnectWallet();
             else {
@@ -144,11 +268,39 @@
                 loadClaimRecords();
             }
         }
+
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                if (this.dataset.tab === 'invite') loadInviteRecords();
+                else loadClaimRecords();
+            });
+        });
+
         function loadClaimRecords() {
             const container = document.getElementById('recordListContainer');
             if (!currentAccount) { container.innerHTML = '<div style="text-align:center;color:#888;">请先连接钱包</div>'; return; }
-            container.innerHTML = '<div class="record-item">模拟记录</div>';
+            container.innerHTML = '<div class="record-item">示例领取记录：100 HSBC</div>';
         }
+
+        function loadInviteRecords() {
+            const container = document.getElementById('recordListContainer');
+            if (!currentAccount) { container.innerHTML = '<div style="text-align:center;color:#888;">请先连接钱包</div>'; return; }
+            container.innerHTML = '<div class="record-item">示例邀请记录：+50 HSBC</div>';
+        }
+
+        document.getElementById('claimAirdropBtn').addEventListener('click', () => {
+            if (!currentAccount) { alert('请先连接钱包！'); return; }
+            alert('🎉 领取成功！获得 100 HSBC 空投奖励！');
+            loadClaimRecords();
+        });
+
+        document.querySelector('.btn-primary').addEventListener('click', () => {
+            const link = document.querySelector('.input-box').textContent;
+            navigator.clipboard.writeText(link).then(() => alert('邀请链接已复制！'));
+        });
+
         async function initAfterEthers() {
             if (typeof window.ethereum !== 'undefined') {
                 provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -163,11 +315,10 @@
                 } catch (e) { setDisconnectedUI(); }
                 window.ethereum.on('accountsChanged', handleAccountsChanged);
                 window.ethereum.on('chainChanged', () => window.location.reload());
+            } else {
+                connectBtn.textContent = 'No Wallet';
+                connectBtn.disabled = true;
             }
-            document.getElementById('claimAirdropBtn').addEventListener('click', () => {
-                if (!currentAccount) { alert('请先连接钱包！'); return; }
-                alert('领取成功！（模拟）');
-            });
         }
     </script>
     <script async src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js" onload="initAfterEthers()"></script>
