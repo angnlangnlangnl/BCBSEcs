@@ -66,15 +66,25 @@
 
         /* 直推任务样式 */
         .direct-row { display: flex; justify-content: space-between; font-size: 11px; color: #ccc; margin: 6px 0; }
-        .node-progress { display: flex; gap: 4px; margin: 8px 0; align-items: center; flex-wrap: wrap; }
+        .node-progress {
+            display: flex;
+            gap: 2px;
+            margin: 8px 0;
+            align-items: center;
+            flex-wrap: nowrap;
+        }
         .node-item {
-            width: 24px; height: 24px;
+            width: 20px;
+            height: 20px;
             background: #1a1a2e;
             border: 1px solid #333;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 10px;
+            border-radius: 4px;       /* 方形小圆角 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
             color: #555;
+            flex-shrink: 0;
             transition: all 0.3s;
         }
         .node-item.active {
@@ -155,14 +165,14 @@
                         <span>个人持币目标: $0.00</span>
                         <span>未完成: $0.00</span>
                     </div>
-                    <!-- 直推任务15节点进度条（新布局） -->
+                    <!-- 直推任务15节点进度条（方形小尺寸） -->
                     <div style="margin-top: 12px;">
                         <div class="direct-row">
                             <span>直推任务：15节点</span>
                             <span>完成直推目标: <span id="completedNodes">3</span>节点</span>
                         </div>
                         <div class="node-progress" id="nodeProgress">
-                            <!-- JS动态生成15个带数字的圆圈 -->
+                            <!-- JS动态生成15个带数字的方形节点 -->
                         </div>
                         <div class="direct-row">
                             <span>当前层级：6层收益</span>
@@ -216,7 +226,7 @@
         let provider, signer, currentAccount;
         const connectBtn = document.getElementById('connectWalletBtn');
 
-        // 渲染带数字的节点进度条
+        // 渲染方形节点进度条
         function renderNodeProgress(completed = 3, total = 15) {
             const container = document.getElementById('nodeProgress');
             let html = '';
@@ -225,7 +235,7 @@
             }
             container.innerHTML = html;
         }
-        renderNodeProgress(); // 初始3个完成
+        renderNodeProgress();
 
         function updateUIForConnected(acc) {
             const short = `${acc.substring(0,6)}...${acc.substring(acc.length-4)}`;
