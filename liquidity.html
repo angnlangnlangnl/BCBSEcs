@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>流动性 - SpaceX Web3</title>
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
         body { background-color: #050505; display: flex; justify-content: center; align-items: center; height: 100dvh; overflow: hidden; color: #ffffff; }
@@ -20,7 +21,7 @@
         .panel::before { content: ''; position: absolute; top: -1px; left: -1px; right: -1px; bottom: -1px; border-radius: 12px; padding: 1px; background: linear-gradient(135deg, #f90, transparent, #f90); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
         .page-title { font-size: 24px; color: #f90; text-align: center; margin: 10px 0 20px; }
         .btn-primary { width: 100%; background: linear-gradient(90deg, #f4a200, #ffd700); border: none; border-radius: 8px; padding: 12px; font-weight: bold; color: #111; cursor: pointer; }
-        .bottom-nav { flex-shrink: 0; background: rgba(15,15,30,0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,153,0,0.15); border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.9); display: flex; justify-content: space-around; padding: 12px 0; margin: 0 15px 15px 15px; position: relative; }
+        .bottom-nav { flex-shrink: 0; background: rgba(15,15,30,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,153,0,0.15); border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.9); display: flex; justify-content: space-around; padding: 12px 0; margin: 0 15px 15px 15px; position: relative; }
         .bottom-nav::before { content: ''; position: absolute; top: -1px; left: -1px; right: -1px; bottom: -1px; border-radius: 20px; padding: 1px; background: linear-gradient(135deg, #f90, transparent, #f90); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: #666; font-size: 11px; gap: 4px; cursor: pointer; padding: 5px 10px; transition: all 0.2s ease; text-decoration: none; }
         .nav-item .icon { font-size: 20px; }
@@ -40,8 +41,8 @@
             </div>
             <div class="page-title">💧 流动性</div>
             <div class="panel">
-                <div class="title" style="color:#f90;font-size:14px;font-weight:600;">添加流动性</div>
-                <div class="desc" style="color:#aaa;font-size:12px;margin-bottom:12px;">为交易对提供流动性，赚取手续费奖励</div>
+                <div style="color:#f90;font-size:14px;font-weight:600;">添加流动性</div>
+                <div style="color:#aaa;font-size:12px;margin-bottom:12px;">为交易对提供流动性，赚取手续费奖励</div>
                 <button class="btn-primary">添加流动性</button>
             </div>
         </div>
@@ -54,21 +55,26 @@
         </div>
     </div>
     <script>
+        // ---------- 合约地址 ----------
+        const AIGC_ADDRESS = '0x059451F7f591E43a0Ad58616ed403dB64ab5e170';
+        const BCBS_ADDRESS = '0xC2ED87266c9F35eeb6715624264A8163A361FCd7';
+        const HSBC_ADDRESS = '0x20aD84A60902A91F036bD6bdB85AD1d61B2f65C1';
+
         let provider, signer, currentAccount;
+        const connectBtn = document.getElementById('connectWalletBtn');
+
         function updateUIForConnected(acc) {
-            const btn = document.getElementById('connectWalletBtn');
-            btn.textContent = `${acc.substring(0,6)}...${acc.substring(acc.length-4)}`;
-            btn.classList.add('connected');
-            btn.onclick = disconnectWallet;
+            connectBtn.textContent = `${acc.substring(0,6)}...${acc.substring(acc.length-4)}`;
+            connectBtn.classList.add('connected');
+            connectBtn.onclick = disconnectWallet;
         }
         function setDisconnectedUI() {
-            const btn = document.getElementById('connectWalletBtn');
-            btn.textContent = 'Connect wallet';
-            btn.classList.remove('connected');
-            btn.onclick = connectWallet;
+            connectBtn.textContent = 'Connect wallet';
+            connectBtn.classList.remove('connected');
+            connectBtn.onclick = connectWallet;
         }
         async function connectWallet() {
-            if (typeof window.ethereum === 'undefined') { alert('请安装 MetaMask！'); return; }
+            if (typeof window.ethereum === 'undefined') { alert('请安装MetaMask'); return; }
             const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
             currentAccount = accounts[0];
             provider = new ethers.providers.Web3Provider(window.ethereum);
