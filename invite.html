@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>邀请 - SpaceX Web3</title>
-    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
         body { background-color: #050505; display: flex; justify-content: center; align-items: center; height: 100dvh; overflow: hidden; color: #ffffff; }
@@ -17,68 +16,28 @@
         .lang-btn { background: transparent; border: 1px solid #333; color: #aaa; padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer; }
         .connect-btn { background: transparent; border: 1px solid #f90; color: #f90; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; box-shadow: 0 0 10px rgba(255,153,0,0.1); transition: all 0.2s; white-space: nowrap; }
         .connect-btn.connected { background: rgba(255,153,0,0.2); border-color: #ffaa00; color: #ffd700; }
-
-        /* 面板与发光边框 */
         .panel { background: rgba(20,20,30,0.6); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #333; position: relative; box-shadow: inset 0 0 20px rgba(255,170,0,0.02); }
         .panel::before { content: ''; position: absolute; top: -1px; left: -1px; right: -1px; bottom: -1px; border-radius: 12px; padding: 1px; background: linear-gradient(135deg, #f90, transparent, #f90); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
-
         .page-title { font-size: 24px; color: #f90; text-align: center; margin: 10px 0 20px; }
-
-        /* 推广流程示意图 */
-        .process-panel { background: rgba(20,20,30,0.6); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #333; position: relative; }
-        .process-panel::before { content: ''; position: absolute; top: -1px; left: -1px; right: -1px; bottom: -1px; border-radius: 12px; padding: 1px; background: linear-gradient(135deg, #f90, transparent, #f90); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
+        .process-panel { background: rgba(20,20,30,0.6); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #333; }
         .process-flow { display: flex; align-items: center; justify-content: space-around; }
         .process-step { display: flex; flex-direction: column; align-items: center; gap: 6px; color: #ccc; font-size: 12px; }
         .process-step .step-icon { font-size: 28px; }
         .process-arrow { color: #f90; font-size: 22px; margin: 0 -5px; }
-
-        /* 空投卡片特殊样式 */
         .airdrop-card { background: linear-gradient(135deg, rgba(255,170,0,0.15), rgba(255,170,0,0.02)); border: 1px solid rgba(255,170,0,0.3); }
-        .airdrop-card .airdrop-header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
-        .airdrop-card .airdrop-icon { font-size: 36px; }
-        .airdrop-card .airdrop-title { color: #f90; font-size: 18px; font-weight: 700; }
-        .airdrop-card .airdrop-amount-box {
-            background: rgba(0,0,0,0.4); border: 1px solid #333; border-radius: 6px;
-            padding: 12px; text-align: center; color: #ffffff; font-size: 24px; font-weight: 700;
-            margin: 8px 0 12px 0;
-        }
-        .airdrop-card .airdrop-desc { color: #ccc; font-size: 12px; margin-bottom: 12px; }
-        .airdrop-btn { width: 100%; background: linear-gradient(90deg, #ff6600, #ff9900); border: none; border-radius: 8px; padding: 12px; font-weight: bold; color: #fff; cursor: pointer; box-shadow: 0 0 15px rgba(255,102,0,0.3); font-size: 15px; }
-
-        /* 记录列表切换按钮 */
+        .airdrop-amount-box { background: rgba(0,0,0,0.4); border: 1px solid #333; border-radius: 6px; padding: 12px; text-align: center; color: #ffffff; font-size: 24px; font-weight: 700; margin: 8px 0 12px 0; }
+        .airdrop-btn { width: 100%; background: linear-gradient(90deg, #ff6600, #ff9900); border: none; border-radius: 8px; padding: 12px; font-weight: bold; color: #fff; cursor: pointer; }
         .tab-switch { display: flex; gap: 10px; margin-bottom: 15px; }
-        .tab-btn { flex: 1; padding: 10px; background: rgba(30,30,40,0.8); border: 1px solid #444; border-radius: 8px; color: #aaa; font-size: 14px; cursor: pointer; text-align: center; transition: all 0.2s; }
-        .tab-btn.active { background: linear-gradient(135deg, rgba(255,170,0,0.2), rgba(255,170,0,0.05)); border-color: #f90; color: #f90; box-shadow: 0 0 10px rgba(255,170,0,0.2); }
-
-        /* 记录列表样式 */
+        .tab-btn { flex: 1; padding: 10px; background: rgba(30,30,40,0.8); border: 1px solid #444; border-radius: 8px; color: #aaa; font-size: 14px; cursor: pointer; text-align: center; }
+        .tab-btn.active { background: linear-gradient(135deg, rgba(255,170,0,0.2), rgba(255,170,0,0.05)); border-color: #f90; color: #f90; }
         .record-item { background: rgba(30,30,40,0.5); border: 1px solid #333; border-radius: 8px; padding: 12px; margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 8px; }
-        .record-item .field { flex: 1 1 45%; min-width: 120px; }
-        .record-item .field-label { font-size: 10px; color: #888; margin-bottom: 2px; }
-        .record-item .field-value { font-size: 13px; color: #fff; word-break: break-all; }
-        .record-item .status-claimed { color: #4caf50; font-weight: 600; }
-        .record-item .status-pending { color: #ffaa00; font-weight: 600; }
-
-        /* 交易考核卡片样式 */
         .header-row { display: flex; justify-content: space-between; margin-bottom: 20px; }
-        .header-title { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #888; }
-        .header-title span { color: #ccc; }
-
         .stats-row { display: flex; margin-bottom: 20px; }
         .stat-box { flex: 1; padding: 0 10px; }
-        .stat-box:first-child { border-right: 1px solid #333; padding-left: 0; }
-        .stat-box:last-child { padding-right: 0; }
-        .stat-label { font-size: 11px; color: #888; margin-bottom: 5px; }
-        .stat-val { font-size: 24px; font-weight: 600; letter-spacing: 0.5px; }
-
         .progress-area { background: rgba(0,0,0,0.3); border-radius: 8px; padding: 10px; }
-        .progress-header { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; }
-        .progress-header .right { color: #f90; }
-        .progress-track { height: 12px; background: #1a1a2e; border-radius: 6px; overflow: hidden; margin-bottom: 6px; position: relative; }
-        .progress-fill { height: 100%; width: 0%; background: repeating-linear-gradient(45deg, #ff8c00, #ff8c00 10px, #ffaa00 10px, #ffaa00 20px); border-radius: 6px; box-shadow: 0 0 10px rgba(255,153,0,0.2); }
-        .progress-footer { display: flex; justify-content: space-between; font-size: 11px; color: #aaa; }
-
-        /* 底部导航 */
-        .bottom-nav { flex-shrink: 0; background: rgba(15,15,30,0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,153,0,0.15); border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.9); display: flex; justify-content: space-around; padding: 12px 0; margin: 0 15px 15px 15px; position: relative; }
+        .progress-track { height: 12px; background: #1a1a2e; border-radius: 6px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; background: repeating-linear-gradient(45deg, #ff8c00, #ff8c00 10px, #ffaa00 10px, #ffaa00 20px); }
+        .bottom-nav { flex-shrink: 0; background: rgba(15,15,30,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,153,0,0.15); border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.9); display: flex; justify-content: space-around; padding: 12px 0; margin: 0 15px 15px 15px; position: relative; }
         .bottom-nav::before { content: ''; position: absolute; top: -1px; left: -1px; right: -1px; bottom: -1px; border-radius: 20px; padding: 1px; background: linear-gradient(135deg, #f90, transparent, #f90); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: #666; font-size: 11px; gap: 4px; cursor: pointer; padding: 5px 10px; transition: all 0.2s ease; text-decoration: none; }
         .nav-item .icon { font-size: 20px; }
@@ -89,7 +48,6 @@
 <body>
     <div class="app-container">
         <div class="scroll-area">
-            <!-- 头部 -->
             <div class="header">
                 <div class="logo-area">🚀 <span>SPACEX</span></div>
                 <div class="header-controls">
@@ -97,91 +55,53 @@
                     <button id="connectWalletBtn" class="connect-btn">Connect wallet</button>
                 </div>
             </div>
-
             <div class="page-title">📨 邀请好友</div>
-
-            <!-- 第一卡片：空投活动 -->
+            <!-- 空投卡片 -->
             <div class="panel airdrop-card">
-                <div class="airdrop-header">
-                    <span class="airdrop-icon">🎁</span>
-                    <div>
-                        <div class="airdrop-title">限量空投活动</div>
-                        <div class="airdrop-desc">新用户专享，推荐好友可奖励50HSBC</div>
-                    </div>
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+                    <span style="font-size:36px;">🎁</span>
+                    <div><div style="color:#f90;font-size:18px;font-weight:700;">限量空投活动</div><div style="color:#ccc;font-size:12px;">新用户专享，推荐好友可奖励50HSBC</div></div>
                 </div>
                 <div class="airdrop-amount-box">已到账100 HSBC</div>
                 <button class="airdrop-btn" id="claimAirdropBtn">立即领取</button>
             </div>
-
-            <!-- 第二卡片：交易考核概览 -->
+            <!-- 交易考核概览 -->
             <div class="panel">
                 <div class="header-row">
-                    <div class="header-title">📅 <span>最大区总业绩</span></div>
-                    <div class="header-title">📅 <span>最小区总业绩</span></div>
+                    <div><span style="color:#888;">📅 最大区总业绩</span></div>
+                    <div><span style="color:#888;">📅 最小区总业绩</span></div>
                 </div>
                 <div class="stats-row">
-                    <div class="stat-box">
-                        <div class="stat-label">累计交易量($)</div>
-                        <div class="stat-val">0.00</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-label">累计交易量($)</div>
-                        <div class="stat-val">0.00</div>
-                    </div>
+                    <div class="stat-box"><div style="color:#888;font-size:11px;">累计交易量($)</div><div style="font-size:24px;">0.00</div></div>
+                    <div class="stat-box"><div style="color:#888;font-size:11px;">累计交易量($)</div><div style="font-size:24px;">0.00</div></div>
                 </div>
                 <div class="progress-area">
-                    <div class="progress-header">
-                        <span>考核进度</span>
-                        <span class="right">0.00%</span>
-                    </div>
-                    <div class="progress-track">
-                        <div class="progress-fill" style="width: 0%;"></div>
-                    </div>
-                    <div class="progress-footer">
-                        <span>个人持币目标: $0.00</span>
-                        <span>未完成: $0.00</span>
-                    </div>
+                    <div style="display:flex;justify-content:space-between;font-size:13px;"><span>考核进度</span><span style="color:#f90;">0.00%</span></div>
+                    <div class="progress-track"><div class="progress-fill" style="width:0%;"></div></div>
+                    <div style="display:flex;justify-content:space-between;font-size:11px;color:#aaa;"><span>个人持币目标: $0.00</span><span>未完成: $0.00</span></div>
                 </div>
             </div>
-
-            <!-- 第三卡片：推广流程示意图（移动到此位置） -->
+            <!-- 推广流程 -->
             <div class="panel process-panel">
                 <div class="process-flow">
-                    <div class="process-step">
-                        <span class="step-icon">👤</span>
-                        <span>老用户</span>
-                    </div>
+                    <div class="process-step"><span class="step-icon">👤</span><span>老用户</span></div>
                     <span class="process-arrow">→</span>
-                    <div class="process-step">
-                        <span class="step-icon">🔄</span>
-                        <span>转AIGC</span>
-                    </div>
+                    <div class="process-step"><span class="step-icon">🔄</span><span>转AIGC</span></div>
                     <span class="process-arrow">→</span>
-                    <div class="process-step">
-                        <span class="step-icon">🌱</span>
-                        <span>新用户</span>
-                    </div>
+                    <div class="process-step"><span class="step-icon">🌱</span><span>新用户</span></div>
                     <span class="process-arrow">→</span>
-                    <div class="process-step">
-                        <span class="step-icon">✅</span>
-                        <span>绑定成功</span>
-                    </div>
+                    <div class="process-step"><span class="step-icon">✅</span><span>绑定成功</span></div>
                 </div>
             </div>
-
-            <!-- 第四卡片：记录面板（带切换按钮） -->
+            <!-- 记录面板 -->
             <div class="panel">
                 <div class="tab-switch">
                     <div class="tab-btn" data-tab="invite">邀请记录</div>
                     <div class="tab-btn active" data-tab="claim">领取记录</div>
                 </div>
-                <div id="recordListContainer">
-                    <!-- 动态填充 -->
-                </div>
+                <div id="recordListContainer"></div>
             </div>
         </div>
-
-        <!-- 底部导航 -->
         <div class="bottom-nav">
             <a href="index.html" class="nav-item"><span class="icon">💼</span><span>资产</span></a>
             <a href="stake.html" class="nav-item"><span class="icon">🔒</span><span>质押</span></a>
@@ -190,11 +110,46 @@
             <a href="ecosystem.html" class="nav-item"><span class="icon">🌐</span><span>生态</span></a>
         </div>
     </div>
-
     <script>
         let provider, signer, currentAccount;
-        const connectBtn = document.getElementById('connectWalletBtn');
-        async function initWallet() {
+        function updateUIForConnected(acc) {
+            const btn = document.getElementById('connectWalletBtn');
+            btn.textContent = `${acc.substring(0,6)}...${acc.substring(acc.length-4)}`;
+            btn.classList.add('connected');
+            btn.onclick = disconnectWallet;
+        }
+        function setDisconnectedUI() {
+            const btn = document.getElementById('connectWalletBtn');
+            btn.textContent = 'Connect wallet';
+            btn.classList.remove('connected');
+            btn.onclick = connectWallet;
+        }
+        async function connectWallet() {
+            if (typeof window.ethereum === 'undefined') { alert('请安装 MetaMask！'); return; }
+            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            currentAccount = accounts[0];
+            provider = new ethers.providers.Web3Provider(window.ethereum);
+            signer = provider.getSigner();
+            updateUIForConnected(currentAccount);
+            loadClaimRecords();
+        }
+        function disconnectWallet() { currentAccount = null; signer = null; setDisconnectedUI(); }
+        function handleAccountsChanged(accounts) {
+            if (accounts.length === 0) disconnectWallet();
+            else {
+                currentAccount = accounts[0];
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                signer = provider.getSigner();
+                updateUIForConnected(currentAccount);
+                loadClaimRecords();
+            }
+        }
+        function loadClaimRecords() {
+            const container = document.getElementById('recordListContainer');
+            if (!currentAccount) { container.innerHTML = '<div style="text-align:center;color:#888;">请先连接钱包</div>'; return; }
+            container.innerHTML = '<div class="record-item">模拟记录</div>';
+        }
+        async function initAfterEthers() {
             if (typeof window.ethereum !== 'undefined') {
                 provider = new ethers.providers.Web3Provider(window.ethereum);
                 try {
@@ -204,139 +159,17 @@
                         signer = provider.getSigner();
                         updateUIForConnected(currentAccount);
                         loadClaimRecords();
-                    } else { setDisconnectedUI(); }
-                } catch (err) { setDisconnectedUI(); }
+                    } else setDisconnectedUI();
+                } catch (e) { setDisconnectedUI(); }
                 window.ethereum.on('accountsChanged', handleAccountsChanged);
                 window.ethereum.on('chainChanged', () => window.location.reload());
-            } else {
-                connectBtn.textContent = 'No Wallet';
-                connectBtn.disabled = true;
             }
-        }
-        function setDisconnectedUI() {
-            connectBtn.textContent = 'Connect wallet';
-            connectBtn.classList.remove('connected');
-            connectBtn.onclick = connectWallet;
-        }
-        async function connectWallet() {
-            if (typeof window.ethereum === 'undefined') { alert('请安装 MetaMask！'); return; }
-            try {
-                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                currentAccount = accounts[0];
-                provider = new ethers.providers.Web3Provider(window.ethereum);
-                signer = provider.getSigner();
-                updateUIForConnected(currentAccount);
-                loadClaimRecords();
-            } catch (err) { console.error(err); }
-        }
-        function updateUIForConnected(account) {
-            const shortAddr = `${account.substring(0, 6)}...${account.substring(account.length - 4)}`;
-            connectBtn.textContent = shortAddr;
-            connectBtn.classList.add('connected');
-            connectBtn.onclick = disconnectWallet;
-        }
-        function disconnectWallet() {
-            currentAccount = null; signer = null; setDisconnectedUI();
-        }
-        function handleAccountsChanged(accounts) {
-            if (accounts.length === 0) { disconnectWallet(); }
-            else {
-                currentAccount = accounts[0];
-                provider = new ethers.providers.Web3Provider(window.ethereum);
-                signer = provider.getSigner();
-                updateUIForConnected(currentAccount);
-                const activeTab = document.querySelector('.tab-btn.active')?.dataset.tab;
-                if (activeTab === 'invite') loadInviteRecords();
-                else loadClaimRecords();
-            }
-        }
-
-        // 空投领取按钮
-        document.getElementById('claimAirdropBtn').addEventListener('click', () => {
-            if (!currentAccount) { alert('请先连接钱包！'); return; }
-            alert('🎉 领取成功！获得 100 HSBC 空投奖励！');
-            if (document.querySelector('.tab-btn.active')?.dataset.tab === 'claim') loadClaimRecords();
-        });
-
-        // 记录切换逻辑
-        const tabBtns = document.querySelectorAll('.tab-btn');
-        tabBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                tabBtns.forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                const tab = this.dataset.tab;
-                if (tab === 'invite') {
-                    loadInviteRecords();
-                } else {
-                    loadClaimRecords();
-                }
+            document.getElementById('claimAirdropBtn').addEventListener('click', () => {
+                if (!currentAccount) { alert('请先连接钱包！'); return; }
+                alert('领取成功！（模拟）');
             });
-        });
-
-        function loadInviteRecords() {
-            const container = document.getElementById('recordListContainer');
-            if (!currentAccount) {
-                container.innerHTML = '<div style="text-align: center; color: #888; padding: 20px 0;">请先连接钱包</div>';
-                return;
-            }
-            const records = [
-                { inviter: currentAccount, reward: 50, invited: '0x1111111111111111111111111111111111111111', timestamp: Date.now()/1000 - 7200 },
-                { inviter: currentAccount, reward: 50, invited: '0x2222222222222222222222222222222222222222', timestamp: Date.now()/1000 - 3600 },
-                { inviter: '0x3333333333333333333333333333333333333333', reward: 50, invited: currentAccount, timestamp: Date.now()/1000 - 1800 }
-            ];
-            let html = '';
-            for (const rec of records) {
-                const isSelfInviter = rec.inviter.toLowerCase() === currentAccount.toLowerCase();
-                const time = new Date(rec.timestamp * 1000).toLocaleString('zh-CN');
-                const shortAddr = (addr) => addr.length > 10 ? `${addr.substring(0,6)}...${addr.substring(addr.length-4)}` : addr;
-                html += `
-                    <div class="record-item">
-                        <div class="field"><div class="field-label">邀请人</div><div class="field-value">${shortAddr(rec.inviter)}${isSelfInviter ? ' (我)' : ''}</div></div>
-                        <div class="field"><div class="field-label">被邀请人</div><div class="field-value">${shortAddr(rec.invited)}${rec.invited.toLowerCase() === currentAccount.toLowerCase() ? ' (我)' : ''}</div></div>
-                        <div class="field"><div class="field-label">奖励</div><div class="field-value">${rec.reward} HSBC</div></div>
-                        <div class="field"><div class="field-label">时间</div><div class="field-value">${time}</div></div>
-                    </div>
-                `;
-            }
-            container.innerHTML = html;
         }
-
-        function loadClaimRecords() {
-            const container = document.getElementById('recordListContainer');
-            if (!currentAccount) {
-                container.innerHTML = '<div style="text-align: center; color: #888; padding: 20px 0;">请先连接钱包</div>';
-                return;
-            }
-            const records = [
-                { user: '0x1234567890123456789012345678901234567890', reward: 100, referrer: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd', referrerReward: 50, timestamp: Date.now()/1000 - 86400, claimed: true },
-                { user: currentAccount, reward: 100, referrer: '0x0000000000000000000000000000000000000000', referrerReward: 0, timestamp: Date.now()/1000 - 3600, claimed: true },
-                { user: '0x9876543210987654321098765432109876543210', reward: 100, referrer: currentAccount, referrerReward: 50, timestamp: Date.now()/1000 - 1800, claimed: true }
-            ];
-            const currentUserRecord = records.find(r => r.user.toLowerCase() === currentAccount.toLowerCase());
-            if (!currentUserRecord) {
-                records.unshift({ user: currentAccount, reward: 100, referrer: '0x0000000000000000000000000000000000000000', referrerReward: 0, timestamp: null, claimed: false });
-            }
-            let html = '';
-            for (const rec of records) {
-                const isSelf = rec.user.toLowerCase() === currentAccount.toLowerCase();
-                const status = rec.claimed ? '<span class="status-claimed">✅ 已领取</span>' : '<span class="status-pending">⏳ 待领取</span>';
-                const time = rec.timestamp ? new Date(rec.timestamp * 1000).toLocaleString('zh-CN') : '--';
-                const shortAddr = (addr) => addr.length > 10 ? `${addr.substring(0,6)}...${addr.substring(addr.length-4)}` : addr;
-                html += `
-                    <div class="record-item">
-                        <div class="field"><div class="field-label">领取人</div><div class="field-value">${shortAddr(rec.user)}${isSelf ? ' (我)' : ''}</div></div>
-                        <div class="field"><div class="field-label">状态</div><div class="field-value">${status}</div></div>
-                        <div class="field"><div class="field-label">用户奖励</div><div class="field-value">${rec.reward} HSBC</div></div>
-                        <div class="field"><div class="field-label">推荐人</div><div class="field-value">${rec.referrer === '0x0000000000000000000000000000000000000000' ? '无' : shortAddr(rec.referrer)}</div></div>
-                        <div class="field"><div class="field-label">推荐人奖励</div><div class="field-value">${rec.referrerReward} HSBC</div></div>
-                        <div class="field"><div class="field-label">领取时间</div><div class="field-value">${time}</div></div>
-                    </div>
-                `;
-            }
-            container.innerHTML = html;
-        }
-
-        window.addEventListener('load', initWallet);
     </script>
+    <script async src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js" onload="initAfterEthers()"></script>
 </body>
 </html>
