@@ -87,7 +87,6 @@
         /* 立即申请按钮 —— 高级金属黑色 + 黄渐变线框 */
         .node-apply-btn {
             width: 100%;
-            /* 金属黑渐变背景 + 黄色渐变边框 */
             background: 
                 linear-gradient(135deg, #1a1a1a, #2d2d2d) padding-box,
                 linear-gradient(90deg, #f90, #ffcc00) border-box;
@@ -95,7 +94,7 @@
             border-radius: 8px;
             padding: 12px;
             font-weight: bold;
-            color: #f90;                /* 亮金色文字 */
+            color: #f90;
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(255,170,0,0.3);
             font-size: 15px;
@@ -229,8 +228,8 @@
                         <button class="node-apply-btn" data-node="genesis">立即申请</button>
                     </div>
                 </div>
-                <!-- 提取收益按钮 -->
-                <button class="withdraw-reward-btn" id="withdrawRewardBtn">提取收益</button>
+                <!-- 提取收益按钮文字已修改 -->
+                <button class="withdraw-reward-btn" id="withdrawRewardBtn">当前可提取0.00</button>
             </div>
 
             <!-- 交易考核概览（含直推任务节点） -->
@@ -339,7 +338,7 @@
                 alert('请先连接钱包！');
                 return;
             }
-            alert('提取收益成功！（模拟）');
+            alert('当前可提取0.00（模拟）');
         });
 
         // ==================== 节点进度条 ====================
