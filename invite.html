@@ -19,7 +19,6 @@
         .panel { background: rgba(20,20,30,0.6); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #333; position: relative; box-shadow: inset 0 0 20px rgba(255,170,0,0.02); }
         .panel::before { content: ''; position: absolute; top: -1px; left: -1px; right: -1px; bottom: -1px; border-radius: 12px; padding: 1px; background: linear-gradient(135deg, #f90, transparent, #f90); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
         .page-title { font-size: 24px; color: #f90; text-align: center; margin: 10px 0 20px; }
-
         .airdrop-card { background: linear-gradient(135deg, rgba(255,170,0,0.15), rgba(255,170,0,0.02)); border: 1px solid rgba(255,170,0,0.3); }
         .airdrop-card .airdrop-header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
         .airdrop-card .airdrop-icon { font-size: 36px; }
@@ -27,7 +26,6 @@
         .airdrop-card .airdrop-amount-box { background: rgba(0,0,0,0.4); border: 1px solid #333; border-radius: 6px; padding: 12px; text-align: center; color: #ffffff; font-size: 24px; font-weight: 700; margin: 8px 0 12px 0; }
         .airdrop-card .airdrop-desc { color: #ccc; font-size: 12px; margin-bottom: 12px; }
         .airdrop-btn { width: 100%; background: linear-gradient(90deg, #f4a200, #ffd700); border: none; border-radius: 8px; padding: 12px; font-weight: bold; color: #111; cursor: pointer; box-shadow: 0 0 15px rgba(255,102,0,0.3); font-size: 15px; }
-
         .node-slider { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 0; -webkit-overflow-scrolling: touch; scrollbar-width: thin; scrollbar-color: #f90 #1a1a2e; }
         .node-slider::-webkit-scrollbar { height: 4px; }
         .node-slider::-webkit-scrollbar-track { background: #1a1a2e; border-radius: 2px; }
@@ -42,7 +40,6 @@
         .node-apply-btn:active { transform: scale(0.98); box-shadow: 0 2px 10px rgba(255,170,0,0.4); }
         .withdraw-reward-btn { width: 100%; background: linear-gradient(90deg, #f4a200, #ffd700); border: none; border-radius: 8px; padding: 14px; font-size: 16px; font-weight: bold; color: #111; cursor: pointer; box-shadow: 0 6px 20px rgba(255,136,0,0.3); margin-top: 15px; transition: transform 0.1s; }
         .withdraw-reward-btn:active { transform: scale(0.98); }
-
         .record-tab-switch { display: flex; gap: 10px; margin-bottom: 15px; }
         .record-tab-btn { flex: 1; padding: 10px; background: rgba(30,30,40,0.8); border: 1px solid #444; border-radius: 8px; color: #aaa; font-size: 14px; cursor: pointer; text-align: center; transition: all 0.2s; }
         .record-tab-btn.active { background: linear-gradient(135deg, rgba(255,170,0,0.2), rgba(255,170,0,0.05)); border-color: #f90; color: #f90; box-shadow: 0 0 10px rgba(255,170,0,0.2); }
@@ -50,7 +47,6 @@
         .record-item .field { flex: 1 1 45%; min-width: 120px; }
         .record-item .field-label { font-size: 10px; color: #888; margin-bottom: 2px; }
         .record-item .field-value { font-size: 13px; color: #fff; word-break: break-all; }
-
         .header-row { display: flex; justify-content: space-between; margin-bottom: 20px; }
         .header-title { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #888; }
         .header-title span { color: #ccc; }
@@ -70,15 +66,13 @@
         .node-progress { display: flex; gap: 1px; margin: 8px 0; align-items: center; flex-wrap: nowrap; }
         .node-item { width: 18px; height: 18px; background: #1a1a2e; border: 1px solid #333; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 8px; color: #555; flex-shrink: 0; transition: all 0.3s; }
         .node-item.active { background: #f90; border-color: #f90; color: #000; font-weight: bold; box-shadow: 0 0 8px #f90, inset 0 0 4px #fff; }
-
         .process-panel { background: rgba(20,20,30,0.6); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #333; position: relative; }
         .process-panel::before { content: ''; position: absolute; top: -1px; left: -1px; right: -1px; bottom: -1px; border-radius: 12px; padding: 1px; background: linear-gradient(135deg, #f90, transparent, #f90); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
         .process-flow { display: flex; align-items: center; justify-content: space-around; }
         .process-step { display: flex; flex-direction: column; align-items: center; gap: 6px; color: #ccc; font-size: 12px; }
         .process-step .step-icon { font-size: 28px; }
         .process-arrow { color: #f90; font-size: 22px; margin: 0 -5px; }
-
-        .bottom-nav { flex-shrink: 0; background: rgba(15,15,30,0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,153,0,0.15); border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.9); display: flex; justify-content: space-around; padding: 12px 0; margin: 0 15px 15px 15px; position: relative; }
+        .bottom-nav { flex-shrink: 0; background: rgba(15,15,30,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,153,0,0.15); border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.9); display: flex; justify-content: space-around; padding: 12px 0; margin: 0 15px 15px 15px; position: relative; }
         .bottom-nav::before { content: ''; position: absolute; top: -1px; left: -1px; right: -1px; bottom: -1px; border-radius: 20px; padding: 1px; background: linear-gradient(135deg, #f90, transparent, #f90); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: #666; font-size: 11px; gap: 4px; cursor: pointer; padding: 5px 10px; transition: all 0.2s ease; text-decoration: none; }
         .nav-item .icon { font-size: 20px; }
@@ -98,7 +92,6 @@
             </div>
             <div class="page-title">📨 邀请好友</div>
 
-            <!-- 空投活动 -->
             <div class="panel airdrop-card">
                 <div class="airdrop-header">
                     <span class="airdrop-icon">🎁</span>
@@ -111,7 +104,6 @@
                 <button class="airdrop-btn" id="claimAirdropBtn">立即领取</button>
             </div>
 
-            <!-- 节点卡片滑动 + 提取收益 -->
             <div class="panel">
                 <div class="node-slider" id="nodeSlider">
                     <div class="node-card">
@@ -139,7 +131,6 @@
                 <button class="withdraw-reward-btn" id="withdrawRewardBtn">当前可提取 --</button>
             </div>
 
-            <!-- 交易考核概览（含直推节点） -->
             <div class="panel">
                 <div class="header-row">
                     <div class="header-title">📅 <span>最大区总业绩</span></div>
@@ -156,32 +147,17 @@
                     </div>
                 </div>
                 <div class="progress-area">
-                    <div class="progress-header">
-                        <span>考核进度</span>
-                        <span class="right">0.00%</span>
-                    </div>
-                    <div class="progress-track">
-                        <div class="progress-fill" style="width: 0%;"></div>
-                    </div>
-                    <div class="progress-footer">
-                        <span>个人持币目标: <span id="bcbseBalance">0.00</span> BCBSE</span>
-                        <span>未完成: $0.00</span>
-                    </div>
-                    <div style="margin-top: 12px;">
-                        <div class="direct-row">
-                            <span>直推任务：15节点</span>
-                            <span>完成直推目标: <span id="completedNodes">0</span>节点</span>
-                        </div>
+                    <div class="progress-header"><span>考核进度</span><span class="right">0.00%</span></div>
+                    <div class="progress-track"><div class="progress-fill" style="width:0%;"></div></div>
+                    <div class="progress-footer"><span>个人持币目标: <span id="bcbseBalance">0.00</span> BCBSE</span><span>未完成: $0.00</span></div>
+                    <div style="margin-top:12px;">
+                        <div class="direct-row"><span>直推任务：15节点</span><span>完成直推目标: <span id="completedNodes">0</span>节点</span></div>
                         <div class="node-progress" id="nodeProgress"></div>
-                        <div class="direct-row">
-                            <span>当前层级：<span id="identityLevel">--</span></span>
-                            <span>当前利率: <span id="rateLevel">--</span></span>
-                        </div>
+                        <div class="direct-row"><span>当前层级：<span id="identityLevel">--</span></span><span>当前利率: <span id="rateLevel">--</span></span></div>
                     </div>
                 </div>
             </div>
 
-            <!-- 推广流程 -->
             <div class="panel process-panel">
                 <div class="process-flow">
                     <div class="process-step"><span class="step-icon">👤</span><span>老用户</span></div>
@@ -194,7 +170,6 @@
                 </div>
             </div>
 
-            <!-- 记录面板 -->
             <div class="panel">
                 <div class="record-tab-switch">
                     <div class="record-tab-btn" data-tab="invite">邀请记录</div>
@@ -214,15 +189,17 @@
     </div>
 
     <script>
-        // ---------- 合约地址和ABI（请替换为实际值）----------
-        const HSBC_ADDRESS = '0x...';
-        const AIGC_ADDRESS = '0x...';
+        // ---------- 合约地址 ----------
+        const AIGC_ADDRESS = '0x059451F7f591E43a0Ad58616ed403dB64ab5e170';
+        const BCBS_ADDRESS = '0xC2ED87266c9F35eeb6715624264A8163A361FCd7';
+        const HSBC_ADDRESS = '0x20aD84A60902A91F036bD6bdB85AD1d61B2f65C1';
         const BCBSE_ADDRESS = '0x...';
         const USDT_ADDRESS = '0x...';
-        const HSBC_ABI = [ /* ... */ ];
-        const AIGC_ABI = [ /* ... */ ];
-        const BCBSE_ABI = [ /* ... */ ];
-        const USDT_ABI = [ /* ... */ ];
+
+        const HSBC_ABI = [ /* HSBC ABI */ ];
+        const AIGC_ABI = [ /* AIGC ABI */ ];
+        const BCBSE_ABI = [ /* BCBSE ABI */ ];
+        const USDT_ABI = [ /* USDT ABI */ ];
 
         let provider, signer, currentAccount;
         let hsbcContract, aigcContract, bcbseContract, usdtContract;
@@ -317,7 +294,6 @@
             container.innerHTML = html;
         }
 
-        // ---------- 交互按钮 ----------
         document.getElementById('claimAirdropBtn').addEventListener('click', async () => {
             if (!currentAccount) { alert('请先连接钱包'); return; }
             try {
@@ -366,7 +342,6 @@
             } catch (e) { alert('提取失败: ' + e.message); }
         });
 
-        // ---------- 记录面板 ----------
         document.querySelectorAll('.record-tab-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.record-tab-btn').forEach(b => b.classList.remove('active'));
@@ -381,10 +356,7 @@
             if (!currentAccount) { container.innerHTML = '<div style="text-align:center;color:#888;">请先连接钱包</div>'; return; }
             try {
                 const refs = await bcbseContract.getDirectReferrals(currentAccount);
-                if (refs.length === 0) {
-                    container.innerHTML = '<div class="record-item">暂无邀请记录</div>';
-                    return;
-                }
+                if (refs.length === 0) { container.innerHTML = '<div class="record-item">暂无邀请记录</div>'; return; }
                 let html = '';
                 refs.forEach(addr => {
                     const short = `${addr.substring(0,6)}...${addr.substring(addr.length-4)}`;
@@ -400,10 +372,7 @@
             try {
                 const filter = aigcContract.filters.RewardClaimed(currentAccount);
                 const events = await aigcContract.queryFilter(filter, 0, 'latest');
-                if (events.length === 0) {
-                    container.innerHTML = '<div class="record-item">暂无领取记录</div>';
-                    return;
-                }
+                if (events.length === 0) { container.innerHTML = '<div class="record-item">暂无领取记录</div>'; return; }
                 let html = '';
                 events.reverse().forEach(event => {
                     const { aigcAmount, bnbPaid } = event.args;
@@ -416,7 +385,6 @@
             } catch (e) { container.innerHTML = '<div style="text-align:center;color:#888;">加载失败</div>'; }
         }
 
-        // ---------- 钱包连接 ----------
         function updateUIForConnected(acc) {
             connectBtn.textContent = `${acc.substring(0,6)}...${acc.substring(acc.length-4)}`;
             connectBtn.classList.add('connected');
@@ -445,10 +413,7 @@
             updateUIForConnected(currentAccount);
             refreshAllData();
         }
-        function disconnectWallet() {
-            currentAccount = null; signer = null;
-            setDisconnectedUI();
-        }
+        function disconnectWallet() { currentAccount = null; signer = null; setDisconnectedUI(); }
         function handleAccountsChanged(accounts) {
             if (accounts.length === 0) disconnectWallet();
             else {
@@ -476,10 +441,7 @@
                 } catch (e) { setDisconnectedUI(); }
                 window.ethereum.on('accountsChanged', handleAccountsChanged);
                 window.ethereum.on('chainChanged', () => window.location.reload());
-            } else {
-                connectBtn.textContent = 'No Wallet';
-                connectBtn.disabled = true;
-            }
+            } else { connectBtn.textContent = 'No Wallet'; connectBtn.disabled = true; }
         }
     </script>
     <script async src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js" onload="initAfterEthers()"></script>
