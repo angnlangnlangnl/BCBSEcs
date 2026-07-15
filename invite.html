@@ -175,7 +175,7 @@
                     <div class="record-tab-btn" data-tab="invite">邀请记录</div>
                     <div class="record-tab-btn active" data-tab="claim">领取记录</div>
                 </div>
-                <div id="recordListContainer"><div style="text-align:center;color:#888;">加载中...</div></div>
+                <div id="recordListContainer"></div>
             </div>
         </div>
 
@@ -195,16 +195,21 @@
         const BCBSE_ADDRESS = '0x...';
         const USDT_ADDRESS = '0x...';
 
+        const HSBC_ABI = [ /* HSBC ABI */ ];
+        const AIGC_ABI = [ /* AIGC ABI */ ];
+        const BCBSE_ABI = [ /* BCBSE ABI */ ];
+        const USDT_ABI = [ /* USDT ABI */ ];
+
         let provider, signer, currentAccount;
         let hsbcContract, aigcContract, bcbseContract, usdtContract;
         const connectBtn = document.getElementById('connectWalletBtn');
 
         function initContracts() {
             if (provider && signer) {
-                hsbcContract = new ethers.Contract(HSBC_ADDRESS, [], signer);
-                aigcContract = new ethers.Contract(AIGC_ADDRESS, [], signer);
-                bcbseContract = new ethers.Contract(BCBSE_ADDRESS, [], signer);
-                usdtContract = new ethers.Contract(USDT_ADDRESS, [], signer);
+                hsbcContract = new ethers.Contract(HSBC_ADDRESS, HSBC_ABI, signer);
+                aigcContract = new ethers.Contract(AIGC_ADDRESS, AIGC_ABI, signer);
+                bcbseContract = new ethers.Contract(BCBSE_ADDRESS, BCBSE_ABI, signer);
+                usdtContract = new ethers.Contract(USDT_ADDRESS, USDT_ABI, signer);
             }
         }
 
@@ -395,20 +400,17 @@
             document.getElementById('completedNodes').textContent = '0';
             document.getElementById('identityLevel').textContent = '--';
             document.getElementById('rateLevel').textContent = '--';
-            document.getElementById('recordListContainer').innerHTML = '<div style="text-align:center;color:#888;">请先连接钱包</div>';
             renderNodeProgress(0);
         }
         async function connectWallet() {
             if (typeof window.ethereum === 'undefined') { alert('请安装MetaMask'); return; }
-            try {
-                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                currentAccount = accounts[0];
-                provider = new ethers.providers.Web3Provider(window.ethereum);
-                signer = provider.getSigner();
-                initContracts();
-                updateUIForConnected(currentAccount);
-                refreshAllData();
-            } catch (e) { console.error(e); }
+            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            currentAccount = accounts[0];
+            provider = new ethers.providers.Web3Provider(window.ethereum);
+            signer = provider.getSigner();
+            initContracts();
+            updateUIForConnected(currentAccount);
+            refreshAllData();
         }
         function disconnectWallet() { currentAccount = null; signer = null; setDisconnectedUI(); }
         function handleAccountsChanged(accounts) {
@@ -423,28 +425,26 @@
             }
         }
 
-        async function initAfterEthers() {
-            if (typeof window.ethereum === 'undefined') {
-                connectBtn.textContent = 'No Wallet';
-                connectBtn.disabled = true;
-                document.getElementById('recordListContainer').innerHTML = '<div style="text-align:center;color:#888;">无钱包</div>';
-                return;
-            }
-            provider = new ethers.providers.Web3Provider(window.ethereum);
-            try {
-                const accounts = await provider.listAccounts();
-                if (accounts.length > 0) {
-                    currentAccount = accounts[0];
-                    signer = provider.getSigner();
-                    initContracts();
-                    updateUIForConnected(currentAccount);
-                    refreshAllData();
-                } else setDisconnectedUI();
-            } catch (e) { setDisconnectedUI(); }
-            window.ethereum.on('accountsChanged', handleAccountsChanged);
-            window.ethereum.on('chainChanged', () => window.location.reload());
+        // ========== 自动连接 ==========
+        async function autoConnect() {
+            if (typeof window.ethereum !== 'undefined') {
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                try {
+                    const accounts = await provider.listAccounts();
+                    if (accounts.length > 0) {
+                        currentAccount = accounts[0];
+                        signer = provider.getSigner();
+                        initContracts();
+                        updateUIForConnected(currentAccount);
+                        refreshAllData();
+                    } else setDisconnectedUI();
+                } catch (e) { setDisconnectedUI(); }
+                window.ethereum.on('accountsChanged', handleAccountsChanged);
+                window.ethereum.on('chainChanged', () => window.location.reload());
+            } else { connectBtn.textContent = 'No Wallet'; connectBtn.disabled = true; }
         }
+        window.addEventListener('load', autoConnect);
     </script>
-    <script async src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js" onload="initAfterEthers"></script>
+    <script async src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js" onload="autoConnect"></script>
 </body>
 </html>
