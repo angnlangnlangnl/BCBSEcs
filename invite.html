@@ -68,21 +68,21 @@
         .direct-row { display: flex; justify-content: space-between; font-size: 11px; color: #ccc; margin: 6px 0; }
         .node-progress {
             display: flex;
-            gap: 2px;
+            gap: 1px;                /* 间距进一步缩小 */
             margin: 8px 0;
             align-items: center;
             flex-wrap: nowrap;
         }
         .node-item {
-            width: 20px;
-            height: 20px;
+            width: 18px;             /* 尺寸从20px降至18px */
+            height: 18px;
             background: #1a1a2e;
             border: 1px solid #333;
-            border-radius: 4px;       /* 方形小圆角 */
+            border-radius: 4px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 9px;
+            font-size: 8px;          /* 字体适当缩小 */
             color: #555;
             flex-shrink: 0;
             transition: all 0.3s;
@@ -165,7 +165,7 @@
                         <span>个人持币目标: $0.00</span>
                         <span>未完成: $0.00</span>
                     </div>
-                    <!-- 直推任务15节点进度条（方形小尺寸） -->
+                    <!-- 直推任务15节点进度条（进一步缩小） -->
                     <div style="margin-top: 12px;">
                         <div class="direct-row">
                             <span>直推任务：15节点</span>
@@ -226,7 +226,6 @@
         let provider, signer, currentAccount;
         const connectBtn = document.getElementById('connectWalletBtn');
 
-        // 渲染方形节点进度条
         function renderNodeProgress(completed = 3, total = 15) {
             const container = document.getElementById('nodeProgress');
             let html = '';
