@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SpaceX Web3 App</title>
+    <title>资产 - SpaceX Web3</title>
     <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
     <style>
         * {
@@ -90,6 +90,8 @@
             border-color: #ffaa00;
             color: #ffd700;
         }
+
+        /* 面板与发光边框 */
         .panel {
             background: rgba(20, 20, 30, 0.6);
             border-radius: 12px;
@@ -111,123 +113,106 @@
             mask-composite: exclude;
             pointer-events: none;
         }
-        .value-panel {
-            padding: 20px 15px;
+
+        /* 角色等级与总资产卡片 */
+        .profile-panel {
             display: flex;
             align-items: center;
-            gap: 15px;
+            justify-content: space-between;
+            padding: 15px 15px;
         }
-        .coin-icon {
-            width: 60px;
-            height: 60px;
+        .profile-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .avatar-circle {
+            width: 50px;
+            height: 50px;
             background: linear-gradient(135deg, #f3a900, #ffd700);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 30px;
+            font-size: 24px;
             font-weight: 900;
-            color: #fff;
-            box-shadow: 0 0 20px rgba(255, 200, 0, 0.3);
-        }
-        .value-info { flex: 1; }
-        .value-title { font-size: 12px; color: #f90; font-weight: 500; }
-        .value-number { font-size: 28px; font-weight: 700; color: #fff; margin: 2px 0; }
-        .value-number small { font-size: 16px; font-weight: 400; color: #aaa; }
-        .value-sub { font-size: 14px; color: #ccc; }
-        .chart-area {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 5px;
-        }
-        .chart-placeholder {
-            width: 50px;
-            height: 25px;
-            border-bottom: 1px solid #f90;
-            background: linear-gradient(to right, transparent, #f90);
-            opacity: 0.5;
-            border-radius: 2px;
-            position: relative;
-        }
-        .coin-badge {
-            background: #1a3a1a;
-            color: #4caf50;
-            border: 1px solid #4caf50;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 10px;
-            font-weight: bold;
-        }
-        .title { color: #f90; font-size: 14px; font-weight: 600; margin-bottom: 4px; }
-        .desc { color: #aaa; font-size: 12px; margin-bottom: 12px; }
-        .input-box {
-            background: rgba(0,0,0,0.4);
-            border: 1px solid #333;
-            border-radius: 6px;
-            padding: 12px;
-            text-align: center;
-            color: #f90;
-            font-size: 14px;
-            margin-bottom: 12px;
-        }
-        .btn-primary {
-            width: 100%;
-            background: linear-gradient(90deg, #f4a200, #ffd700);
-            border: none;
-            border-radius: 8px;
-            padding: 12px;
-            font-weight: bold;
             color: #111;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(255, 170, 0, 0.2);
+            box-shadow: 0 0 15px rgba(255, 200, 0, 0.3);
         }
-        .check-in-panel {
-            background: linear-gradient(135deg, rgba(60, 10, 90, 0.4), rgba(10, 10, 30, 0.6));
-            border: 1px solid rgba(150, 50, 200, 0.3);
+        .level-badge {
+            background: #f90;
+            color: #111;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+        .total-value {
+            text-align: right;
+        }
+        .total-label {
+            font-size: 12px;
+            color: #888;
+        }
+        .total-amount {
+            font-size: 22px;
+            font-weight: 700;
+            color: #fff;
+        }
+        .total-amount small {
+            font-size: 14px;
+            font-weight: 400;
+            color: #aaa;
+        }
+
+        /* 资产卡片列表 */
+        .asset-card {
+            background: rgba(30, 30, 40, 0.5);
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 12px 15px;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            gap: 12px;
         }
-        .check-in-panel::before { background: linear-gradient(135deg, #b14bff, transparent, #b14bff); }
-        .check-left { display: flex; align-items: center; gap: 15px; }
-        .check-icon { font-size: 40px; }
-        .check-text { display: flex; flex-direction: column; gap: 5px; }
-        .check-text h3 { color: #fff; font-size: 18px; margin: 0; }
-        .check-text p { color: #ccc; font-size: 11px; margin: 0; }
-        .btn-check {
-            background: linear-gradient(90deg, #ffaa00, #ffdd00);
-            border: none;
-            padding: 8px 25px;
-            border-radius: 20px;
-            font-weight: 700;
-            color: #222;
-            box-shadow: 0 0 15px rgba(255, 200, 0, 0.3);
-            cursor: pointer;
-        }
-        .last-time { font-size: 11px; color: #aaa; text-align: right; margin-top: 5px;}
-
-        .stats-grid-3 {
+        .asset-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #555, #333);
             display: flex;
-            justify-content: space-between;
-            text-align: center;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
         }
-        .stat-item { flex: 1; }
-        .stat-item h4 { font-size: 11px; color: #aaa; margin-bottom: 5px; }
-        .stat-item .val { font-size: 20px; color: #fff; font-weight: 600; }
-        .stat-item .sub-val { font-size: 12px; color: #888; }
-
-        .stats-grid-2 {
-            display: flex;
-            justify-content: space-between;
-            text-align: center;
-            padding: 10px 0;
+        .asset-info {
+            flex: 1;
         }
-        .stat-item-2 { flex: 1; display: flex; align-items: center; justify-content: center; gap: 15px; }
-        .stat-item-2 .icon-big { font-size: 32px; }
-        .stat-item-2 .num-big { font-size: 28px; color: #fff; font-weight: 600; margin-left: 10px; }
-        .stat-item-2 h4 { font-size: 11px; color: #f90; margin: 0; }
+        .asset-name {
+            font-size: 15px;
+            color: #fff;
+            font-weight: 600;
+        }
+        .asset-price {
+            font-size: 12px;
+            color: #aaa;
+        }
+        .asset-right {
+            text-align: right;
+        }
+        .asset-balance {
+            font-size: 15px;
+            color: #fff;
+            font-weight: 600;
+        }
+        .asset-usd-value {
+            font-size: 12px;
+            color: #f90;
+        }
 
+        /* 底部导航 */
         .bottom-nav {
             flex-shrink: 0;
             background: rgba(15, 15, 30, 0.85);
@@ -264,10 +249,9 @@
             cursor: pointer;
             padding: 5px 10px;
             transition: all 0.2s ease;
-            text-decoration: none;        /* 去掉链接下划线 */
+            text-decoration: none;
         }
         .nav-item .icon { font-size: 20px; }
-
         .nav-item.active {
             color: #f90;
             position: relative;
@@ -289,6 +273,7 @@
 <body>
     <div class="app-container">
         <div class="scroll-area">
+            <!-- 头部 -->
             <div class="header">
                 <div class="logo-area">🚀 <span>SPACEX</span></div>
                 <div class="header-controls">
@@ -297,118 +282,52 @@
                 </div>
             </div>
 
-            <div class="panel value-panel">
-                <div class="coin-icon">D</div>
-                <div class="value-info">
-                    <div class="value-title">CURRENT HOLDING VALUE</div>
-                    <div class="value-number">0.0000 <small>ETH</small></div>
-                    <div class="value-sub">0.0000 ETH</div>
-                </div>
-                <div class="chart-area">
-                    <div class="chart-placeholder">
-                        <div style="position:absolute; bottom:0; left:0; width:100%; height:100%; border-left: 1px solid #f90; background: linear-gradient(to top, rgba(255,153,0,0.3), transparent);"></div>
-                    </div>
-                    <div id="tokenBadge" class="coin-badge">ETH</div>
-                </div>
-            </div>
-
-            <div class="panel">
-                <div class="title">INVITE FRIENDS</div>
-                <div class="desc">Invite more friends and earn more ETH!</div>
-                <div class="input-box">No data</div>
-                <button class="btn-primary">Copy Invite Link</button>
-            </div>
-
-            <div class="panel check-in-panel">
-                <div class="check-left">
-                    <div class="check-icon">📅</div>
-                    <div class="check-text">
-                        <h3>DAILY CHECK-IN</h3>
-                        <p>TOTAL CHECK-IN TIMES: 0</p>
+            <!-- 第一卡片：角色等级 + 总资产价值 -->
+            <div class="panel profile-panel">
+                <div class="profile-left">
+                    <div class="avatar-circle">👤</div>
+                    <div>
+                        <div class="level-badge" id="userLevel">--</div>
                     </div>
                 </div>
-                <div>
-                    <button class="btn-check">CHECK IN NOW</button>
-                    <div class="last-time">LAST TIME<br>--</div>
+                <div class="total-value">
+                    <div class="total-label">总资产价值</div>
+                    <div class="total-amount" id="totalAssetValue">-- <small>USD</small></div>
                 </div>
             </div>
 
-            <div class="panel">
-                <div class="stats-grid-3">
-                    <div class="stat-item">
-                        <h4>🔓 UNLOCKED</h4>
-                        <div class="val">0.00</div>
-                        <div class="sub-val">ETH</div>
-                        <div class="sub-val">≈$0.00</div>
-                    </div>
-                    <div class="stat-item">
-                        <h4>👥 REFERRAL</h4>
-                        <div class="val">0.00</div>
-                        <div class="sub-val">ETH</div>
-                        <div class="sub-val">≈$0.00</div>
-                    </div>
-                    <div class="stat-item">
-                        <h4>🔒 LOCK</h4>
-                        <div class="val">0.00</div>
-                        <div class="sub-val">ETH</div>
-                        <div class="sub-val">≈$0.00</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="panel">
-                <div class="stats-grid-2">
-                    <div class="stat-item-2">
-                        <div class="icon-big">👤</div>
-                        <div>
-                            <h4>REFERRAL PEOPLE</h4>
-                            <div class="num-big">0</div>
-                        </div>
-                    </div>
-                    <div class="stat-item-2">
-                        <div class="icon-big">👥</div>
-                        <div>
-                            <h4>TEAM MEMBERS</h4>
-                            <div class="num-big">0</div>
-                        </div>
-                    </div>
-                </div>
+            <!-- 资产卡片列表容器 -->
+            <div id="assetListContainer">
+                <!-- 动态填充资产卡片 -->
             </div>
         </div>
 
-        <!-- 修复后的底部导航栏：使用 <a> 标签，带 href 跳转 -->
+        <!-- 底部导航 -->
         <div class="bottom-nav">
-            <a href="index.html" class="nav-item active">
-                <span class="icon">💼</span>
-                <span>资产</span>
-            </a>
-            <a href="stake.html" class="nav-item">
-                <span class="icon">🔒</span>
-                <span>质押</span>
-            </a>
-            <a href="liquidity.html" class="nav-item">
-                <span class="icon">💧</span>
-                <span>流动性</span>
-            </a>
-            <a href="invite.html" class="nav-item">
-                <span class="icon">📨</span>
-                <span>邀请</span>
-            </a>
-            <a href="ecosystem.html" class="nav-item">
-                <span class="icon">🌐</span>
-                <span>生态</span>
-            </a>
+            <a href="index.html" class="nav-item active"><span class="icon">💼</span><span>资产</span></a>
+            <a href="stake.html" class="nav-item"><span class="icon">🔒</span><span>质押</span></a>
+            <a href="liquidity.html" class="nav-item"><span class="icon">💧</span><span>流动性</span></a>
+            <a href="invite.html" class="nav-item"><span class="icon">📨</span><span>邀请</span></a>
+            <a href="ecosystem.html" class="nav-item"><span class="icon">🌐</span><span>生态</span></a>
         </div>
     </div>
 
     <script>
         let provider, signer, currentAccount;
         const connectBtn = document.getElementById('connectWalletBtn');
-        const valueNumber = document.querySelector('.value-number');
-        const valueSub = document.querySelector('.value-sub');
-        const tokenBadge = document.getElementById('tokenBadge');
+        const totalAssetValueEl = document.getElementById('totalAssetValue');
+        const userLevelEl = document.getElementById('userLevel');
 
-        async function init() {
+        // 资产列表：BNB, USDT, AIGC, BCBS, HSBC
+        const assetDefinitions = [
+            { icon: '💛', name: 'BNB',   price: 580.25 },
+            { icon: '💵', name: 'USDT',  price: 1.00 },
+            { icon: '🟡', name: 'AIGC',  price: 1.20 },
+            { icon: '🏦', name: 'BCBS',  price: 0.95 },
+            { icon: '🔷', name: 'HSBC',  price: 0.85 }
+        ];
+
+        async function initWallet() {
             if (typeof window.ethereum !== 'undefined') {
                 provider = new ethers.providers.Web3Provider(window.ethereum);
                 try {
@@ -417,12 +336,10 @@
                         currentAccount = accounts[0];
                         signer = provider.getSigner();
                         updateUIForConnected(currentAccount);
-                        await updateBalance();
                     } else {
                         setDisconnectedUI();
                     }
                 } catch (err) {
-                    console.error('自动连接检查失败:', err);
                     setDisconnectedUI();
                 }
                 window.ethereum.on('accountsChanged', handleAccountsChanged);
@@ -431,15 +348,14 @@
                 connectBtn.textContent = 'No Wallet';
                 connectBtn.disabled = true;
             }
+            // 无论是否连接，都渲染资产卡片结构
+            renderAssets();
         }
 
         function setDisconnectedUI() {
             connectBtn.textContent = 'Connect wallet';
             connectBtn.classList.remove('connected');
             connectBtn.onclick = connectWallet;
-            valueNumber.innerHTML = '0.0000 <small>ETH</small>';
-            valueSub.textContent = '0.0000 ETH';
-            tokenBadge.textContent = 'ETH';
         }
 
         async function connectWallet() {
@@ -453,7 +369,7 @@
                 provider = new ethers.providers.Web3Provider(window.ethereum);
                 signer = provider.getSigner();
                 updateUIForConnected(currentAccount);
-                await updateBalance();
+                renderAssets();
             } catch (err) {
                 console.error('用户拒绝连接或发生错误:', err);
             }
@@ -470,21 +386,7 @@
             currentAccount = null;
             signer = null;
             setDisconnectedUI();
-        }
-
-        async function updateBalance() {
-            if (!signer || !currentAccount) return;
-            try {
-                const balance = await provider.getBalance(currentAccount);
-                const eth = ethers.utils.formatEther(balance);
-                const display = parseFloat(eth).toFixed(4);
-                valueNumber.innerHTML = `${display} <small>ETH</small>`;
-                valueSub.textContent = `${display} ETH`;
-                tokenBadge.textContent = 'ETH';
-            } catch (err) {
-                console.error('获取余额失败:', err);
-                valueNumber.innerHTML = 'Error';
-            }
+            renderAssets(); // 重新渲染，显示 --
         }
 
         function handleAccountsChanged(accounts) {
@@ -495,11 +397,73 @@
                 provider = new ethers.providers.Web3Provider(window.ethereum);
                 signer = provider.getSigner();
                 updateUIForConnected(currentAccount);
-                updateBalance();
+                renderAssets();
             }
         }
 
-        window.addEventListener('load', init);
+        // 模拟从合约获取余额（连接后返回模拟数据，否则返回 null）
+        async function fetchAssetBalances() {
+            if (!currentAccount || !signer) {
+                // 未连接钱包，返回 null 表示数据不可用
+                return null;
+            }
+            // 这里模拟异步获取，实际替换为合约调用
+            return {
+                BNB: 2.35,
+                USDT: 1520.00,
+                AIGC: 1250.50,
+                BCBS: 800.00,
+                HSBC: 200.00
+            };
+        }
+
+        // 渲染资产卡片，数据不可用时用 --
+        async function renderAssets() {
+            const container = document.getElementById('assetListContainer');
+            const balances = await fetchAssetBalances();
+            let totalValue = 0;
+            let hasData = balances !== null;
+            let html = '';
+
+            for (const def of assetDefinitions) {
+                const balance = hasData ? balances[def.name] : null;
+                const usdValue = (balance !== null && balance !== undefined) ? balance * def.price : null;
+                if (usdValue !== null) totalValue += usdValue;
+
+                const balanceText = (balance !== null && balance !== undefined) ? balance.toLocaleString() : '--';
+                const usdText = (usdValue !== null && usdValue !== undefined) ? `≈ $${usdValue.toFixed(2)}` : '--';
+
+                html += `
+                    <div class="asset-card">
+                        <div class="asset-icon">${def.icon}</div>
+                        <div class="asset-info">
+                            <div class="asset-name">${def.name}</div>
+                            <div class="asset-price">$${def.price.toFixed(2)}</div>
+                        </div>
+                        <div class="asset-right">
+                            <div class="asset-balance">${balanceText}</div>
+                            <div class="asset-usd-value">${usdText}</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+
+            // 更新总资产
+            if (hasData) {
+                totalAssetValueEl.innerHTML = `$${totalValue.toFixed(2)} <small>USD</small>`;
+                // 等级计算
+                const level = Math.floor(totalValue / 1000) + 1;
+                userLevelEl.textContent = `Lv. ${level}`;
+            } else {
+                totalAssetValueEl.innerHTML = `-- <small>USD</small>`;
+                userLevelEl.textContent = '--';
+            }
+        }
+
+        // 页面加载时初始化
+        window.addEventListener('load', initWallet);
     </script>
 </body>
 </html>
