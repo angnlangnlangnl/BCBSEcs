@@ -189,14 +189,12 @@
     </div>
 
     <script>
-        // ---------- 合约地址 ----------
         const AIGC_ADDRESS = '0x059451F7f591E43a0Ad58616ed403dB64ab5e170';
         const BCBS_ADDRESS = '0xC2ED87266c9F35eeb6715624264A8163A361FCd7';
         const HSBC_ADDRESS = '0x20aD84A60902A91F036bD6bdB85AD1d61B2f65C1';
         const USDT_ADDRESS = '0x55d398326f99059fF775485246999027B3197955';
         const BCBSE_ADDRESS = '0x...';
 
-        // ---------- ABI ----------
         const USDT_ABI = [
             "function balanceOf(address owner) view returns (uint256)",
             "function decimals() view returns (uint8)",
@@ -212,9 +210,7 @@
             "function claimReward() payable",
             "function getNodeLevel(address user) view returns (uint8)",
             "function identityLevel(address user) view returns (uint256)",
-            "function directNodeCount(address user) view returns (uint256)",
-            "function balanceOf(address account) view returns (uint256)",
-            "function decimals() view returns (uint8)"
+            "function directNodeCount(address user) view returns (uint256)"
         ];
 
         const BCBSE_ABI = [
@@ -263,7 +259,7 @@
             renderNodeProgress(parseInt(document.getElementById('completedNodes').textContent) || 0);
         }
 
-        // ========== 提币相关函数 ==========
+        // ========== 提币功能（根据 pendingReward 显示可提数量）==========
         async function updateClaimableReward() {
             if (!aigcContract || !currentAccount) {
                 withdrawBtn.textContent = '当前可提取 --';
@@ -275,7 +271,7 @@
                 const display = parseFloat(formatted).toFixed(4);
                 withdrawBtn.textContent = `当前可提取 ${display} AIGC`;
             } catch (e) {
-                console.error('查询待领取数量失败:', e.message);
+                console.error('查询待领取失败:', e.message);
                 withdrawBtn.textContent = '当前可提取 --';
             }
         }
@@ -339,7 +335,7 @@
                     document.getElementById('maxPerformance').textContent = '0.00';
                     document.getElementById('minPerformance').textContent = '0.00';
                 }
-            } catch (e) { console.error('业绩查询失败:', e); }
+            } catch (e) { console.error(e); }
         }
 
         async function updateBalanceAndTarget() {
