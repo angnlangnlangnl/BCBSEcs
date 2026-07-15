@@ -82,14 +82,18 @@
     </div>
 
     <script>
-        // ---------- 合约配置（请替换为实际地址与ABI）----------
-        const AIGC_ADDRESS = '0x...';      // AIGC合约地址
-        const BCBSE_ADDRESS = '0x...';     // BCBSE合约地址
-        const AIGC_ABI = [ /* AIGC合约ABI */ ];
-        const BCBSE_ABI = [ /* BCBSE合约ABI */ ];
+        // ---------- 合约地址 ----------
+        const AIGC_ADDRESS = '0x059451F7f591E43a0Ad58616ed403dB64ab5e170';
+        const BCBS_ADDRESS = '0xC2ED87266c9F35eeb6715624264A8163A361FCd7';
+        const HSBC_ADDRESS = '0x20aD84A60902A91F036bD6bdB85AD1d61B2f65C1';
+        const BCBSE_ADDRESS = '0x...'; // 如需使用请替换
+
+        const AIGC_ABI = [ /* AIGC ABI */ ];
+        const BCBS_ABI = [ /* BCBS ABI */ ];
+        const HSBC_ABI = [ /* HSBC ABI */ ];
 
         let provider, signer, currentAccount;
-        let aigcContract, bcbseContract;
+        let aigcContract, bcbsContract, hsbcContract;
         const connectBtn = document.getElementById('connectWalletBtn');
         const totalAssetValueEl = document.getElementById('totalAssetValue');
         const userLevelEl = document.getElementById('userLevel');
@@ -103,47 +107,37 @@
             { symbol: 'HSBC', price: 0.85 }
         ];
 
-        // ---------- 初始化合约实例 ----------
         function initContracts() {
             if (provider && signer) {
                 aigcContract = new ethers.Contract(AIGC_ADDRESS, AIGC_ABI, signer);
-                bcbseContract = new ethers.Contract(BCBSE_ADDRESS, BCBSE_ABI, signer);
+                bcbsContract = new ethers.Contract(BCBS_ADDRESS, BCBS_ABI, signer);
+                hsbcContract = new ethers.Contract(HSBC_ADDRESS, HSBC_ABI, signer);
             }
         }
 
-        // ---------- 节点信息查询（核心） ----------
         async function updateNodeInfo() {
-            if (!currentAccount || !aigcContract || !bcbseContract) {
+            if (!currentAccount || !aigcContract) {
                 userLevelEl.textContent = '普通用户';
                 nodeInfoEl.innerHTML = '';
                 return;
             }
             try {
-                const nodeLevel = await aigcContract.getNodeLevel(currentAccount);   // 0-3
-                const identity = await aigcContract.identityLevel(currentAccount); // 0,1,2,3...
-                const rate = await bcbseContract.getRateLevel(currentAccount);     // 精度1e18
-                const ratePercent = (rate.div(1e16).toNumber() / 100).toFixed(1) + '%'; // 转为百分比
-
+                const nodeLevel = await aigcContract.getNodeLevel(currentAccount);
+                const identity = await aigcContract.identityLevel(currentAccount);
                 const nodeNames = ['普通用户', '首富节点', '星链节点', '创世节点'];
                 const identityText = identity > 0 ? 'S' + identity : '--';
-                // 全球分红可扩展，这里暂用占位符
-                const dividend = '--';
-
                 userLevelEl.textContent = nodeNames[nodeLevel] || '普通用户';
-                nodeInfoEl.innerHTML = `当前级别：${identityText} ${ratePercent}，全球分红：${dividend}`;
+                nodeInfoEl.innerHTML = `当前级别：${identityText}，全球分红：--`;
             } catch (e) {
-                console.error('获取节点信息失败:', e);
                 userLevelEl.textContent = '普通用户';
                 nodeInfoEl.innerHTML = '';
             }
         }
 
-        // ---------- 资产余额 ----------
         async function refreshBalances() {
             const balances = await fetchBalances();
             let totalValue = 0;
             const hasData = balances !== null;
-
             for (const asset of assets) {
                 const balEl = document.getElementById(`bal-${asset.symbol}`);
                 const valEl = document.getElementById(`val-${asset.symbol}`);
@@ -159,7 +153,6 @@
                     valEl.textContent = '--';
                 }
             }
-
             totalAssetValueEl.innerHTML = hasData ? `$${totalValue.toFixed(2)} <small>USD</small>` : '-- <small>USD</small>';
         }
 
@@ -168,7 +161,6 @@
             return { BNB: 2.35, USDT: 1520.00, AIGC: 1250.50, BCBS: 800.00, HSBC: 200.00 };
         }
 
-        // ---------- 钱包 ----------
         async function initWallet() {
             if (typeof window.ethereum !== 'undefined') {
                 provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -179,12 +171,8 @@
                         signer = provider.getSigner();
                         initContracts();
                         updateUIForConnected(currentAccount);
-                    } else {
-                        setDisconnectedUI();
-                    }
-                } catch (err) {
-                    setDisconnectedUI();
-                }
+                    } else setDisconnectedUI();
+                } catch (err) { setDisconnectedUI(); }
                 window.ethereum.on('accountsChanged', handleAccountsChanged);
                 window.ethereum.on('chainChanged', () => window.location.reload());
             } else {
@@ -211,30 +199,25 @@
         }
 
         async function connectWallet() {
-            if (typeof window.ethereum === 'undefined') {
-                alert('请安装 MetaMask！'); return;
-            }
-            try {
-                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                currentAccount = accounts[0];
-                provider = new ethers.providers.Web3Provider(window.ethereum);
-                signer = provider.getSigner();
-                initContracts();
-                updateUIForConnected(currentAccount);
-                await refreshAll();
-            } catch (e) { console.error(e); }
+            if (typeof window.ethereum === 'undefined') { alert('请安装 MetaMask！'); return; }
+            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            currentAccount = accounts[0];
+            provider = new ethers.providers.Web3Provider(window.ethereum);
+            signer = provider.getSigner();
+            initContracts();
+            updateUIForConnected(currentAccount);
+            await refreshAll();
         }
 
         function updateUIForConnected(account) {
-            const short = `${account.substring(0,6)}...${account.substring(account.length-4)}`;
-            connectBtn.textContent = short;
+            connectBtn.textContent = `${account.substring(0,6)}...${account.substring(account.length-4)}`;
             connectBtn.classList.add('connected');
             connectBtn.onclick = disconnectWallet;
         }
 
         function disconnectWallet() {
             currentAccount = null; signer = null;
-            aigcContract = null; bcbseContract = null;
+            aigcContract = null; bcbsContract = null; hsbcContract = null;
             setDisconnectedUI();
         }
 
@@ -250,7 +233,6 @@
             }
         }
 
-        // ---------- 资产卡片骨架 ----------
         function renderAssetSkeleton() {
             const container = document.getElementById('assetListContainer');
             let html = '';
