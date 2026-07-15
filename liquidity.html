@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>流动性 - SpaceX Web3</title>
-    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
         body { background-color: #050505; display: flex; justify-content: center; align-items: center; height: 100dvh; overflow: hidden; color: #ffffff; }
@@ -55,7 +54,6 @@
         </div>
     </div>
     <script>
-        // ---------- 合约地址 ----------
         const AIGC_ADDRESS = '0x059451F7f591E43a0Ad58616ed403dB64ab5e170';
         const BCBS_ADDRESS = '0xC2ED87266c9F35eeb6715624264A8163A361FCd7';
         const HSBC_ADDRESS = '0x20aD84A60902A91F036bD6bdB85AD1d61B2f65C1';
@@ -75,11 +73,13 @@
         }
         async function connectWallet() {
             if (typeof window.ethereum === 'undefined') { alert('请安装MetaMask'); return; }
-            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-            currentAccount = accounts[0];
-            provider = new ethers.providers.Web3Provider(window.ethereum);
-            signer = provider.getSigner();
-            updateUIForConnected(currentAccount);
+            try {
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                currentAccount = accounts[0];
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                signer = provider.getSigner();
+                updateUIForConnected(currentAccount);
+            } catch (e) { console.error(e); }
         }
         function disconnectWallet() { currentAccount = null; signer = null; setDisconnectedUI(); }
         function handleAccountsChanged(accounts) {
@@ -91,22 +91,26 @@
                 updateUIForConnected(currentAccount);
             }
         }
+
         async function initAfterEthers() {
-            if (typeof window.ethereum !== 'undefined') {
-                provider = new ethers.providers.Web3Provider(window.ethereum);
-                try {
-                    const accounts = await provider.listAccounts();
-                    if (accounts.length > 0) {
-                        currentAccount = accounts[0];
-                        signer = provider.getSigner();
-                        updateUIForConnected(currentAccount);
-                    } else setDisconnectedUI();
-                } catch (e) { setDisconnectedUI(); }
-                window.ethereum.on('accountsChanged', handleAccountsChanged);
-                window.ethereum.on('chainChanged', () => window.location.reload());
+            if (typeof window.ethereum === 'undefined') {
+                connectBtn.textContent = 'No Wallet';
+                connectBtn.disabled = true;
+                return;
             }
+            provider = new ethers.providers.Web3Provider(window.ethereum);
+            try {
+                const accounts = await provider.listAccounts();
+                if (accounts.length > 0) {
+                    currentAccount = accounts[0];
+                    signer = provider.getSigner();
+                    updateUIForConnected(currentAccount);
+                } else setDisconnectedUI();
+            } catch (e) { setDisconnectedUI(); }
+            window.ethereum.on('accountsChanged', handleAccountsChanged);
+            window.ethereum.on('chainChanged', () => window.location.reload());
         }
     </script>
-    <script async src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js" onload="initAfterEthers()"></script>
+    <script async src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js" onload="initAfterEthers"></script>
 </body>
 </html>
