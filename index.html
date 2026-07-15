@@ -23,6 +23,7 @@
         .avatar-circle { width: 50px; height: 50px; background: linear-gradient(135deg, #f3a900, #ffd700); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 900; color: #111; box-shadow: 0 0 15px rgba(255,200,0,0.3); }
         .level-badge { background: #f90; color: #111; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 700; white-space: nowrap; }
         .node-info { font-size: 11px; color: #ccc; margin-top: 4px; line-height: 1.4; }
+        .node-info span { display: block; }
         .total-value { text-align: right; }
         .total-label { font-size: 12px; color: #888; }
         .total-amount { font-size: 22px; font-weight: 700; color: #fff; }
@@ -80,16 +81,13 @@
         </div>
     </div>
 
-    <!-- 预定义 ethers -->
     <script>
-        // 等 ethers 加载完成后执行
         window.ethersReady = false;
     </script>
     <script async src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js" 
             onload="window.ethersReady=true; if(typeof initApp==='function') initApp();"></script>
 
     <script>
-        // ---------- 合约地址 ----------
         const AIGC_ADDRESS = '0x059451F7f591E43a0Ad58616ed403dB64ab5e170';
         const BCBS_ADDRESS = '0xC2ED87266c9F35eeb6715624264A8163A361FCd7';
         const HSBC_ADDRESS = '0x20aD84A60902A91F036bD6bdB85AD1d61B2f65C1';
@@ -155,11 +153,13 @@
                 const levelName = nodeNames[nodeLevel] || '普通用户';
                 const identityText = identity && identity > 0 ? 'S' + identity.toString() : '--';
                 el.textContent = levelName;
-                nodeInfoEl.innerHTML = `当前级别：${identityText}，全球分红：--`;
+                // 修复：当前级别和全球分红分两行显示
+                nodeInfoEl.innerHTML = `<span>当前级别：${identityText}</span><span>全球分红：--</span>`;
             } catch (e) {
                 console.error('节点信息查询失败:', e.message);
                 el.textContent = '普通用户';
-                nodeInfoEl.innerHTML = '';
+                // 修复：换行显示
+                nodeInfoEl.innerHTML = '<span>当前级别：--</span><span>全球分红：--</span>';
             }
         }
 
@@ -210,7 +210,8 @@
             connectBtn.onclick = connectWallet;
             totalAssetValueEl.innerHTML = '-- <small>USD</small>';
             userLevelEl.textContent = '普通用户';
-            nodeInfoEl.innerHTML = '';
+            // 修复：换行显示
+            nodeInfoEl.innerHTML = '<span>当前级别：--</span><span>全球分红：--</span>';
             document.querySelectorAll('.asset-balance').forEach(el => el.textContent = '--');
             document.querySelectorAll('.asset-usd-value').forEach(el => el.textContent = '--');
         }
@@ -274,13 +275,11 @@
             window.ethereum.on('chainChanged', () => window.location.reload());
         }
 
-        // ---------- 初始化入口 ----------
         function initApp() {
             console.log('🚀 ethers 已加载，开始初始化应用');
             autoConnect();
         }
 
-        // 渲染卡片骨架
         function renderAssetSkeleton() {
             const container = document.getElementById('assetListContainer');
             let html = '';
@@ -304,7 +303,6 @@
 
         renderAssetSkeleton();
 
-        // 如果 ethers 已经加载（本地缓存），立即初始化
         if (window.ethersReady) {
             initApp();
         }
