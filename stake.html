@@ -13,44 +13,60 @@
         .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; }
         .logo-area { display: flex; align-items: center; font-size: 16px; font-weight: bold; background: linear-gradient(to right, #aaa, #fff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .logo-area span { margin-left: 5px; }
-        .connect-btn { background: transparent; border: 1px solid #f90; color: #f90; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+        .header-controls { display: flex; gap: 10px; align-items: center; }
+        .lang-btn { background: transparent; border: 1px solid #333; color: #aaa; padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer; }
+        .connect-btn { background: transparent; border: 1px solid #f90; color: #f90; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; box-shadow: 0 0 10px rgba(255,153,0,0.1); transition: all 0.2s; white-space: nowrap; }
         .connect-btn.connected { background: rgba(255,153,0,0.2); border-color: #ffaa00; color: #ffd700; }
-        .panel { background: rgba(20,20,30,0.6); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #333; position: relative; }
+        .connect-btn:disabled, .stake-btn:disabled, .btn:disabled { opacity: 0.35; cursor: not-allowed; }
+        .panel { background: rgba(20,20,30,0.6); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #333; position: relative; box-shadow: inset 0 0 20px rgba(255,170,0,0.02); }
         .panel::before { content: ''; position: absolute; top: -1px; left: -1px; right: -1px; bottom: -1px; border-radius: 12px; padding: 1px; background: linear-gradient(135deg, #f90, transparent, #f90); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
         .page-title { font-size: 24px; color: #f90; text-align: center; margin: 10px 0 20px; }
-        .faucet-btn { background: linear-gradient(90deg, #ffaa00, #ffdd00); border: none; padding: 10px 18px; border-radius: 25px; font-weight: 700; color: #222; cursor: pointer; font-size: 13px; }
+        .faucet-panel { display: flex; align-items: center; justify-content: space-between; }
+        .faucet-info { display: flex; flex-direction: column; gap: 8px; }
+        .faucet-item { display: flex; align-items: center; gap: 8px; }
+        .faucet-btn { background: linear-gradient(90deg, #ffaa00, #ffdd00); border: none; padding: 12px 20px; border-radius: 25px; font-weight: 700; color: #222; cursor: pointer; font-size: 14px; white-space: nowrap; }
         .tab-container { display: flex; gap: 10px; margin-bottom: 15px; }
-        .tab-btn { flex: 1; padding: 10px; background: rgba(30,30,40,0.8); border: 1px solid #444; border-radius: 8px; color: #aaa; font-size: 14px; cursor: pointer; text-align: center; }
-        .tab-btn.active { border-color: #f90; color: #f90; }
+        .tab-btn { flex: 1; padding: 10px; background: rgba(30,30,40,0.8); border: 1px solid #444; border-radius: 8px; color: #aaa; font-size: 14px; cursor: pointer; text-align: center; transition: all 0.2s; }
+        .tab-btn.active { background: linear-gradient(135deg, rgba(255,170,0,0.2), rgba(255,170,0,0.05)); border-color: #f90; color: #f90; box-shadow: 0 0 10px rgba(255,170,0,0.2); }
         .amount-input-wrapper { background: rgba(0,0,0,0.3); border: 1px solid #444; border-radius: 8px; padding: 12px; display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
         .amount-input-wrapper input { flex: 1; background: transparent; border: none; color: #fff; font-size: 18px; outline: none; }
         .balance-info { display: flex; justify-content: space-between; color: #aaa; font-size: 12px; margin-bottom: 5px; }
         .balance-info .max-btn { color: #f90; cursor: pointer; }
         .period-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px; }
-        .period-btn { padding: 10px 5px; background: rgba(30,30,40,0.8); border: 1px solid #444; border-radius: 8px; color: #aaa; font-size: 13px; cursor: pointer; text-align: center; }
-        .period-btn.active { border-color: #f90; color: #f90; }
+        .period-btn { padding: 10px 5px; background: rgba(30,30,40,0.8); border: 1px solid #444; border-radius: 8px; color: #aaa; font-size: 13px; cursor: pointer; text-align: center; transition: all 0.2s; }
+        .period-btn.active { background: linear-gradient(135deg, rgba(255,170,0,0.3), rgba(255,170,0,0.1)); border-color: #f90; color: #f90; box-shadow: 0 0 10px rgba(255,170,0,0.2); }
         .period-btn .rate-label { display: block; font-size: 10px; color: #f90; margin-top: 3px; }
-        .stake-btn { width: 100%; background: linear-gradient(90deg, #f4a200, #ffd700); border: none; border-radius: 8px; padding: 14px; font-weight: bold; color: #111; cursor: pointer; font-size: 16px; }
+        .reward-preview { background: rgba(255,170,0,0.05); border-radius: 8px; padding: 10px; margin: 15px 0; display: flex; justify-content: space-between; align-items: center; }
+        .reward-preview span { color: #ccc; font-size: 13px; }
+        .reward-preview strong { color: #f90; font-size: 16px; }
+        .stake-btn { width: 100%; background: linear-gradient(90deg, #f4a200, #ffd700); border: none; border-radius: 8px; padding: 14px; font-weight: bold; color: #111; cursor: pointer; box-shadow: 0 4px 15px rgba(255,170,0,0.3); font-size: 16px; }
         .order-list-title { font-size: 16px; color: #f90; margin-bottom: 12px; }
-        .stake-card { background: rgba(16,26,46,0.8); border: 1px solid rgba(0,180,255,0.15); border-radius: 14px; padding: 14px; margin-bottom: 10px; }
-        .stake-card-header { display: flex; justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 10px; }
-        .stake-card-id { font-size: 15px; color: #c8d6e5; font-weight: 600; }
-        .stake-card-status { padding: 3px 12px; border-radius: 12px; font-size: 11px; font-weight: 600; }
-        .status-active { background: rgba(255,215,0,0.15); color: #ffd93d; }
-        .status-ready { background: rgba(0,230,118,0.15); color: #7bed9f; }
-        .status-redeemed { background: rgba(150,150,150,0.2); color: #999; }
-        .stake-row { display: flex; justify-content: space-between; padding: 4px 0; font-size: 13px; }
-        .stake-label { color: #6a8aae; }
-        .stake-value { color: #c8d6e5; }
-        .stake-value.rate { color: #00d4ff; }
-        .stake-interest-box { background: rgba(0,0,0,0.25); border-radius: 10px; padding: 10px; margin: 8px 0; }
-        .stake-actions { display: flex; gap: 8px; margin-top: 8px; }
-        .stake-actions button { flex: 1; padding: 8px; border-radius: 8px; border: none; font-size: 12px; font-weight: 600; cursor: pointer; }
-        .btn-claim { background: rgba(0,180,255,0.2); color: #00d4ff; }
-        .btn-redeem { background: rgba(0,230,118,0.15); color: #7bed9f; }
-        .btn-early { background: rgba(255,71,87,0.15); color: #ff6b6b; }
-        button:disabled { opacity: 0.3; }
-        .empty-msg { text-align: center; color: #6a8aae; padding: 30px 0; }
+        .stake-card { background: rgba(16, 26, 46, 0.7); border: 1px solid rgba(0, 180, 255, 0.12); border-radius: 16px; padding: 16px; margin-bottom: 14px; backdrop-filter: blur(8px); }
+        .stake-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .stake-id { font-weight: 600; color: #c8d6e5; font-size: 17px; }
+        .stake-status { padding: 4px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .status-active { background: rgba(255, 215, 0, 0.15); color: #ffd93d; }
+        .status-ready { background: rgba(0, 230, 118, 0.15); color: #7bed9f; }
+        .status-redeemed { background: rgba(100, 100, 100, 0.2); color: #8a8a8a; }
+        .info-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
+        .info-row .label { color: #6a8aae; font-size: 13px; }
+        .info-row .value { color: #c8d6e5; font-size: 13px; font-weight: 500; }
+        .info-row .rate { color: #00d4ff; }
+        .stake-interest { background: rgba(0, 0, 0, 0.2); border-radius: 10px; padding: 10px 14px; margin: 10px 0; }
+        .stake-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+        .stake-actions .btn { flex: 1; padding: 9px 10px; border: none; border-radius: 10px; font-weight: 500; cursor: pointer; min-width: 90px; font-size: 12px; transition: all 0.2s; }
+        .btn-primary { background: rgba(0, 180, 255, 0.15); color: #00d4ff; }
+        .btn-success { background: rgba(0, 230, 118, 0.12); color: #7bed9f; }
+        .btn-danger { background: rgba(255, 71, 87, 0.12); color: #ff6b6b; }
+        .countdown { color: #ffd93d; font-weight: 600; }
+        .pending-interest { color: #ffd93d; font-weight: 600; }
+        .skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.03) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 6px; }
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        .skeleton-row { display: flex; justify-content: space-between; padding: 8px 0; align-items: center; }
+        .skeleton-label { width: 55px; height: 14px; }
+        .skeleton-value { width: 90px; height: 14px; }
+        .skeleton-interest { background: rgba(0,0,0,0.2); border-radius: 10px; padding: 10px 14px; margin: 10px 0; }
+        .skeleton-btn { width: 100%; height: 36px; border-radius: 10px; }
         .bottom-nav { flex-shrink: 0; background: rgba(15,15,30,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,153,0,0.15); border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.9); display: flex; justify-content: space-around; padding: 12px 0; margin: 0 15px 15px 15px; position: relative; }
         .bottom-nav::before { content: ''; position: absolute; top: -1px; left: -1px; right: -1px; bottom: -1px; border-radius: 20px; padding: 1px; background: linear-gradient(135deg, #f90, transparent, #f90); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: #666; font-size: 11px; gap: 4px; cursor: pointer; padding: 5px 10px; transition: all 0.2s ease; text-decoration: none; }
@@ -62,49 +78,36 @@
 <body>
     <div class="app-container">
         <div class="scroll-area">
-            <div class="header">
-                <div class="logo-area">🚀 <span>BCBS</span></div>
-                <button id="connectWalletBtn" class="connect-btn">Connect wallet</button>
-            </div>
+            <div class="header"><div class="logo-area">🚀 <span>BCBS</span></div><div class="header-controls"><button class="lang-btn">🇺🇸 EN ⌄</button><button id="connectWalletBtn" class="connect-btn">Connect wallet</button></div></div>
             <div class="page-title">🔒 质押挖矿</div>
-            <div class="panel"><span>🪙 AIGC 100 | 💵 USDT 100</span> <button class="faucet-btn" id="claimFaucetBtn">领取测试币</button></div>
+            <div class="panel faucet-panel"><div class="faucet-info"><div class="faucet-item">🪙 AIGC <span style="color:#f90;">100</span></div><div class="faucet-item">💵 USDT <span style="color:#f90;">100</span></div></div><button class="faucet-btn" id="claimFaucetBtn">领取测试币</button></div>
             <div class="panel">
-                <div class="tab-container">
-                    <div class="tab-btn active" data-coin="AIGC">AIGC</div>
-                    <div class="tab-btn" data-coin="USDT">USDT</div>
-                </div>
-                <div class="balance-info"><span>余额: <span id="availableBalance">0.00</span> <span id="coinLabel">AIGC</span></span><span class="max-btn" id="maxBtn">MAX</span></div>
-                <div class="amount-input-wrapper"><input type="number" id="stakeAmount" placeholder="0" value="0"><span style="color:#f90;" id="currencyDisplay">AIGC</span></div>
+                <div class="tab-container"><div class="tab-btn active" data-coin="AIGC">AIGC</div><div class="tab-btn" data-coin="USDT">USDT</div></div>
+                <div class="balance-info"><span>可质押余额: <span id="availableBalance">0.00</span> <span id="coinLabel">AIGC</span></span><span class="max-btn" id="maxBtn">MAX</span></div>
+                <div class="amount-input-wrapper"><input type="number" id="stakeAmount" placeholder="0.00" value="0"><span id="currencyDisplay" style="color:#f90;">AIGC</span></div>
                 <div style="color:#ccc;font-size:13px;margin-bottom:8px;">选择质押周期</div>
-                <div class="period-grid">
-                    <div class="period-btn active" data-period="0">7天<span class="rate-label">日利率0.8%</span></div>
-                    <div class="period-btn" data-period="1">35天<span class="rate-label">日利率1.3%</span></div>
-                    <div class="period-btn" data-period="2">180天<span class="rate-label">日利率1.8%</span></div>
-                    <div class="period-btn" data-period="3">360天<span class="rate-label">日利率2.1%</span></div>
-                    <div class="period-btn" data-period="4">540天<span class="rate-label">日利率2.3%</span></div>
-                    <div class="period-btn" data-period="5">720天<span class="rate-label">日利率2.6%</span></div>
-                </div>
+                <div class="period-grid"><div class="period-btn active" data-period="0">7天<span class="rate-label">日利率0.8%</span></div><div class="period-btn" data-period="1">35天<span class="rate-label">日利率1.3%</span></div><div class="period-btn" data-period="2">180天<span class="rate-label">日利率1.8%</span></div><div class="period-btn" data-period="3">360天<span class="rate-label">日利率2.1%</span></div><div class="period-btn" data-period="4">540天<span class="rate-label">日利率2.3%</span></div><div class="period-btn" data-period="5">720天<span class="rate-label">日利率2.6%</span></div></div>
+                <div class="reward-preview"><span>预计可获得利息</span><strong id="estimatedReward">0.00 BCBS</strong></div>
                 <button class="stake-btn" id="stakeSubmitBtn">立即质押</button>
             </div>
-            <div class="panel">
-                <div class="order-list-title">📋 我的质押订单</div>
-                <div id="orderListContainer"><div class="empty-msg">连接钱包后查看</div></div>
-            </div>
+            <div class="panel"><div class="order-list-title">📋 我的质押订单</div><div id="orderListContainer"><div class="stake-card"><div class="stake-header"><div class="skeleton" style="width:40px;height:17px;"></div><div class="skeleton" style="width:70px;height:24px;border-radius:20px;"></div></div><div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value"></div></div><div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value"></div></div><div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value" style="width:140px;"></div></div><div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value" style="width:140px;"></div></div><div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value"></div></div><div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value" style="width:120px;"></div></div><div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value" style="width:50px;"></div></div><div class="skeleton-interest"><div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value"></div></div><div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value" style="width:80px;"></div></div></div><div class="stake-actions"><div class="skeleton skeleton-btn"></div><div class="skeleton skeleton-btn"></div></div></div></div></div>
         </div>
-        <div class="bottom-nav">
-            <a href="index.html" class="nav-item"><span class="icon">💼</span><span>资产</span></a>
-            <a href="stake.html" class="nav-item active"><span class="icon">🔒</span><span>质押</span></a>
-            <a href="liquidity.html" class="nav-item"><span class="icon">💧</span><span>流动性</span></a>
-            <a href="invite.html" class="nav-item"><span class="icon">📨</span><span>邀请</span></a>
-            <a href="ecosystem.html" class="nav-item"><span class="icon">🌐</span><span>生态</span></a>
-        </div>
+        <div class="bottom-nav"><a href="index.html" class="nav-item"><span class="icon">💼</span><span>资产</span></a><a href="stake.html" class="nav-item active"><span class="icon">🔒</span><span>质押</span></a><a href="liquidity.html" class="nav-item"><span class="icon">💧</span><span>流动性</span></a><a href="invite.html" class="nav-item"><span class="icon">📨</span><span>邀请</span></a><a href="ecosystem.html" class="nav-item"><span class="icon">🌐</span><span>生态</span></a></div>
     </div>
 
     <script>
         // ========== 合约地址 ==========
-        const BCBS_ADDR = '0xC2ED87266c9F35eeb6715624264A8163A361FCd7';
-        const AIGC_ADDR = '0x49CaB5FCE501e3209d1933a745413D061879AA7a';
-        const USDT_ADDR = '0x55d398326f99059fF775485246999027B3197955';
+        const AIGC_ADDRESS = '0x49CaB5FCE501e3209d1933a745413D061879AA7a';
+        const BCBS_ADDRESS = '0xC2ED87266c9F35eeb6715624264A8163A361FCd7';
+        const USDT_ADDRESS = '0x55d398326f99059fF775485246999027B3197955';
+
+        // ========== ABI（只读+写入）==========
+        const ERC20_ABI = [
+            "function balanceOf(address) view returns (uint256)",
+            "function decimals() view returns (uint8)",
+            "function approve(address,uint256) returns (bool)",
+            "function allowance(address,address) view returns (uint256)"
+        ];
 
         const STAKE_ABI = [
             "function getUserStakeIds(address) view returns (uint256[])",
@@ -117,285 +120,195 @@
             "function redeemPrincipal(uint256) returns (bool)",
             "function redeemPrincipalEarly(uint256) returns (bool)"
         ];
-        const ERC20_ABI = ["function balanceOf(address) view returns (uint256)","function decimals() view returns (uint8)","function approve(address,uint256) returns (bool)","function allowance(address,address) view returns (uint256)"];
 
-        // ========== 全局变量 ==========
-        let currentAccount = null;
-        let signer = null;
-        let writeProvider = null;
-        const container = document.getElementById('orderListContainer');
+        let provider, signer, currentAccount, stakeContract, aigcContract, usdtContract;
         const connectBtn = document.getElementById('connectWalletBtn');
+        const stakeBtn = document.getElementById('stakeSubmitBtn');
         const periodDays = [7, 35, 180, 360, 540, 720];
-        let currentPeriod = 0;
-        let currentCoin = 'AIGC';
+        const dailyRates = [0.008, 0.013, 0.018, 0.021, 0.023, 0.026];
+        let currentCoin = 'AIGC', currentPeriod = 0, countdownTimer = null;
 
-        // ========== RPC ==========
-        const rpc = new ethers.providers.JsonRpcProvider('https://bsc-dataseed1.binance.org');
-        const stakeRead = new ethers.Contract(BCBS_ADDR, STAKE_ABI, rpc);
+        // ========== 工具函数 ==========
+        function fAmt(a, d = 18) { if (!a || a === '0') return '0.0000'; return parseFloat(ethers.utils.formatUnits(a, d)).toFixed(4); }
+        function fTs(t) { if (!t || t === '0') return '--'; return new Date(t * 1000).toLocaleString('zh-CN', { year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false }); }
+        function fRm(end) { const r = end - Math.floor(Date.now()/1000); if (r <= 0) return '已到期 ✅'; const d = Math.floor(r/86400), h = Math.floor((r%86400)/3600), m = Math.floor((r%3600)/60); return d > 0 ? `${d}天${h}时${m}分` : h > 0 ? `${h}时${m}分` : `${m}分`; }
+        function pNm(p) { const m = {0:{n:'7 天',t:'35 分钟'},1:{n:'35 天',t:'175 分钟'},2:{n:'180 天',t:'15 小时'},3:{n:'360 天',t:'30 小时'},4:{n:'540 天',t:'45 小时'},5:{n:'720 天',t:'60 小时'}}; return m[p]||{n:'未知',t:'--'}; }
+        function dRt(p) { const m = {0:'0.8%',1:'1.3%',2:'1.8%',3:'2.1%',4:'2.3%',5:'2.6%'}; return m[p]||'--'; }
+        function stL(redeemed, endTime) { if (redeemed) return {t:'已赎回 ✅',c:'status-redeemed'}; return Math.floor(Date.now()/1000) >= endTime ? {t:'可赎回 🟢',c:'status-ready'} : {t:'⏳ 质押中',c:'status-active'}; }
 
-        // ========== 格式化 ==========
-        const fmt = (a, d = 18) => a && a !== '0' ? parseFloat(ethers.utils.formatUnits(a, d)).toFixed(4) : '0.0000';
-        const ts = t => t ? new Date(t * 1000).toLocaleString('zh-CN') : '--';
-
-        // ========== 连接钱包 ==========
-        async function doConnect() {
-            if (typeof window.ethereum === 'undefined') {
-                alert('请安装 MetaMask 或使用 Trust Wallet 内置浏览器');
-                return;
-            }
+        function initContracts() {
+            if (!provider || !signer) return false;
             try {
-                // 请求账户权限
-                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                if (accounts.length === 0) {
-                    alert('未获取到账户，请检查钱包是否解锁');
-                    return;
-                }
-                currentAccount = accounts[0];
-                writeProvider = new ethers.providers.Web3Provider(window.ethereum);
-                signer = writeProvider.getSigner();
-                
-                // 更新按钮
-                const short = `${currentAccount.substring(0,6)}...${currentAccount.substring(currentAccount.length-4)}`;
-                connectBtn.textContent = short;
-                connectBtn.classList.add('connected');
-                
-                console.log('✅ 钱包已连接:', currentAccount);
-                
-                // 加载数据
-                await loadOrders();
-                await updateBalance();
+                stakeContract = new ethers.Contract(BCBS_ADDRESS, STAKE_ABI, signer);
+                aigcContract = new ethers.Contract(AIGC_ADDRESS, ERC20_ABI, signer);
+                usdtContract = new ethers.Contract(USDT_ADDRESS, ERC20_ABI, signer);
+                console.log('✅ 合约初始化成功');
+                return true;
             } catch (e) {
-                console.error('连接失败:', e);
-                if (e.code === 4001) {
-                    alert('您拒绝了连接请求，请在 MetaMask 中重新授权');
-                } else {
-                    alert('连接失败: ' + e.message);
-                }
+                console.error('❌ 合约初始化失败:', e.message);
+                return false;
             }
         }
 
-        // 绑定点击事件
-        connectBtn.addEventListener('click', doConnect);
+        async function getDecimals(c) { try { return await c.decimals(); } catch (e) { return 18; } }
+        async function refreshAll() { if (!currentAccount) return; updateBalance(); updateRewardPreview(); await loadOrders(); }
+        async function updateBalance() {
+            try {
+                const c = currentCoin === 'AIGC' ? aigcContract : usdtContract;
+                if (!c) { document.getElementById('availableBalance').textContent = '0.00'; return; }
+                const b = await c.balanceOf(currentAccount);
+                document.getElementById('availableBalance').textContent = ethers.utils.formatUnits(b, await getDecimals(c));
+            } catch (e) { document.getElementById('availableBalance').textContent = '0.00'; }
+        }
+        function updateRewardPreview() { document.getElementById('estimatedReward').textContent = `${((parseFloat(document.getElementById('stakeAmount').value)||0) * dailyRates[currentPeriod] * periodDays[currentPeriod]).toFixed(4)} BCBS`; }
 
-        // 断开连接
-        connectBtn.addEventListener('click', function() {
-            if (this.classList.contains('connected')) {
-                // 已连接状态点击 = 断开
-                if (confirm('断开钱包连接？')) {
-                    currentAccount = null;
-                    signer = null;
-                    writeProvider = null;
-                    this.textContent = 'Connect wallet';
-                    this.classList.remove('connected');
-                    document.getElementById('availableBalance').textContent = '0.00';
-                    container.innerHTML = '<div class="empty-msg">连接钱包后查看</div>';
-                    console.log('❌ 钱包已断开');
-                }
-            }
-        }, { once: false });
+        // ========== 事件 ==========
+        document.getElementById('claimFaucetBtn').addEventListener('click', () => { if (!currentAccount) { alert('请先连接钱包'); return; } alert('领取测试币成功（模拟）'); updateBalance(); });
+        document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', function() { document.querySelectorAll('.tab-btn').forEach(x => x.classList.remove('active')); this.classList.add('active'); currentCoin = this.dataset.coin; document.getElementById('coinLabel').textContent = currentCoin; document.getElementById('currencyDisplay').textContent = currentCoin; document.getElementById('stakeAmount').value = '0'; updateBalance(); updateRewardPreview(); }));
+        document.querySelectorAll('.period-btn').forEach(b => b.addEventListener('click', function() { document.querySelectorAll('.period-btn').forEach(x => x.classList.remove('active')); this.classList.add('active'); currentPeriod = parseInt(this.dataset.period); updateRewardPreview(); }));
+        document.getElementById('maxBtn').addEventListener('click', () => { document.getElementById('stakeAmount').value = document.getElementById('availableBalance').textContent; updateRewardPreview(); });
+        document.getElementById('stakeAmount').addEventListener('input', updateRewardPreview);
 
-        // 重新绑定：已连接时点击断开，未连接时点击连接
-        connectBtn.addEventListener('click', function(e) {
-            if (this.classList.contains('connected')) {
-                e.stopImmediatePropagation();
-            }
+        // ========== 质押 ==========
+        stakeBtn.addEventListener('click', async () => {
+            if (!currentAccount) { alert('请先连接钱包'); return; }
+            const amt = document.getElementById('stakeAmount').value;
+            if (!amt || parseFloat(amt) <= 0) { alert('请输入有效的质押数量'); return; }
+            const tc = currentCoin === 'AIGC' ? aigcContract : usdtContract;
+            const d = await getDecimals(tc);
+            const amtW = ethers.utils.parseUnits(amt, d);
+            stakeBtn.disabled = true; stakeBtn.textContent = '检查授权中...';
+            try {
+                const alw = await tc.allowance(currentAccount, BCBS_ADDRESS);
+                if (alw.lt(amtW)) { stakeBtn.textContent = '授权中...'; const tx = await tc.approve(BCBS_ADDRESS, ethers.constants.MaxUint256); await tx.wait(); stakeBtn.textContent = '质押中...'; }
+                const sf = currentCoin === 'AIGC' ? stakeContract.stakeAIGC : stakeContract.stakeUSDT;
+                const tx = await sf(amtW, currentPeriod, { gasLimit: 500000 }); await tx.wait();
+                alert('✅ 质押成功！'); document.getElementById('stakeAmount').value = '0'; updateRewardPreview(); refreshAll();
+            } catch (e) { alert('质押失败: ' + (e.reason || e.message)); }
+            finally { stakeBtn.disabled = false; stakeBtn.textContent = '立即质押'; }
         });
 
-        // ========== 自动连接（页面加载时）==========
-        async function autoConnect() {
-            if (typeof window.ethereum === 'undefined') return;
-            try {
-                const provider = new ethers.providers.Web3Provider(window.ethereum);
-                const accounts = await provider.listAccounts();
-                if (accounts.length > 0) {
-                    currentAccount = accounts[0];
-                    writeProvider = provider;
-                    signer = provider.getSigner();
-                    const short = `${currentAccount.substring(0,6)}...${currentAccount.substring(currentAccount.length-4)}`;
-                    connectBtn.textContent = short;
-                    connectBtn.classList.add('connected');
-                    console.log('🔄 自动连接:', currentAccount);
-                    await loadOrders();
-                    await updateBalance();
-                }
-            } catch (e) {
-                console.log('自动连接跳过:', e.message);
-            }
-        }
+        // ========== 空卡片/骨架屏 ==========
+        function emptyCard() { return `<div class="stake-card"><div class="stake-header"><span class="stake-id"># --</span><span class="stake-status status-active">⏳ 质押中</span></div><div class="info-row"><span class="label">质押资产</span><span class="value">--</span></div><div class="info-row"><span class="label">质押数量</span><span class="value">0.0000</span></div><div class="info-row"><span class="label">质押时间</span><span class="value">--</span></div><div class="info-row"><span class="label">到期时间</span><span class="value">--</span></div><div class="info-row"><span class="label">剩余时间</span><span class="value">--</span></div><div class="info-row"><span class="label">周期</span><span class="value">--</span></div><div class="info-row"><span class="label">日利率</span><span class="value rate">--</span></div><div class="stake-interest"><div class="info-row"><span class="label">已领取利息</span><span class="value">0.0000 BCBS</span></div><div class="info-row"><span class="label">待领取利息</span><span class="value pending-interest">0.0000 BCBS</span></div></div><div class="stake-actions"><button class="btn btn-primary" disabled>💰 领取利息</button><button class="btn btn-success" disabled>🔓 赎回本金</button></div></div>`; }
+        function skel() { return `<div class="stake-card"><div class="stake-header"><div class="skeleton" style="width:40px;height:17px;"></div><div class="skeleton" style="width:70px;height:24px;border-radius:20px;"></div></div><div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value"></div></div><div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value"></div></div><div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value" style="width:140px;"></div></div><div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value" style="width:140px;"></div></div><div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value"></div></div><div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value" style="width:120px;"></div></div><div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value" style="width:50px;"></div></div><div class="skeleton-interest"><div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value"></div></div><div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value" style="width:80px;"></div></div></div><div class="stake-actions"><div class="skeleton skeleton-btn"></div><div class="skeleton skeleton-btn"></div></div></div>`; }
 
-        // 监听账户变化
-        if (window.ethereum) {
-            window.ethereum.on('accountsChanged', (accs) => {
-                console.log('账户变化:', accs);
-                if (accs.length === 0) {
-                    currentAccount = null;
-                    signer = null;
-                    connectBtn.textContent = 'Connect wallet';
-                    connectBtn.classList.remove('connected');
-                    container.innerHTML = '<div class="empty-msg">连接钱包后查看</div>';
-                } else {
-                    currentAccount = accs[0];
-                    writeProvider = new ethers.providers.Web3Provider(window.ethereum);
-                    signer = writeProvider.getSigner();
-                    const short = `${currentAccount.substring(0,6)}...${currentAccount.substring(currentAccount.length-4)}`;
-                    connectBtn.textContent = short;
-                    connectBtn.classList.add('connected');
-                    loadOrders();
-                    updateBalance();
-                }
-            });
-        }
+        function startCountdown() { if (countdownTimer) clearInterval(countdownTimer); countdownTimer = setInterval(() => { document.querySelectorAll('.countdown').forEach(el => { const t = parseInt(el.dataset.endTime); if (t) el.textContent = fRm(t); }); }, 10000); }
 
-        // ========== 更新余额 ==========
-        async function updateBalance() {
-            if (!currentAccount) return;
-            try {
-                const c = currentCoin === 'AIGC' ? new ethers.Contract(AIGC_ADDR, ERC20_ABI, rpc) : new ethers.Contract(USDT_ADDR, ERC20_ABI, rpc);
-                const b = await c.balanceOf(currentAccount);
-                document.getElementById('availableBalance').textContent = ethers.utils.formatUnits(b, 18);
-            } catch (e) {
-                document.getElementById('availableBalance').textContent = '0.00';
-            }
-        }
-
-        // ========== 加载订单 ==========
+        // ========== 核心：加载订单（带调试）==========
         async function loadOrders() {
+            const container = document.getElementById('orderListContainer');
+            
+            // 未连接钱包
             if (!currentAccount) {
-                container.innerHTML = '<div class="empty-msg">连接钱包后查看</div>';
+                console.log('⏸️ 未连接钱包，显示骨架屏');
+                container.innerHTML = skel();
                 return;
             }
-            container.innerHTML = '<div class="empty-msg">⏳ 查询中...</div>';
+            
+            // 合约未初始化
+            if (!stakeContract) {
+                console.warn('⚠️ stakeContract 未初始化，尝试重新初始化...');
+                if (!initContracts()) {
+                    container.innerHTML = '<div style="text-align:center;color:#ff6b6b;padding:20px;">合约初始化失败</div>';
+                    return;
+                }
+            }
+
+            // 显示骨架屏
+            container.innerHTML = skel();
+
             try {
-                const ids = await Promise.race([
-                    stakeRead.getUserStakeIds(currentAccount),
-                    new Promise((_, reject) => setTimeout(() => reject(new Error('查询超时，请检查网络')), 8000))
-                ]);
-                console.log('📡 订单IDs:', ids.map(i => i.toString()));
-                
+                // 步骤1：获取用户质押ID列表
+                console.log('📡 查询用户质押ID列表, 地址:', currentAccount);
+                const ids = await stakeContract.getUserStakeIds(currentAccount);
+                console.log('📡 返回质押ID列表:', ids.map(id => id.toString()));
+
+                // 步骤2：无数据
                 if (ids.length === 0) {
-                    container.innerHTML = '<div class="empty-msg">📭 暂无质押订单</div>';
+                    console.log('📭 该用户暂无质押订单');
+                    container.innerHTML = emptyCard();
                     return;
                 }
 
+                // 步骤3：遍历获取详情
+                console.log(`📡 共 ${ids.length} 个订单，开始获取详情...`);
                 let html = '';
                 for (const id of ids) {
-                    const s = await stakeRead.getStakeInfo(id);
-                    const p = await stakeRead.getPendingInterest(id);
-                    const coin = s.tokenType === 0 ? 'AIGC' : 'USDT';
-                    const end = parseInt(s.startTime) + periodDays[s.period] * 86400;
-                    const redeemed = s.redeemed;
-                    const expired = Date.now()/1000 >= end;
-                    const stText = redeemed ? '已赎回' : (expired ? '可赎回' : '质押中');
-                    const stCls = redeemed ? 'status-redeemed' : (expired ? 'status-ready' : 'status-active');
-                    const pv = parseFloat(fmt(p));
-                    
+                    console.log(`📡 获取订单 #${id} 详情...`);
+                    const s = await stakeContract.getStakeInfo(id);
+                    console.log(`📡 订单 #${id} 详情:`, {
+                        id: s.id.toString(),
+                        user: s.user,
+                        tokenType: s.tokenType,
+                        amount: s.amount.toString(),
+                        startTime: s.startTime.toString(),
+                        period: s.period,
+                        redeemed: s.redeemed,
+                        lastClaimTime: s.lastClaimTime.toString(),
+                        accumulatedClaimed: s.accumulatedClaimed.toString()
+                    });
+
+                    const p = await stakeContract.getPendingInterest(id);
+                    console.log(`📡 订单 #${id} 待领取利息:`, p.toString());
+
+                    const tokenName = s.tokenType === 0 ? 'AIGC' : 'USDT';
+                    const decimals = s.tokenType === 0 ? await getDecimals(aigcContract) : await getDecimals(usdtContract);
+                    const pi = pNm(s.period);
+                    const dr = dRt(s.period);
+                    const endTime = parseInt(s.startTime) + (parseInt(periodDays[s.period]) * 86400);
+                    const st = stL(s.redeemed, endTime);
+                    const pv = parseFloat(fAmt(p));
+                    const isR = s.redeemed, isReady = st.t.includes('可赎回');
+
                     html += `<div class="stake-card">
-                        <div class="stake-card-header"><span class="stake-card-id">#${id}</span><span class="stake-card-status ${stCls}">${stText}</span></div>
-                        <div class="stake-row"><span class="stake-label">资产</span><span class="stake-value">${coin}</span></div>
-                        <div class="stake-row"><span class="stake-label">数量</span><span class="stake-value">${fmt(s.amount)} ${coin}</span></div>
-                        <div class="stake-row"><span class="stake-label">开始</span><span class="stake-value">${ts(s.startTime)}</span></div>
-                        <div class="stake-row"><span class="stake-label">到期</span><span class="stake-value">${ts(end)}</span></div>
-                        <div class="stake-row"><span class="stake-label">周期</span><span class="stake-value">${periodDays[s.period]}天</span></div>
-                        <div class="stake-row"><span class="stake-label">日利率</span><span class="stake-value rate">${['0.8%','1.3%','1.8%','2.1%','2.3%','2.6%'][s.period]}</span></div>
-                        <div class="stake-interest-box">
-                            <div class="stake-row"><span class="stake-label">已领利息</span><span class="stake-value">${fmt(s.accumulatedClaimed)} BCBS</span></div>
-                            <div class="stake-row"><span class="stake-label">待领利息</span><span class="stake-value" style="color:#ffd93d;">${fmt(p)} BCBS</span></div>
+                        <div class="stake-header"><span class="stake-id"># ${id}</span><span class="stake-status ${st.c}">${st.t}</span></div>
+                        <div class="info-row"><span class="label">质押资产</span><span class="value">${tokenName}</span></div>
+                        <div class="info-row"><span class="label">质押数量</span><span class="value">${fAmt(s.amount, decimals)} ${tokenName}</span></div>
+                        <div class="info-row"><span class="label">质押时间</span><span class="value">${fTs(s.startTime)}</span></div>
+                        <div class="info-row"><span class="label">到期时间</span><span class="value">${fTs(endTime)}</span></div>
+                        <div class="info-row"><span class="label">剩余时间</span><span class="value countdown" data-end-time="${endTime}">${fRm(endTime)}</span></div>
+                        <div class="info-row"><span class="label">周期</span><span class="value">${pi.n} (测试版 ${pi.t})</span></div>
+                        <div class="info-row"><span class="label">日利率</span><span class="value rate">${dr}</span></div>
+                        <div class="stake-interest">
+                            <div class="info-row"><span class="label">已领取利息</span><span class="value">${fAmt(s.accumulatedClaimed)} BCBS</span></div>
+                            <div class="info-row"><span class="label">待领取利息</span><span class="value pending-interest">${fAmt(p)} BCBS</span></div>
                         </div>
-                        ${!redeemed ? `<div class="stake-actions">
-                            <button class="btn-claim" onclick="doClaim(${id})" ${pv<=0?'disabled':''}>💰 领取利息</button>
-                            ${expired ? `<button class="btn-redeem" onclick="doRedeem(${id})">🔓 赎回本金</button>` : `<button class="btn-early" onclick="doEarly(${id})">⚠️ 提前赎回</button>`}
-                        </div>` : ''}
+                        <div class="stake-actions">
+                            <button class="btn btn-primary" data-id="${id}" data-action="claim" ${isR || pv <= 0 ? 'disabled' : ''}>💰 领取利息</button>
+                            ${isReady ? `<button class="btn btn-success" data-id="${id}" data-action="redeem">🔓 赎回本金</button>` : `<button class="btn btn-danger" data-id="${id}" data-action="early" ${isR ? 'disabled' : ''}>⚠️ 提前赎回</button>`}
+                        </div>
                     </div>`;
                 }
+                console.log('✅ 订单渲染完成');
                 container.innerHTML = html;
-                console.log('✅ 渲染完成');
+                startCountdown();
+
+                // 绑定按钮事件
+                document.querySelectorAll('.btn:not([disabled])').forEach(b => b.addEventListener('click', async function() {
+                    const id = this.dataset.id, act = this.dataset.action;
+                    this.disabled = true; const ot = this.textContent; this.textContent = '处理中...';
+                    try {
+                        if (act === 'claim') { const pe = await stakeContract.getPendingInterest(id); const fe = await stakeContract.getBnbRequiredForClaim(pe); const tx = await stakeContract.claimInterest(id, { value: fe, gasLimit: 300000 }); await tx.wait(); alert('✅ 利息领取成功！'); }
+                        else if (act === 'redeem') { if (!confirm('确认赎回本金？')) { this.disabled = false; this.textContent = ot; return; } const tx = await stakeContract.redeemPrincipal(id, { gasLimit: 300000 }); await tx.wait(); alert('✅ 本金已赎回！'); }
+                        else if (act === 'early') { if (!confirm('⚠️ 提前赎回将扣除30%本金，确定继续？')) { this.disabled = false; this.textContent = ot; return; } const tx = await stakeContract.redeemPrincipalEarly(id, { gasLimit: 300000 }); await tx.wait(); alert('⚠️ 提前赎回完成'); }
+                        loadOrders();
+                    } catch (e) { alert('操作失败: ' + (e.reason || e.message)); this.disabled = false; this.textContent = ot; }
+                }));
+
             } catch (e) {
-                console.error('❌ 加载失败:', e.message);
-                container.innerHTML = `<div class="empty-msg">加载失败: ${e.message}</div>`;
+                console.error('❌ 订单加载失败:', e);
+                container.innerHTML = '<div style="text-align:center;color:#ff6b6b;padding:20px;">加载失败: ' + e.message + '</div>';
             }
         }
 
-        // ========== 操作（全局函数）==========
-        window.doClaim = async function(id) {
-            if (!signer) return alert('请先连接钱包');
-            const sc = new ethers.Contract(BCBS_ADDR, STAKE_ABI, signer);
-            try {
-                const p = await stakeRead.getPendingInterest(id);
-                const fee = await stakeRead.getBnbRequiredForClaim(p);
-                const tx = await sc.claimInterest(id, { value: fee, gasLimit: 300000 });
-                await tx.wait();
-                alert('✅ 利息领取成功！');
-                loadOrders();
-            } catch (e) { alert('失败: ' + (e.reason || e.message)); }
-        };
-        window.doRedeem = async function(id) {
-            if (!signer) return alert('请先连接钱包');
-            if (!confirm('确认赎回本金？')) return;
-            const sc = new ethers.Contract(BCBS_ADDR, STAKE_ABI, signer);
-            try {
-                const tx = await sc.redeemPrincipal(id, { gasLimit: 300000 });
-                await tx.wait();
-                alert('✅ 本金已赎回！');
-                loadOrders();
-            } catch (e) { alert('失败: ' + (e.reason || e.message)); }
-        };
-        window.doEarly = async function(id) {
-            if (!signer) return alert('请先连接钱包');
-            if (!confirm('⚠️ 提前赎回将扣除30%本金，确定继续？')) return;
-            const sc = new ethers.Contract(BCBS_ADDR, STAKE_ABI, signer);
-            try {
-                const tx = await sc.redeemPrincipalEarly(id, { gasLimit: 300000 });
-                await tx.wait();
-                alert('⚠️ 提前赎回完成');
-                loadOrders();
-            } catch (e) { alert('失败: ' + (e.reason || e.message)); }
-        };
-
-        // ========== UI 事件 ==========
-        document.getElementById('claimFaucetBtn').addEventListener('click', () => {
-            if (!currentAccount) return alert('请先连接钱包');
-            alert('领取测试币（模拟）');
-            updateBalance();
-        });
-        document.getElementById('maxBtn').addEventListener('click', () => {
-            document.getElementById('stakeAmount').value = document.getElementById('availableBalance').textContent;
-        });
-        document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', function() {
-            document.querySelectorAll('.tab-btn').forEach(x => x.classList.remove('active'));
-            this.classList.add('active');
-            currentCoin = this.dataset.coin;
-            document.getElementById('coinLabel').textContent = currentCoin;
-            document.getElementById('currencyDisplay').textContent = currentCoin;
-            updateBalance();
-        }));
-        document.querySelectorAll('.period-btn').forEach(b => b.addEventListener('click', function() {
-            document.querySelectorAll('.period-btn').forEach(x => x.classList.remove('active'));
-            this.classList.add('active');
-            currentPeriod = parseInt(this.dataset.period);
-        }));
-        document.getElementById('stakeSubmitBtn').addEventListener('click', async () => {
-            if (!signer) return alert('请先连接钱包');
-            const amt = document.getElementById('stakeAmount').value;
-            if (!amt || parseFloat(amt) <= 0) return alert('请输入有效的质押数量');
-            const tc = new ethers.Contract(currentCoin === 'AIGC' ? AIGC_ADDR : USDT_ADDR, ERC20_ABI, signer);
-            const sc = new ethers.Contract(BCBS_ADDR, STAKE_ABI, signer);
-            const amtW = ethers.utils.parseUnits(amt, 18);
-            try {
-                const alw = await tc.allowance(currentAccount, BCBS_ADDR);
-                if (alw.lt(amtW)) {
-                    const tx = await tc.approve(BCBS_ADDR, ethers.constants.MaxUint256);
-                    await tx.wait();
-                }
-                const tx = await (currentCoin === 'AIGC' ? sc.stakeAIGC(amtW, currentPeriod) : sc.stakeUSDT(amtW, currentPeriod));
-                await tx.wait();
-                alert('✅ 质押成功！');
-                loadOrders();
-                updateBalance();
-            } catch (e) { alert('质押失败: ' + (e.reason || e.message)); }
-        });
-
-        // ========== 启动 ==========
-        autoConnect();
+        function updateUIForConnected(acc) { connectBtn.textContent = `${acc.substring(0,6)}...${acc.substring(acc.length-4)}`; connectBtn.classList.add('connected'); connectBtn.onclick = disconnectWallet; }
+        function setDisconnectedUI() { connectBtn.textContent = 'Connect wallet'; connectBtn.classList.remove('connected'); connectBtn.onclick = connectWallet; document.getElementById('availableBalance').textContent = '0.00'; document.getElementById('orderListContainer').innerHTML = skel(); }
+        async function connectWallet() { if (typeof window.ethereum === 'undefined') { alert('请安装MetaMask'); return; } const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' }); currentAccount = accounts[0]; provider = new ethers.providers.Web3Provider(window.ethereum); signer = provider.getSigner(); initContracts(); updateUIForConnected(currentAccount); refreshAll(); }
+        function disconnectWallet() { currentAccount = null; signer = null; setDisconnectedUI(); if (countdownTimer) clearInterval(countdownTimer); }
+        function handleAccountsChanged(accounts) { if (accounts.length === 0) disconnectWallet(); else { currentAccount = accounts[0]; provider = new ethers.providers.Web3Provider(window.ethereum); signer = provider.getSigner(); initContracts(); updateUIForConnected(currentAccount); refreshAll(); } }
+        async function autoConnect() { if (typeof window.ethereum !== 'undefined') { provider = new ethers.providers.Web3Provider(window.ethereum); try { const accounts = await provider.listAccounts(); if (accounts.length > 0) { currentAccount = accounts[0]; signer = provider.getSigner(); initContracts(); updateUIForConnected(currentAccount); refreshAll(); } else setDisconnectedUI(); } catch (e) { setDisconnectedUI(); } window.ethereum.on('accountsChanged', handleAccountsChanged); window.ethereum.on('chainChanged', () => window.location.reload()); } else { connectBtn.textContent = 'No Wallet'; connectBtn.disabled = true; } }
+        window.addEventListener('load', autoConnect);
     </script>
+    <script async src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js" onload="autoConnect"></script>
 </body>
 </html>
