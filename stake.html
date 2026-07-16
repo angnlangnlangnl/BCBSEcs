@@ -17,7 +17,7 @@
         .lang-btn { background: transparent; border: 1px solid #333; color: #aaa; padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer; }
         .connect-btn { background: transparent; border: 1px solid #f90; color: #f90; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; box-shadow: 0 0 10px rgba(255,153,0,0.1); transition: all 0.2s; white-space: nowrap; }
         .connect-btn.connected { background: rgba(255,153,0,0.2); border-color: #ffaa00; color: #ffd700; }
-        .connect-btn:disabled, .stake-btn:disabled, .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .connect-btn:disabled, .stake-btn:disabled, .btn:disabled { opacity: 0.35; cursor: not-allowed; }
         .panel { background: rgba(20,20,30,0.6); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #333; position: relative; box-shadow: inset 0 0 20px rgba(255,170,0,0.02); }
         .panel::before { content: ''; position: absolute; top: -1px; left: -1px; right: -1px; bottom: -1px; border-radius: 12px; padding: 1px; background: linear-gradient(135deg, #f90, transparent, #f90); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
         .page-title { font-size: 24px; color: #f90; text-align: center; margin: 10px 0 20px; }
@@ -63,13 +63,13 @@
         .info-row .rate { color: #00d4ff; }
         .stake-interest { background: rgba(0, 0, 0, 0.2); border-radius: 10px; padding: 10px 14px; margin: 10px 0; }
         .stake-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
-        .stake-actions .btn { flex: 1; padding: 9px 10px; border: none; border-radius: 10px; font-weight: 500; cursor: pointer; min-width: 90px; font-size: 12px; }
+        .stake-actions .btn { flex: 1; padding: 9px 10px; border: none; border-radius: 10px; font-weight: 500; cursor: pointer; min-width: 90px; font-size: 12px; transition: all 0.2s; }
         .btn-primary { background: rgba(0, 180, 255, 0.15); color: #00d4ff; }
-        .btn-primary:hover { background: rgba(0, 180, 255, 0.25); }
+        .btn-primary:hover:not(:disabled) { background: rgba(0, 180, 255, 0.25); }
         .btn-success { background: rgba(0, 230, 118, 0.12); color: #7bed9f; }
-        .btn-success:hover { background: rgba(0, 230, 118, 0.2); }
+        .btn-success:hover:not(:disabled) { background: rgba(0, 230, 118, 0.2); }
         .btn-danger { background: rgba(255, 71, 87, 0.12); color: #ff6b6b; }
-        .btn-danger:hover { background: rgba(255, 71, 87, 0.2); }
+        .btn-danger:hover:not(:disabled) { background: rgba(255, 71, 87, 0.2); }
         .countdown { color: #ffd93d; font-weight: 600; }
         .pending-interest { color: #ffd93d; font-weight: 600; }
 
@@ -86,9 +86,6 @@
         .skeleton-value { width: 90px; height: 14px; }
         .skeleton-interest { background: rgba(0,0,0,0.2); border-radius: 10px; padding: 10px 14px; margin: 10px 0; }
         .skeleton-btn { width: 100%; height: 36px; border-radius: 10px; }
-
-        .empty-state { text-align: center; padding: 30px 0; color: #6a8aae; }
-        .empty-state .icon { font-size: 44px; margin-bottom: 8px; }
 
         .bottom-nav { flex-shrink: 0; background: rgba(15,15,30,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,153,0,0.15); border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.9); display: flex; justify-content: space-around; padding: 12px 0; margin: 0 15px 15px 15px; position: relative; }
         .bottom-nav::before { content: ''; position: absolute; top: -1px; left: -1px; right: -1px; bottom: -1px; border-radius: 20px; padding: 1px; background: linear-gradient(135deg, #f90, transparent, #f90); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
@@ -119,7 +116,6 @@
             <div class="panel">
                 <div class="order-list-title">📋 我的质押订单</div>
                 <div id="orderListContainer">
-                    <!-- 默认显示骨架屏 -->
                     <div class="stake-card">
                         <div class="stake-header"><div class="skeleton" style="width:40px;height:17px;"></div><div class="skeleton" style="width:70px;height:24px;border-radius:20px;"></div></div>
                         <div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value"></div></div>
@@ -130,6 +126,7 @@
                         <div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value" style="width:120px;"></div></div>
                         <div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value" style="width:50px;"></div></div>
                         <div class="skeleton-interest"><div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value"></div></div><div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value" style="width:80px;"></div></div></div>
+                        <div class="stake-actions"><div class="skeleton skeleton-btn"></div><div class="skeleton skeleton-btn"></div></div>
                     </div>
                 </div>
             </div>
@@ -189,55 +186,54 @@
             finally { stakeBtn.disabled = false; stakeBtn.textContent = '立即质押'; }
         });
 
-        // ========== 骨架屏模板 ==========
-        function renderSkeleton(count = 1) {
-            let html = '';
-            for (let i = 0; i < count; i++) {
-                html += `
-                    <div class="stake-card">
-                        <div class="stake-header"><div class="skeleton" style="width:40px;height:17px;"></div><div class="skeleton" style="width:70px;height:24px;border-radius:20px;"></div></div>
-                        <div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value"></div></div>
-                        <div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value"></div></div>
-                        <div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value" style="width:140px;"></div></div>
-                        <div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value" style="width:140px;"></div></div>
-                        <div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value"></div></div>
-                        <div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value" style="width:120px;"></div></div>
-                        <div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value" style="width:50px;"></div></div>
-                        <div class="skeleton-interest"><div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value"></div></div><div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value" style="width:80px;"></div></div></div>
-                    </div>`;
-            }
-            return html;
+        // ========== 渲染卡片 ==========
+        function renderEmptyCard() {
+            return `
+                <div class="stake-card">
+                    <div class="stake-header"><span class="stake-id"># --</span><span class="stake-status status-active">⏳ 质押中</span></div>
+                    <div class="info-row"><span class="label">质押资产</span><span class="value">--</span></div>
+                    <div class="info-row"><span class="label">质押数量</span><span class="value">0.0000</span></div>
+                    <div class="info-row"><span class="label">质押时间</span><span class="value">--</span></div>
+                    <div class="info-row"><span class="label">到期时间</span><span class="value">--</span></div>
+                    <div class="info-row"><span class="label">剩余时间</span><span class="value">--</span></div>
+                    <div class="info-row"><span class="label">周期</span><span class="value">--</span></div>
+                    <div class="info-row"><span class="label">日利率</span><span class="value rate">--</span></div>
+                    <div class="stake-interest">
+                        <div class="info-row"><span class="label">已领取利息</span><span class="value">0.0000 BCBS</span></div>
+                        <div class="info-row"><span class="label">待领取利息</span><span class="value pending-interest">0.0000 BCBS</span></div>
+                    </div>
+                    <div class="stake-actions">
+                        <button class="btn btn-primary" disabled>💰 领取利息</button>
+                        <button class="btn btn-success" disabled>🔓 赎回本金</button>
+                    </div>
+                </div>`;
+        }
+
+        function renderSkeleton() {
+            return `
+                <div class="stake-card">
+                    <div class="stake-header"><div class="skeleton" style="width:40px;height:17px;"></div><div class="skeleton" style="width:70px;height:24px;border-radius:20px;"></div></div>
+                    <div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value"></div></div>
+                    <div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value"></div></div>
+                    <div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value" style="width:140px;"></div></div>
+                    <div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value" style="width:140px;"></div></div>
+                    <div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value"></div></div>
+                    <div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value" style="width:120px;"></div></div>
+                    <div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value" style="width:50px;"></div></div>
+                    <div class="skeleton-interest"><div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value"></div></div><div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value" style="width:80px;"></div></div></div>
+                    <div class="stake-actions"><div class="skeleton skeleton-btn"></div><div class="skeleton skeleton-btn"></div></div>
+                </div>`;
         }
 
         function startCountdown() { if (countdownTimer) clearInterval(countdownTimer); countdownTimer = setInterval(() => { document.querySelectorAll('.countdown').forEach(el => { const t = parseInt(el.dataset.endTime); if (t) el.textContent = formatRemainingTime(t); }); }, 10000); }
 
         async function loadOrders() {
             const container = document.getElementById('orderListContainer');
-            if (!currentAccount) { container.innerHTML = renderSkeleton(1); return; }
-            if (!stakeContract) { container.innerHTML = renderSkeleton(1); return; }
-            // 显示骨架屏
-            container.innerHTML = renderSkeleton(1);
+            if (!currentAccount) { container.innerHTML = renderSkeleton(); return; }
+            container.innerHTML = renderSkeleton();
             try {
                 const ids = await stakeContract.getUserStakeIds(currentAccount);
-                // 无数据时显示标题为0的卡片
-                if (ids.length === 0) {
-                    container.innerHTML = `
-                        <div class="stake-card">
-                            <div class="stake-header"><span class="stake-id"># --</span><span class="stake-status status-active">⏳ 质押中</span></div>
-                            <div class="info-row"><span class="label">质押资产</span><span class="value">--</span></div>
-                            <div class="info-row"><span class="label">质押数量</span><span class="value">0.0000</span></div>
-                            <div class="info-row"><span class="label">质押时间</span><span class="value">--</span></div>
-                            <div class="info-row"><span class="label">到期时间</span><span class="value">--</span></div>
-                            <div class="info-row"><span class="label">剩余时间</span><span class="value">--</span></div>
-                            <div class="info-row"><span class="label">周期</span><span class="value">--</span></div>
-                            <div class="info-row"><span class="label">日利率</span><span class="value rate">--</span></div>
-                            <div class="stake-interest">
-                                <div class="info-row"><span class="label">已领取利息</span><span class="value">0.0000 BCBS</span></div>
-                                <div class="info-row"><span class="label">待领取利息</span><span class="value pending-interest">0.0000 BCBS</span></div>
-                            </div>
-                        </div>`;
-                    return;
-                }
+                if (ids.length === 0) { container.innerHTML = renderEmptyCard(); return; }
                 let html = '';
                 for (const id of ids) {
                     const stake = await stakeContract.getStakeInfo(id);
@@ -249,6 +245,8 @@
                     const endTime = parseInt(stake.startTime) + (parseInt(periodDays[stake.period]) * 86400);
                     const status = getStatusLabel(stake.redeemed, endTime);
                     const pendingVal = parseFloat(formatTokenAmount(pending));
+                    const isRedeemed = stake.redeemed;
+                    const isReady = status.text.includes('可赎回');
                     html += `
                         <div class="stake-card">
                             <div class="stake-header"><span class="stake-id"># ${id}</span><span class="stake-status ${status.cls}">${status.text}</span></div>
@@ -263,34 +261,20 @@
                                 <div class="info-row"><span class="label">已领取利息</span><span class="value">${formatTokenAmount(stake.accumulatedClaimed)} BCBS</span></div>
                                 <div class="info-row"><span class="label">待领取利息</span><span class="value pending-interest">${formatTokenAmount(pending)} BCBS</span></div>
                             </div>
-                            ${!stake.redeemed ? `<div class="stake-actions">${pendingVal > 0 ? `<button class="btn btn-primary" data-id="${id}" data-action="claim">💰 领取利息</button>` : ''}${status.text.includes('可赎回') ? `<button class="btn btn-success" data-id="${id}" data-action="redeem">🔓 赎回本金</button>` : `<button class="btn btn-danger" data-id="${id}" data-action="early">⚠️ 提前赎回</button>`}</div>` : ''}
+                            <div class="stake-actions">
+                                <button class="btn btn-primary" data-id="${id}" data-action="claim" ${isRedeemed || pendingVal <= 0 ? 'disabled' : ''}>💰 领取利息</button>
+                                ${isReady ? `<button class="btn btn-success" data-id="${id}" data-action="redeem">🔓 赎回本金</button>` : `<button class="btn btn-danger" data-id="${id}" data-action="early" ${isRedeemed ? 'disabled' : ''}>⚠️ 提前赎回</button>`}
+                            </div>
                         </div>`;
                 }
                 container.innerHTML = html;
                 startCountdown();
                 bindOrderActions();
-            } catch (e) {
-                // 加载失败时显示标题为0的卡片
-                container.innerHTML = `
-                    <div class="stake-card">
-                        <div class="stake-header"><span class="stake-id"># --</span><span class="stake-status status-active">⏳ 质押中</span></div>
-                        <div class="info-row"><span class="label">质押资产</span><span class="value">--</span></div>
-                        <div class="info-row"><span class="label">质押数量</span><span class="value">0.0000</span></div>
-                        <div class="info-row"><span class="label">质押时间</span><span class="value">--</span></div>
-                        <div class="info-row"><span class="label">到期时间</span><span class="value">--</span></div>
-                        <div class="info-row"><span class="label">剩余时间</span><span class="value">--</span></div>
-                        <div class="info-row"><span class="label">周期</span><span class="value">--</span></div>
-                        <div class="info-row"><span class="label">日利率</span><span class="value rate">--</span></div>
-                        <div class="stake-interest">
-                            <div class="info-row"><span class="label">已领取利息</span><span class="value">0.0000 BCBS</span></div>
-                            <div class="info-row"><span class="label">待领取利息</span><span class="value pending-interest">0.0000 BCBS</span></div>
-                        </div>
-                    </div>`;
-            }
+            } catch (e) { container.innerHTML = renderEmptyCard(); }
         }
 
         function bindOrderActions() {
-            document.querySelectorAll('.btn').forEach(btn => btn.addEventListener('click', async function() {
+            document.querySelectorAll('.btn:not([disabled])').forEach(btn => btn.addEventListener('click', async function() {
                 const id = this.dataset.id, action = this.dataset.action;
                 this.disabled = true; const origText = this.textContent; this.textContent = '处理中...';
                 try {
@@ -303,7 +287,7 @@
         }
 
         function updateUIForConnected(acc) { connectBtn.textContent = `${acc.substring(0,6)}...${acc.substring(acc.length-4)}`; connectBtn.classList.add('connected'); connectBtn.onclick = disconnectWallet; }
-        function setDisconnectedUI() { connectBtn.textContent = 'Connect wallet'; connectBtn.classList.remove('connected'); connectBtn.onclick = connectWallet; document.getElementById('availableBalance').textContent = '0.00'; document.getElementById('orderListContainer').innerHTML = renderSkeleton(1); }
+        function setDisconnectedUI() { connectBtn.textContent = 'Connect wallet'; connectBtn.classList.remove('connected'); connectBtn.onclick = connectWallet; document.getElementById('availableBalance').textContent = '0.00'; document.getElementById('orderListContainer').innerHTML = renderSkeleton(); }
         async function connectWallet() { if (typeof window.ethereum === 'undefined') { alert('请安装MetaMask'); return; } const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' }); currentAccount = accounts[0]; provider = new ethers.providers.Web3Provider(window.ethereum); signer = provider.getSigner(); initContracts(); updateUIForConnected(currentAccount); refreshAll(); }
         function disconnectWallet() { currentAccount = null; signer = null; setDisconnectedUI(); if (countdownTimer) clearInterval(countdownTimer); }
         function handleAccountsChanged(accounts) { if (accounts.length === 0) disconnectWallet(); else { currentAccount = accounts[0]; provider = new ethers.providers.Web3Provider(window.ethereum); signer = provider.getSigner(); initContracts(); updateUIForConnected(currentAccount); refreshAll(); } }
