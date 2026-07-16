@@ -1,14 +1,14 @@
+<!-- liquidity.html -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>流动性 - SpaceX Web3</title>
-    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
+    <title>流动性 - BCBS</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
         body { background-color: #050505; display: flex; justify-content: center; align-items: center; height: 100dvh; overflow: hidden; color: #ffffff; }
-        .app-container { width: 100%; max-width: 420px; height: 100dvh; background: radial-gradient(circle at center, #111 0%, #030303 100%); background-image: radial-gradient(circle at 10% 20%, rgba(255,170,0,0.05) 0%, transparent 20%), radial-gradient(circle at 90% 80%, rgba(255,170,0,0.05) 0%, transparent 20%); border-radius: 20px; box-shadow: 0 0 30px rgba(0,0,0,0.8); display: flex; flex-direction: column; position: relative; overflow: hidden; }
+        .app-container { width: 100%; max-width: 420px; height: 100dvh; background: radial-gradient(circle at center, #111 0%, #030303 100%); border-radius: 20px; box-shadow: 0 0 30px rgba(0,0,0,0.8); display: flex; flex-direction: column; position: relative; overflow: hidden; }
         .scroll-area { flex: 1; overflow-y: auto; padding: 15px; -webkit-overflow-scrolling: touch; }
         .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; }
         .logo-area { display: flex; align-items: center; font-size: 16px; font-weight: bold; background: linear-gradient(to right, #aaa, #fff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -32,82 +32,25 @@
 <body>
     <div class="app-container">
         <div class="scroll-area">
-            <div class="header">
-                <div class="logo-area">🚀 <span>SPACEX</span></div>
-                <div class="header-controls">
-                    <button class="lang-btn">🇺🇸 EN ⌄</button>
-                    <button id="connectWalletBtn" class="connect-btn">Connect wallet</button>
-                </div>
-            </div>
+            <div class="header"><div class="logo-area">🚀 <span>BCBS</span></div><div class="header-controls"><button class="lang-btn">🇺🇸 EN ⌄</button><button id="connectWalletBtn" class="connect-btn">Connect wallet</button></div></div>
             <div class="page-title">💧 流动性</div>
-            <div class="panel">
-                <div style="color:#f90;font-size:14px;font-weight:600;">添加流动性</div>
-                <div style="color:#aaa;font-size:12px;margin-bottom:12px;">为交易对提供流动性，赚取手续费奖励</div>
-                <button class="btn-primary">添加流动性</button>
-            </div>
+            <div class="panel"><div style="color:#f90;font-size:14px;font-weight:600;">添加流动性</div><div style="color:#aaa;font-size:12px;margin-bottom:12px;">为交易对提供流动性，赚取手续费奖励</div><button class="btn-primary">添加流动性</button></div>
         </div>
-        <div class="bottom-nav">
-            <a href="index.html" class="nav-item"><span class="icon">💼</span><span>资产</span></a>
-            <a href="stake.html" class="nav-item"><span class="icon">🔒</span><span>质押</span></a>
-            <a href="liquidity.html" class="nav-item active"><span class="icon">💧</span><span>流动性</span></a>
-            <a href="invite.html" class="nav-item"><span class="icon">📨</span><span>邀请</span></a>
-            <a href="ecosystem.html" class="nav-item"><span class="icon">🌐</span><span>生态</span></a>
-        </div>
+        <div class="bottom-nav"><a href="index.html" class="nav-item"><span class="icon">💼</span><span>资产</span></a><a href="stake.html" class="nav-item"><span class="icon">🔒</span><span>质押</span></a><a href="liquidity.html" class="nav-item active"><span class="icon">💧</span><span>流动性</span></a><a href="invite.html" class="nav-item"><span class="icon">📨</span><span>邀请</span></a><a href="ecosystem.html" class="nav-item"><span class="icon">🌐</span><span>生态</span></a></div>
     </div>
     <script>
-        const AIGC_ADDRESS = '0x059451F7f591E43a0Ad58616ed403dB64ab5e170';
+        const AIGC_ADDRESS = '0xD557878c5C1338cA21d8B4B344CB9BD84Ea83c7B';
         const BCBS_ADDRESS = '0xC2ED87266c9F35eeb6715624264A8163A361FCd7';
         const HSBC_ADDRESS = '0x20aD84A60902A91F036bD6bdB85AD1d61B2f65C1';
-
         let provider, signer, currentAccount;
         const connectBtn = document.getElementById('connectWalletBtn');
-
-        function updateUIForConnected(acc) {
-            connectBtn.textContent = `${acc.substring(0,6)}...${acc.substring(acc.length-4)}`;
-            connectBtn.classList.add('connected');
-            connectBtn.onclick = disconnectWallet;
-        }
-        function setDisconnectedUI() {
-            connectBtn.textContent = 'Connect wallet';
-            connectBtn.classList.remove('connected');
-            connectBtn.onclick = connectWallet;
-        }
-        async function connectWallet() {
-            if (typeof window.ethereum === 'undefined') { alert('请安装MetaMask'); return; }
-            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-            currentAccount = accounts[0];
-            provider = new ethers.providers.Web3Provider(window.ethereum);
-            signer = provider.getSigner();
-            updateUIForConnected(currentAccount);
-        }
-        function disconnectWallet() { currentAccount = null; signer = null; setDisconnectedUI(); }
-        function handleAccountsChanged(accounts) {
-            if (accounts.length === 0) disconnectWallet();
-            else {
-                currentAccount = accounts[0];
-                provider = new ethers.providers.Web3Provider(window.ethereum);
-                signer = provider.getSigner();
-                updateUIForConnected(currentAccount);
-            }
-        }
-
-        // ========== 自动连接 ==========
-        async function autoConnect() {
-            if (typeof window.ethereum !== 'undefined') {
-                provider = new ethers.providers.Web3Provider(window.ethereum);
-                try {
-                    const accounts = await provider.listAccounts();
-                    if (accounts.length > 0) {
-                        currentAccount = accounts[0];
-                        signer = provider.getSigner();
-                        updateUIForConnected(currentAccount);
-                    } else setDisconnectedUI();
-                } catch (e) { setDisconnectedUI(); }
-                window.ethereum.on('accountsChanged', handleAccountsChanged);
-                window.ethereum.on('chainChanged', () => window.location.reload());
-            }
-        }
-        window.addEventListener('load', autoConnect);
+        function updateUIForConnected(acc){ connectBtn.textContent=`${acc.substring(0,6)}...${acc.substring(acc.length-4)}`; connectBtn.classList.add('connected'); connectBtn.onclick=disconnectWallet; }
+        function setDisconnectedUI(){ connectBtn.textContent='Connect wallet'; connectBtn.classList.remove('connected'); connectBtn.onclick=connectWallet; }
+        async function connectWallet(){ if(typeof window.ethereum==='undefined'){ alert('请安装MetaMask'); return; } const accounts=await window.ethereum.request({method:'eth_requestAccounts'}); currentAccount=accounts[0]; provider=new ethers.providers.Web3Provider(window.ethereum); signer=provider.getSigner(); updateUIForConnected(currentAccount); }
+        function disconnectWallet(){ currentAccount=null; signer=null; setDisconnectedUI(); }
+        function handleAccountsChanged(accounts){ if(accounts.length===0)disconnectWallet(); else{ currentAccount=accounts[0]; provider=new ethers.providers.Web3Provider(window.ethereum); signer=provider.getSigner(); updateUIForConnected(currentAccount); } }
+        async function autoConnect(){ if(typeof window.ethereum!=='undefined'){ provider=new ethers.providers.Web3Provider(window.ethereum); try{ const accounts=await provider.listAccounts(); if(accounts.length>0){ currentAccount=accounts[0]; signer=provider.getSigner(); updateUIForConnected(currentAccount); }else setDisconnectedUI(); }catch(e){ setDisconnectedUI(); } window.ethereum.on('accountsChanged',handleAccountsChanged); window.ethereum.on('chainChanged',()=>window.location.reload()); } }
+        window.addEventListener('load',autoConnect);
     </script>
     <script async src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js" onload="autoConnect"></script>
 </body>
