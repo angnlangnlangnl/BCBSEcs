@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>质押 - SpaceX Web3</title>
-    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
+    <title>质押 - BCBS</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
         body { background-color: #050505; display: flex; justify-content: center; align-items: center; height: 100dvh; overflow: hidden; color: #ffffff; }
-        .app-container { width: 100%; max-width: 420px; height: 100dvh; background: radial-gradient(circle at center, #111 0%, #030303 100%); background-image: radial-gradient(circle at 10% 20%, rgba(255,170,0,0.05) 0%, transparent 20%), radial-gradient(circle at 90% 80%, rgba(255,170,0,0.05) 0%, transparent 20%); border-radius: 20px; box-shadow: 0 0 30px rgba(0,0,0,0.8); display: flex; flex-direction: column; position: relative; overflow: hidden; }
+        .app-container { width: 100%; max-width: 420px; height: 100dvh; background: radial-gradient(circle at center, #111 0%, #030303 100%); border-radius: 20px; box-shadow: 0 0 30px rgba(0,0,0,0.8); display: flex; flex-direction: column; position: relative; overflow: hidden; }
         .scroll-area { flex: 1; overflow-y: auto; padding: 15px; -webkit-overflow-scrolling: touch; }
         .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; }
         .logo-area { display: flex; align-items: center; font-size: 16px; font-weight: bold; background: linear-gradient(to right, #aaa, #fff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -60,251 +59,47 @@
 <body>
     <div class="app-container">
         <div class="scroll-area">
-            <div class="header">
-                <div class="logo-area">🚀 <span>SPACEX</span></div>
-                <div class="header-controls">
-                    <button class="lang-btn">🇺🇸 EN ⌄</button>
-                    <button id="connectWalletBtn" class="connect-btn">Connect wallet</button>
-                </div>
-            </div>
+            <div class="header"><div class="logo-area">🚀 <span>BCBS</span></div><div class="header-controls"><button class="lang-btn">🇺🇸 EN ⌄</button><button id="connectWalletBtn" class="connect-btn">Connect wallet</button></div></div>
             <div class="page-title">🔒 质押挖矿</div>
-            <div class="panel faucet-panel">
-                <div class="faucet-info">
-                    <div class="faucet-item"><span style="font-size:20px;">🪙</span><span style="color:#ccc;">AIGC</span><span class="faucet-amount">100</span></div>
-                    <div class="faucet-item"><span style="font-size:20px;">💵</span><span style="color:#ccc;">USDT</span><span class="faucet-amount">100</span></div>
-                </div>
-                <button class="faucet-btn" id="claimFaucetBtn">领取测试币</button>
-            </div>
+            <div class="panel faucet-panel"><div class="faucet-info"><div class="faucet-item"><span style="font-size:20px;">🪙</span><span style="color:#ccc;">AIGC</span><span class="faucet-amount">100</span></div><div class="faucet-item"><span style="font-size:20px;">💵</span><span style="color:#ccc;">USDT</span><span class="faucet-amount">100</span></div></div><button class="faucet-btn" id="claimFaucetBtn">领取测试币</button></div>
             <div class="panel">
-                <div class="tab-container">
-                    <div class="tab-btn active" data-coin="AIGC">AIGC</div>
-                    <div class="tab-btn" data-coin="USDT">USDT</div>
-                </div>
-                <div class="balance-info">
-                    <span>可质押余额: <span id="availableBalance">0.00</span> <span id="coinLabel">AIGC</span></span>
-                    <span class="max-btn" id="maxBtn">MAX</span>
-                </div>
-                <div class="amount-input-wrapper">
-                    <input type="number" id="stakeAmount" placeholder="0.00" value="0">
-                    <span class="currency" id="currencyDisplay">AIGC</span>
-                </div>
+                <div class="tab-container"><div class="tab-btn active" data-coin="AIGC">AIGC</div><div class="tab-btn" data-coin="USDT">USDT</div></div>
+                <div class="balance-info"><span>可质押余额: <span id="availableBalance">0.00</span> <span id="coinLabel">AIGC</span></span><span class="max-btn" id="maxBtn">MAX</span></div>
+                <div class="amount-input-wrapper"><input type="number" id="stakeAmount" placeholder="0.00" value="0"><span class="currency" id="currencyDisplay">AIGC</span></div>
                 <div style="color:#ccc;font-size:13px;margin-bottom:8px;">选择质押周期</div>
-                <div class="period-grid">
-                    <div class="period-btn active" data-period="0">7天<span class="rate-label">日利率0.8%</span></div>
-                    <div class="period-btn" data-period="1">35天<span class="rate-label">日利率1.3%</span></div>
-                    <div class="period-btn" data-period="2">180天<span class="rate-label">日利率1.8%</span></div>
-                    <div class="period-btn" data-period="3">360天<span class="rate-label">日利率2.1%</span></div>
-                    <div class="period-btn" data-period="4">540天<span class="rate-label">日利率2.3%</span></div>
-                    <div class="period-btn" data-period="5">720天<span class="rate-label">日利率2.6%</span></div>
-                </div>
+                <div class="period-grid"><div class="period-btn active" data-period="0">7天<span class="rate-label">日利率0.8%</span></div><div class="period-btn" data-period="1">35天<span class="rate-label">日利率1.3%</span></div><div class="period-btn" data-period="2">180天<span class="rate-label">日利率1.8%</span></div><div class="period-btn" data-period="3">360天<span class="rate-label">日利率2.1%</span></div><div class="period-btn" data-period="4">540天<span class="rate-label">日利率2.3%</span></div><div class="period-btn" data-period="5">720天<span class="rate-label">日利率2.6%</span></div></div>
                 <button class="stake-btn" id="stakeSubmitBtn">立即质押</button>
             </div>
-            <div class="panel">
-                <div class="order-list-title">📋 我的质押订单</div>
-                <div id="orderListContainer"><div style="text-align:center;color:#888;">请先连接钱包</div></div>
-            </div>
+            <div class="panel"><div class="order-list-title">📋 我的质押订单</div><div id="orderListContainer"><div style="text-align:center;color:#888;">请先连接钱包</div></div></div>
         </div>
-        <div class="bottom-nav">
-            <a href="index.html" class="nav-item"><span class="icon">💼</span><span>资产</span></a>
-            <a href="stake.html" class="nav-item active"><span class="icon">🔒</span><span>质押</span></a>
-            <a href="liquidity.html" class="nav-item"><span class="icon">💧</span><span>流动性</span></a>
-            <a href="invite.html" class="nav-item"><span class="icon">📨</span><span>邀请</span></a>
-            <a href="ecosystem.html" class="nav-item"><span class="icon">🌐</span><span>生态</span></a>
-        </div>
+        <div class="bottom-nav"><a href="index.html" class="nav-item"><span class="icon">💼</span><span>资产</span></a><a href="stake.html" class="nav-item active"><span class="icon">🔒</span><span>质押</span></a><a href="liquidity.html" class="nav-item"><span class="icon">💧</span><span>流动性</span></a><a href="invite.html" class="nav-item"><span class="icon">📨</span><span>邀请</span></a><a href="ecosystem.html" class="nav-item"><span class="icon">🌐</span><span>生态</span></a></div>
     </div>
     <script>
-        const AIGC_ADDRESS = '0x059451F7f591E43a0Ad58616ed403dB64ab5e170';
+        const AIGC_ADDRESS = '0xD557878c5C1338cA21d8B4B344CB9BD84Ea83c7B';
         const BCBS_ADDRESS = '0xC2ED87266c9F35eeb6715624264A8163A361FCd7';
         const HSBC_ADDRESS = '0x20aD84A60902A91F036bD6bdB85AD1d61B2f65C1';
         const BCBSE_ADDRESS = '0x...';
-        const USDT_ADDRESS = '0x...';
-
-        let provider, signer, currentAccount;
-        let bcbseContract, aigcContract, usdtContract;
+        const USDT_ADDRESS = '0x55d398326f99059fF775485246999027B3197955';
+        let provider, signer, currentAccount, bcbseContract, aigcContract, usdtContract;
         const connectBtn = document.getElementById('connectWalletBtn');
         const periodDays = [7, 35, 180, 360, 540, 720];
-        let currentCoin = 'AIGC';
-        let currentPeriod = 0;
-
-        function initContracts() {
-            if (provider && signer) {
-                bcbseContract = new ethers.Contract(BCBSE_ADDRESS, [], signer);
-                aigcContract = new ethers.Contract(AIGC_ADDRESS, [], signer);
-                usdtContract = new ethers.Contract(USDT_ADDRESS, [], signer);
-            }
-        }
-
-        async function refreshAll() {
-            if (!currentAccount) return;
-            updateBalance();
-            loadOrders();
-        }
-
-        async function updateBalance() {
-            try {
-                const contract = currentCoin === 'AIGC' ? aigcContract : usdtContract;
-                const balance = await contract.balanceOf(currentAccount);
-                document.getElementById('availableBalance').textContent = ethers.utils.formatUnits(balance, currentCoin === 'USDT' ? 6 : 18);
-            } catch (e) { document.getElementById('availableBalance').textContent = '0.00'; }
-        }
-
-        document.getElementById('claimFaucetBtn').addEventListener('click', () => {
-            if (!currentAccount) { alert('请先连接钱包'); return; }
-            alert('领取测试币成功（模拟）');
-            updateBalance();
-        });
-
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                currentCoin = this.dataset.coin;
-                document.getElementById('coinLabel').textContent = currentCoin;
-                document.getElementById('currencyDisplay').textContent = currentCoin;
-                updateBalance();
-            });
-        });
-
-        document.querySelectorAll('.period-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                currentPeriod = parseInt(this.dataset.period);
-            });
-        });
-
-        document.getElementById('maxBtn').addEventListener('click', () => {
-            document.getElementById('stakeAmount').value = document.getElementById('availableBalance').textContent;
-        });
-
-        document.getElementById('stakeSubmitBtn').addEventListener('click', async () => {
-            if (!currentAccount) { alert('请先连接钱包'); return; }
-            const amount = document.getElementById('stakeAmount').value;
-            if (!amount || parseFloat(amount) <= 0) { alert('请输入有效的质押数量'); return; }
-            const decimals = currentCoin === 'USDT' ? 6 : 18;
-            const amountWei = ethers.utils.parseUnits(amount, decimals);
-            const tokenContract = currentCoin === 'AIGC' ? aigcContract : usdtContract;
-            try {
-                const allowance = await tokenContract.allowance(currentAccount, BCBSE_ADDRESS);
-                if (allowance.lt(amountWei)) {
-                    alert('需要授权代币，即将弹出授权交易...');
-                    const approveTx = await tokenContract.approve(BCBSE_ADDRESS, amountWei);
-                    await approveTx.wait();
-                }
-                const stakeFunc = currentCoin === 'AIGC' ? bcbseContract.stakeAIGC : bcbseContract.stakeUSDT;
-                const tx = await stakeFunc(amountWei, currentPeriod);
-                await tx.wait();
-                alert('质押成功！');
-                document.getElementById('stakeAmount').value = '0';
-                refreshAll();
-            } catch (e) { alert('操作失败: ' + e.message); }
-        });
-
-        async function loadOrders() {
-            const container = document.getElementById('orderListContainer');
-            if (!currentAccount) { container.innerHTML = '<div style="text-align:center;color:#888;">请先连接钱包</div>'; return; }
-            try {
-                const ids = await bcbseContract.getUserStakeIds(currentAccount);
-                if (ids.length === 0) { container.innerHTML = '<div style="text-align:center;color:#888;">暂无质押订单</div>'; return; }
-                let html = '';
-                for (const id of ids) {
-                    const stake = await bcbseContract.getStakeInfo(id);
-                    const pendingInterest = await bcbseContract.getPendingInterest(id);
-                    const tokenName = stake.tokenType === 0 ? 'AIGC' : 'USDT';
-                    const decimals = stake.tokenType === 0 ? 18 : 6;
-                    const amount = ethers.utils.formatUnits(stake.amount, decimals);
-                    const start = new Date(stake.startTime * 1000).toLocaleString();
-                    const periodDay = periodDays[stake.period];
-                    const expireTime = stake.startTime + periodDay * (60 * 60 * 24);
-                    const expire = new Date(expireTime * 1000).toLocaleString();
-                    const claimed = ethers.utils.formatEther(stake.accumulatedClaimed);
-                    const pending = ethers.utils.formatEther(pendingInterest);
-                    const isExpired = Date.now()/1000 >= expireTime;
-                    const redeemed = stake.redeemed;
-                    let status = redeemed ? '已赎回' : (isExpired ? '已到期' : '活跃');
-                    html += `
-                        <div class="order-item">
-                            <div class="order-row">
-                                <div class="order-field"><span class="order-label">ID</span><br><span class="order-value">#${id}</span></div>
-                                <div class="order-field"><span class="order-label">币种</span><br><span class="order-value">${tokenName}</span></div>
-                                <div class="order-field"><span class="order-label">数量</span><br><span class="order-value">${amount}</span></div>
-                                <div class="order-field"><span class="order-label">周期</span><br><span class="order-value">${periodDay}天</span></div>
-                            </div>
-                            <div class="order-row">
-                                <div class="order-field"><span class="order-label">开始</span><br><span class="order-value">${start}</span></div>
-                                <div class="order-field"><span class="order-label">到期</span><br><span class="order-value">${expire}</span></div>
-                                <div class="order-field"><span class="order-label">已领利息</span><br><span class="order-value">${claimed} BCBSE</span></div>
-                                <div class="order-field"><span class="order-label">待领利息</span><br><span class="order-value">${pending} BCBSE</span></div>
-                            </div>
-                            <div class="order-row">
-                                <div class="order-field"><span class="order-label">状态</span><br><span class="order-value" style="color:${redeemed?'#ff5252':'#4caf50'}">${status}</span></div>
-                            </div>
-                            ${!redeemed ? `
-                            <div class="order-actions">
-                                ${parseFloat(pending) > 0 ? `<button class="action-btn claim-btn" data-id="${id}">领取利息</button>` : ''}
-                                ${isExpired ? `<button class="action-btn redeem-btn" data-id="${id}">赎回本金</button>` : `<button class="action-btn early-btn" data-id="${id}">提前赎回(扣30%)</button>`}
-                            </div>` : ''}
-                        </div>
-                    `;
-                }
-                container.innerHTML = html;
-            } catch (e) { container.innerHTML = '<div style="text-align:center;color:#888;">订单加载失败</div>'; }
-        }
-
-        function updateUIForConnected(acc) {
-            connectBtn.textContent = `${acc.substring(0,6)}...${acc.substring(acc.length-4)}`;
-            connectBtn.classList.add('connected');
-            connectBtn.onclick = disconnectWallet;
-        }
-        function setDisconnectedUI() {
-            connectBtn.textContent = 'Connect wallet';
-            connectBtn.classList.remove('connected');
-            connectBtn.onclick = connectWallet;
-            document.getElementById('availableBalance').textContent = '0.00';
-            document.getElementById('orderListContainer').innerHTML = '<div style="text-align:center;color:#888;">请先连接钱包</div>';
-        }
-        async function connectWallet() {
-            if (typeof window.ethereum === 'undefined') { alert('请安装MetaMask'); return; }
-            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-            currentAccount = accounts[0];
-            provider = new ethers.providers.Web3Provider(window.ethereum);
-            signer = provider.getSigner();
-            initContracts();
-            updateUIForConnected(currentAccount);
-            refreshAll();
-        }
-        function disconnectWallet() { currentAccount = null; signer = null; setDisconnectedUI(); }
-        function handleAccountsChanged(accounts) {
-            if (accounts.length === 0) disconnectWallet();
-            else {
-                currentAccount = accounts[0];
-                provider = new ethers.providers.Web3Provider(window.ethereum);
-                signer = provider.getSigner();
-                initContracts();
-                updateUIForConnected(currentAccount);
-                refreshAll();
-            }
-        }
-
-        // ========== 自动连接 ==========
-        async function autoConnect() {
-            if (typeof window.ethereum !== 'undefined') {
-                provider = new ethers.providers.Web3Provider(window.ethereum);
-                try {
-                    const accounts = await provider.listAccounts();
-                    if (accounts.length > 0) {
-                        currentAccount = accounts[0];
-                        signer = provider.getSigner();
-                        initContracts();
-                        updateUIForConnected(currentAccount);
-                        refreshAll();
-                    } else setDisconnectedUI();
-                } catch (e) { setDisconnectedUI(); }
-                window.ethereum.on('accountsChanged', handleAccountsChanged);
-                window.ethereum.on('chainChanged', () => window.location.reload());
-            } else { connectBtn.textContent = 'No Wallet'; connectBtn.disabled = true; }
-        }
-        window.addEventListener('load', autoConnect);
+        let currentCoin = 'AIGC', currentPeriod = 0;
+        function initContracts() { if(provider&&signer){ bcbseContract=new ethers.Contract(BCBSE_ADDRESS,[],signer); aigcContract=new ethers.Contract(AIGC_ADDRESS,[],signer); usdtContract=new ethers.Contract(USDT_ADDRESS,[],signer); } }
+        async function refreshAll(){ if(!currentAccount)return; updateBalance(); loadOrders(); }
+        async function updateBalance(){ try{ const contract=currentCoin==='AIGC'?aigcContract:usdtContract; const balance=await contract.balanceOf(currentAccount); document.getElementById('availableBalance').textContent=ethers.utils.formatUnits(balance,currentCoin==='USDT'?6:18); }catch(e){ document.getElementById('availableBalance').textContent='0.00'; } }
+        document.getElementById('claimFaucetBtn').addEventListener('click',()=>{ if(!currentAccount){ alert('请先连接钱包'); return; } alert('领取测试币成功（模拟）'); updateBalance(); });
+        document.querySelectorAll('.tab-btn').forEach(btn=>{ btn.addEventListener('click',function(){ document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active'); currentCoin=this.dataset.coin; document.getElementById('coinLabel').textContent=currentCoin; document.getElementById('currencyDisplay').textContent=currentCoin; updateBalance(); }); });
+        document.querySelectorAll('.period-btn').forEach(btn=>{ btn.addEventListener('click',function(){ document.querySelectorAll('.period-btn').forEach(b=>b.classList.remove('active')); this.classList.add('active'); currentPeriod=parseInt(this.dataset.period); }); });
+        document.getElementById('maxBtn').addEventListener('click',()=>{ document.getElementById('stakeAmount').value=document.getElementById('availableBalance').textContent; });
+        document.getElementById('stakeSubmitBtn').addEventListener('click',async()=>{ if(!currentAccount){ alert('请先连接钱包'); return; } const amount=document.getElementById('stakeAmount').value; if(!amount||parseFloat(amount)<=0){ alert('请输入有效的质押数量'); return; } alert('质押功能待BCBSE合约配置'); });
+        async function loadOrders(){ const container=document.getElementById('orderListContainer'); if(!currentAccount){ container.innerHTML='<div style="text-align:center;color:#888;">请先连接钱包</div>'; return; } container.innerHTML='<div style="text-align:center;color:#888;">暂无质押订单</div>'; }
+        function updateUIForConnected(acc){ connectBtn.textContent=`${acc.substring(0,6)}...${acc.substring(acc.length-4)}`; connectBtn.classList.add('connected'); connectBtn.onclick=disconnectWallet; }
+        function setDisconnectedUI(){ connectBtn.textContent='Connect wallet'; connectBtn.classList.remove('connected'); connectBtn.onclick=connectWallet; document.getElementById('availableBalance').textContent='0.00'; document.getElementById('orderListContainer').innerHTML='<div style="text-align:center;color:#888;">请先连接钱包</div>'; }
+        async function connectWallet(){ if(typeof window.ethereum==='undefined'){ alert('请安装MetaMask'); return; } const accounts=await window.ethereum.request({method:'eth_requestAccounts'}); currentAccount=accounts[0]; provider=new ethers.providers.Web3Provider(window.ethereum); signer=provider.getSigner(); initContracts(); updateUIForConnected(currentAccount); refreshAll(); }
+        function disconnectWallet(){ currentAccount=null; signer=null; setDisconnectedUI(); }
+        function handleAccountsChanged(accounts){ if(accounts.length===0)disconnectWallet(); else{ currentAccount=accounts[0]; provider=new ethers.providers.Web3Provider(window.ethereum); signer=provider.getSigner(); initContracts(); updateUIForConnected(currentAccount); refreshAll(); } }
+        async function autoConnect(){ if(typeof window.ethereum!=='undefined'){ provider=new ethers.providers.Web3Provider(window.ethereum); try{ const accounts=await provider.listAccounts(); if(accounts.length>0){ currentAccount=accounts[0]; signer=provider.getSigner(); initContracts(); updateUIForConnected(currentAccount); refreshAll(); }else setDisconnectedUI(); }catch(e){ setDisconnectedUI(); } window.ethereum.on('accountsChanged',handleAccountsChanged); window.ethereum.on('chainChanged',()=>window.location.reload()); }else{ connectBtn.textContent='No Wallet'; connectBtn.disabled=true; } }
+        window.addEventListener('load',autoConnect);
     </script>
     <script async src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js" onload="autoConnect"></script>
 </body>
