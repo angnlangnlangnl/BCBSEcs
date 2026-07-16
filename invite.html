@@ -118,7 +118,8 @@
                 <div class="progress-area">
                     <div class="progress-header"><span>考核进度</span><span class="right" id="progressPercent">0.00%</span></div>
                     <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%;"></div></div>
-                    <div class="progress-footer"><span>个人持币目标: <span id="bcbseBalance">0.00</span> BCBSE</span><span id="progressDetail">业绩0/500</span></div>
+                    <!-- ✅ 修改：个人持币目标改为 持币量/等级任务量 -->
+                    <div class="progress-footer"><span>个人持币目标: <span id="bcbseBalance">0.00</span> / <span id="targetHolding">10.00</span> BCBS</span><span id="progressDetail">业绩0/500</span></div>
                     <div style="margin-top:12px;">
                         <div class="direct-row"><span>直推任务：15节点</span><span>完成直推目标: <span id="completedNodes">0</span>节点</span></div>
                         <div class="node-progress" id="nodeProgress"></div>
@@ -217,6 +218,9 @@
         const TARGET_NODES = 15;
         const TARGET_PERFORMANCE = 500;
 
+        // ✅ 等级持币任务量表（对应 S1-S8 条件利率的持币要求）
+        const HOLDING_TARGETS = [0, 10, 60, 100, 200, 1000, 3000, 6000, 10000];
+
         function initContracts() {
             if (provider && signer) {
                 hsbcContract = new ethers.Contract(HSBC_ADDRESS, HSBC_ABI, signer);
@@ -299,12 +303,45 @@
             }
         }
 
+        // ✅ 修改：获取BCBS持币量 + 对应等级任务量
         async function updateBalanceAndTarget() {
             if (!bcbsContract) return;
+
+            let bcbsBalance = 0;
+            let identityLevel = 0;
+            let targetHolding = 10; // 默认 S1 目标
+
             try {
-                const balance = await bcbsContract.balanceOf(currentAccount);
-                document.getElementById('bcbseBalance').textContent = parseFloat(ethers.utils.formatEther(balance)).toFixed(4);
-            } catch (e) {}
+                // 获取 BCBS 持币量
+                const balanceRaw = await bcbsContract.balanceOf(currentAccount);
+                bcbsBalance = parseFloat(ethers.utils.formatEther(balanceRaw));
+
+                // 获取当前身份等级
+                try {
+                    const rawIdentity = await aigcContract.identityLevel(currentAccount);
+                    identityLevel = parseInt(rawIdentity.toString());
+                } catch (e) {
+                    // 降级：根据直推节点数计算
+                    try {
+                        const count = await aigcContract.getDirectReferralCount(currentAccount);
+                        identityLevel = Math.min(parseInt(count.toString()) * 2, 15);
+                    } catch (e2) {
+                        identityLevel = 0;
+                    }
+                }
+
+                // 根据身份等级确定持币任务量
+                // S0-S8 对应 HOLDING_TARGETS 数组
+                const levelIndex = Math.min(Math.floor(identityLevel / 2), 8); // 2层→S1, 4层→S2, ...
+                targetHolding = HOLDING_TARGETS[levelIndex] || 10;
+
+            } catch (e) {
+                console.warn('持币目标获取失败:', e.message);
+            }
+
+            // ✅ 显示：当前持币量 / 等级任务量
+            document.getElementById('bcbseBalance').textContent = bcbsBalance.toFixed(4);
+            document.getElementById('targetHolding').textContent = targetHolding.toFixed(2);
         }
 
         async function updateDirectNodes() {
@@ -317,12 +354,10 @@
             } catch (e) {}
         }
 
-        // ✅ 修改：当前层级显示为 "2层" 格式
         async function updateIdentityAndRate() {
             let nodeCount = 0;
             try { if (aigcContract) { const count = await aigcContract.getDirectReferralCount(currentAccount); nodeCount = parseInt(count.toString()); } } catch (e) {}
             
-            // ✅ 直推1个=2层, 直推2个=4层, 以此类推（最多15层）
             const identityFromNodes = Math.min(nodeCount * 2, 15);
             document.getElementById('identityLevel').textContent = nodeCount > 0 ? `${identityFromNodes}层` : '0层';
 
@@ -494,6 +529,7 @@
             document.getElementById('maxPerformance').textContent = '0.00';
             document.getElementById('minPerformance').textContent = '0.00';
             document.getElementById('bcbseBalance').textContent = '0.00';
+            document.getElementById('targetHolding').textContent = '10.00';
             document.getElementById('completedNodes').textContent = '0';
             document.getElementById('identityLevel').textContent = '--';
             document.getElementById('rateLevel').textContent = '--';
