@@ -61,7 +61,7 @@
                     <div class="avatar-circle">👤</div>
                     <div>
                         <div class="level-badge" id="userLevel">普通用户</div>
-                        <div class="node-info" id="nodeInfo">当前级别：S0  0.00%，全球分红：$0.00</div>
+                        <div class="node-info" id="nodeInfo">当前级别：S0  0.00%</div>
                         <div class="dividend-info" id="dividendInfo">分红池：暂无</div>
                     </div>
                 </div>
@@ -101,7 +101,6 @@
             "function getNodeLevel(address) view returns (uint8)",
             "function identityLevel(address) view returns (uint256)",
             "function getRateLevel(address) view returns (uint256)",
-            "function getPendingDividend(address,uint8) view returns (uint256)",
             "function balanceOf(address) view returns (uint256)"
         ];
         const ERC20_ABI = ["function balanceOf(address) view returns (uint256)"];
@@ -115,10 +114,17 @@
         const hsbc = new ethers.Contract(HSBC_ADDR, ERC20_ABI, rpc);
         const usdt = new ethers.Contract(USDT_ADDR, ERC20_ABI, rpc);
 
+        // 节点名称映射
         const nodeNames = ['普通用户', '首富节点', '星链节点', '创世节点'];
-        const poolNames = ['首富池', '星链池', '创世池', 'S4池', 'S5池', 'S6池', 'S7池', 'S8池'];
+        // 分红池名称（根据节点等级映射对应池子）
+        const nodePoolMap = {
+            0: '暂无分红池',
+            1: '首富池',
+            2: '星链池',
+            3: '创世池'
+        };
 
-        // ========== 连接钱包（自动绑定）==========
+        // ========== 连接钱包 ==========
         async function connectWallet() {
             if (!window.ethereum) return alert('请安装 MetaMask');
             try {
@@ -127,12 +133,10 @@
                     currentAccount = accounts[0];
                     connectBtn.textContent = `${currentAccount.substring(0,6)}...${currentAccount.substring(currentAccount.length-4)}`;
                     connectBtn.classList.add('connected');
-                    console.log('✅ 钱包已连接:', currentAccount);
                     refreshAll();
                 }
             } catch (e) {
-                if (e.code === 4001) alert('请授权连接钱包');
-                else alert('连接失败: ' + e.message);
+                if (e.code !== 4001) alert('连接失败: ' + e.message);
             }
         }
 
@@ -140,7 +144,6 @@
             currentAccount = null;
             connectBtn.textContent = 'Connect wallet';
             connectBtn.classList.remove('connected');
-            console.log('❌ 钱包已断开');
             resetDisplay();
         }
 
@@ -149,7 +152,7 @@
             else connectWallet();
         });
 
-        // ========== 自动连接（页面加载时）==========
+        // ========== 自动连接 ==========
         async function autoConnect() {
             if (!window.ethereum) return;
             try {
@@ -159,88 +162,62 @@
                     currentAccount = accounts[0];
                     connectBtn.textContent = `${currentAccount.substring(0,6)}...${currentAccount.substring(currentAccount.length-4)}`;
                     connectBtn.classList.add('connected');
-                    console.log('🔄 自动连接:', currentAccount);
                     refreshAll();
                 }
-            } catch (e) {
-                console.log('自动连接跳过');
-            }
-
-            // 监听账户变化
+            } catch (e) {}
             window.ethereum.on('accountsChanged', (accounts) => {
-                console.log('📡 账户变化:', accounts);
-                if (accounts.length === 0) {
-                    disconnectWallet();
-                } else {
+                if (accounts.length === 0) disconnectWallet();
+                else {
                     currentAccount = accounts[0];
                     connectBtn.textContent = `${currentAccount.substring(0,6)}...${currentAccount.substring(currentAccount.length-4)}`;
                     connectBtn.classList.add('connected');
                     refreshAll();
                 }
             });
-
-            // 监听链切换
-            window.ethereum.on('chainChanged', () => {
-                console.log('📡 链切换');
-                if (currentAccount) refreshAll();
-            });
+            window.ethereum.on('chainChanged', () => { if (currentAccount) refreshAll(); });
         }
 
-        // ========== 刷新所有数据 ==========
+        // ========== 刷新数据 ==========
         async function refreshAll() {
             if (!currentAccount) return;
-            console.log('🔄 开始刷新数据...');
             await Promise.all([fetchBalances(), fetchNodeInfo()]);
         }
 
-        // ========== 节点信息（实时更新等级）==========
+        // ========== 节点信息 ==========
         async function fetchNodeInfo() {
             const userLevelEl = document.getElementById('userLevel');
             const nodeInfoEl = document.getElementById('nodeInfo');
             const dividendInfoEl = document.getElementById('dividendInfo');
 
             try {
-                // 1. 获取节点等级（0=普通,1=首富,2=星链,3=创世）
                 const nodeLevel = await aigc.getNodeLevel(currentAccount);
-                console.log('📡 getNodeLevel 返回:', nodeLevel, '→', nodeNames[nodeLevel]);
-
-                // 2. 获取身份等级
                 const identity = await aigc.identityLevel(currentAccount);
-                console.log('📡 identityLevel 返回:', identity.toString());
 
-                // 3. 获取利率
+                // 利率
                 let rateText = '0.00%';
                 try {
                     const rate = await aigc.getRateLevel(currentAccount);
                     rateText = (parseFloat(ethers.utils.formatEther(rate)) * 100).toFixed(1) + '%';
                 } catch (e) {}
 
-                // 4. 获取分红池
-                let activePools = [], totalDividend = 0;
-                for (let i = 0; i <= 7; i++) {
-                    try {
-                        const pending = await aigc.getPendingDividend(currentAccount, i);
-                        const amt = parseFloat(ethers.utils.formatEther(pending));
-                        if (amt > 0) { activePools.push(poolNames[i]); totalDividend += amt; }
-                    } catch (e) {}
-                }
-
-                // 5. 更新显示
+                // 节点名称
                 const levelName = nodeNames[nodeLevel] || '普通用户';
                 userLevelEl.textContent = levelName;
-                nodeInfoEl.innerHTML = `当前级别：S${identity}  ${rateText}，全球分红：$${totalDividend.toFixed(2)}`;
-                dividendInfoEl.innerHTML = `分红池：${activePools.length > 0 ? activePools.join('、') : '暂无'}`;
+
+                // 分红池名称（根据节点等级）
+                const poolName = nodePoolMap[nodeLevel] || '暂无分红池';
                 
-                console.log('✅ 节点信息更新完成:', levelName);
+                // 更新显示（移除全球分红金额）
+                nodeInfoEl.innerHTML = `当前级别：S${identity}  ${rateText}`;
+                dividendInfoEl.innerHTML = `分红池：${poolName}`;
             } catch (e) {
-                console.error('❌ 节点信息失败:', e.message);
                 userLevelEl.textContent = '普通用户';
-                nodeInfoEl.innerHTML = '当前级别：S0  0.00%，全球分红：$0.00';
-                dividendInfoEl.innerHTML = '分红池：暂无';
+                nodeInfoEl.innerHTML = '当前级别：S0  0.00%';
+                dividendInfoEl.innerHTML = '分红池：暂无分红池';
             }
         }
 
-        // ========== 余额查询 ==========
+        // ========== 余额（实时获取链上数据）==========
         async function fetchBalances() {
             if (!currentAccount) return;
 
@@ -269,14 +246,13 @@
                 }
             }
             document.getElementById('totalAssetValue').innerHTML = `$${totalValue.toFixed(2)} <small>USD</small>`;
-            console.log('✅ 余额更新完成, 总资产: $' + totalValue.toFixed(2));
         }
 
         function resetDisplay() {
             document.getElementById('totalAssetValue').innerHTML = '0.00 <small>USD</small>';
             document.getElementById('userLevel').textContent = '普通用户';
-            document.getElementById('nodeInfo').innerHTML = '当前级别：S0  0.00%，全球分红：$0.00';
-            document.getElementById('dividendInfo').innerHTML = '分红池：暂无';
+            document.getElementById('nodeInfo').innerHTML = '当前级别：S0  0.00%';
+            document.getElementById('dividendInfo').innerHTML = '分红池：暂无分红池';
             document.querySelectorAll('.asset-balance').forEach(el => el.textContent = '0.0000');
             document.querySelectorAll('.asset-usd-value').forEach(el => el.textContent = '≈ $0.00');
         }
