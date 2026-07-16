@@ -23,9 +23,27 @@
         .profile-panel { display: flex; align-items: center; justify-content: space-between; padding: 15px 15px; }
         .profile-left { display: flex; align-items: center; gap: 12px; }
         .avatar-circle { width: 50px; height: 50px; background: linear-gradient(135deg, #f3a900, #ffd700); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 900; color: #111; box-shadow: 0 0 15px rgba(255,200,0,0.3); }
-        .level-badge { background: #f90; color: #111; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 700; white-space: nowrap; }
-        .node-info { font-size: 11px; color: #ccc; margin-top: 4px; line-height: 1.4; }
-        .dividend-info { font-size: 10px; color: #4caf50; margin-top: 2px; }
+        .level-badge { background: #f90; color: #111; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 700; white-space: nowrap; display: inline-block; margin-bottom: 4px; }
+
+        /* ✅ 身份信息行 */
+        .identity-row {
+            font-size: 11px;
+            color: #ccc;
+            line-height: 1.4;
+        }
+        /* ✅ 利率单独换行 */
+        .rate-row {
+            font-size: 11px;
+            color: #ffd700;
+            line-height: 1.4;
+            font-weight: 500;
+        }
+        .dividend-row {
+            font-size: 10px;
+            color: #4caf50;
+            line-height: 1.4;
+        }
+
         .total-value { text-align: right; }
         .total-label { font-size: 12px; color: #888; }
         .total-amount { font-size: 22px; font-weight: 700; color: #fff; }
@@ -78,8 +96,10 @@
                     <div class="avatar-circle">👤</div>
                     <div>
                         <div class="level-badge" id="userLevel">普通用户</div>
-                        <div class="node-info" id="nodeInfo">身份：S0 | 利率：0.00%</div>
-                        <div class="dividend-info" id="dividendInfo">分红池：暂无</div>
+                        <!-- ✅ 三行独立布局 -->
+                        <div class="identity-row" id="identityRow">身份：S0</div>
+                        <div class="rate-row" id="rateRow">利率：0.00%</div>
+                        <div class="dividend-row" id="dividendRow">分红池：暂无</div>
                     </div>
                 </div>
                 <div class="total-value">
@@ -120,10 +140,10 @@
             "function balanceOf(address) view returns (uint256)"
         ];
 
+        // ✅ BCBS ABI - 包含 userRate
         const BCBS_ABI = [
             "function balanceOf(address) view returns (uint256)",
-            "function userRate(address) view returns (uint256)",
-            "function getRateLevel(address) view returns (uint256)"
+            "function userRate(address) view returns (uint256)"
         ];
 
         const ERC20_ABI = [
@@ -305,64 +325,67 @@
 
             console.log('🔄 开始加载数据...');
 
-            // ===== 修复1：获取节点等级（从 userInfo 结构体） =====
+            // ===== 1. 获取节点等级 =====
             let nodeLevel = 0;
             try {
-                // 方法A：使用 userInfo 获取 level 字段
+                // 优先使用 userInfo 结构体获取 level
                 const userInfoData = await aigcContract.userInfo(currentAccount);
-                // userInfo 返回元组：(depositUSDT, level, lastClaimTime, pendingReward, lastClaimAmount)
-                nodeLevel = userInfoData.level !== undefined ? userInfoData.level : userInfoData[1];
+                // ethers.js 返回数组或对象
+                if (Array.isArray(userInfoData)) {
+                    nodeLevel = userInfoData[1]; // level 是第二个字段
+                } else {
+                    nodeLevel = userInfoData.level;
+                }
                 console.log('  ✅ userInfo.level:', nodeLevel);
             } catch (e1) {
                 console.warn('  ⚠️ userInfo 失败:', e1.message);
-                // 方法B：降级使用 getNodeLevel
                 try {
+                    // 降级使用 getNodeLevel
                     const rawLevel = await aigcContract.getNodeLevel(currentAccount);
-                    nodeLevel = typeof rawLevel === 'number' ? rawLevel : parseInt(rawLevel.toString());
+                    nodeLevel = parseInt(rawLevel.toString());
                     console.log('  ✅ getNodeLevel (降级):', nodeLevel);
                 } catch (e2) {
                     console.warn('  ⚠️ getNodeLevel 也失败:', e2.message);
                 }
             }
 
-            // ===== 修复2：获取身份等级 =====
+            // ===== 2. 获取身份等级 =====
             let identityLevel = 0;
             try {
                 const rawIdentity = await aigcContract.identityLevel(currentAccount);
-                identityLevel = rawIdentity ? parseInt(rawIdentity.toString()) : 0;
+                identityLevel = parseInt(rawIdentity.toString());
                 console.log('  ✅ identityLevel:', identityLevel);
             } catch (e) {
                 console.warn('  ⚠️ identityLevel 失败:', e.message);
             }
 
-            // ===== 修复3：获取利率（多源降级） =====
+            // ===== 3. 获取利率（从BCBS合约） =====
             let userRate = 0;
             try {
-                // 方法A：从 BCBS 合约获取 userRate
-                const rate = await bcbsContract.userRate(currentAccount);
-                userRate = rate ? parseFloat(ethers.utils.formatEther(rate)) : 0;
-                console.log('  ✅ BCBS.userRate:', userRate);
+                // ✅ 从 BCBS 合约获取 userRate
+                const rawRate = await bcbsContract.userRate(currentAccount);
+                console.log('  📊 BCBS.userRate 原始值:', rawRate.toString());
+                
+                // userRate 存储的是小数（如 2% = 0.02 = 2e16 wei）
+                // 使用 formatEther 转换为可读数值
+                userRate = parseFloat(ethers.utils.formatEther(rawRate));
+                console.log('  ✅ BCBS.userRate:', userRate, '(即', (userRate * 100).toFixed(1) + '%)');
             } catch (e1) {
                 console.warn('  ⚠️ BCBS.userRate 失败:', e1.message);
-                // 方法B：尝试 getRateLevel
-                try {
-                    const rate = await bcbsContract.getRateLevel(currentAccount);
-                    userRate = rate ? parseFloat(ethers.utils.formatEther(rate)) : 0;
-                    console.log('  ✅ BCBS.getRateLevel (降级):', userRate);
-                } catch (e2) {
-                    console.warn('  ⚠️ BCBS.getRateLevel 也失败:', e2.message);
-                    // 方法C：根据节点等级计算基础利率
-                    const baseRates = [0, 0.02, 0.04, 0.40];
-                    userRate = baseRates[nodeLevel] || 0;
-                    console.log('  ✅ 根据节点等级计算利率:', userRate);
-                }
+                
+                // 降级方案：根据节点等级计算基础利率
+                // AIGC合约中的利率映射：
+                // 首富节点(nodeLevel=1): 2%, 星链节点(nodeLevel=2): 4%, 创世节点(nodeLevel=3): 40%
+                const baseRates = [0, 0.02, 0.04, 0.40];
+                userRate = baseRates[nodeLevel] || 0;
+                console.log('  ✅ 根据节点等级计算利率:', userRate, '(即', (userRate * 100).toFixed(1) + '%)');
             }
 
-            // ===== 修复4：获取分红池（基于节点等级） =====
+            // ===== 4. 获取分红池 =====
             const dividendPool = poolMap[nodeLevel] || '暂无';
             console.log('  ✅ 分红池:', dividendPool);
 
-            // ===== 查询代币余额 =====
+            // ===== 5. 查询代币余额 =====
             let bnbBalance = 0, usdtBalance = 0, aigcBalance = 0, bcbsBalance = 0, hsbcBalance = 0;
 
             try {
@@ -414,15 +437,18 @@
 
         // ======================== 更新 UI ========================
         function updateProfileUI(nodeLevel, identityLevel, userRate, dividendPool) {
-            // ✅ 修复1：节点等级
+            // 节点等级徽章
             document.getElementById('userLevel').textContent = nodeNames[nodeLevel] || '普通用户';
             
-            // ✅ 修复2+3：身份等级 + 利率
-            const ratePercent = (userRate * 100).toFixed(1);
-            document.getElementById('nodeInfo').innerHTML = `身份：S${identityLevel} | 利率：${ratePercent}%`;
+            // ✅ 身份行（第一行）
+            document.getElementById('identityRow').textContent = `身份：S${identityLevel}`;
             
-            // ✅ 修复4：分红池
-            document.getElementById('dividendInfo').innerHTML = `分红池：${dividendPool}`;
+            // ✅ 利率行（第二行 - 独立换行）
+            const ratePercent = (userRate * 100).toFixed(1);
+            document.getElementById('rateRow').textContent = `利率：${ratePercent}%`;
+            
+            // ✅ 分红池行（第三行）
+            document.getElementById('dividendRow').textContent = `分红池：${dividendPool}`;
         }
 
         function updateBalanceUI(bnb, usdt, aigc, bcbs, hsbc) {
@@ -447,8 +473,9 @@
         function resetUI() {
             document.getElementById('totalAssetValue').innerHTML = '0.00 <small>USD</small>';
             document.getElementById('userLevel').textContent = '普通用户';
-            document.getElementById('nodeInfo').innerHTML = '身份：S0 | 利率：0.00%';
-            document.getElementById('dividendInfo').innerHTML = '分红池：暂无';
+            document.getElementById('identityRow').textContent = '身份：S0';
+            document.getElementById('rateRow').textContent = '利率：0.00%';
+            document.getElementById('dividendRow').textContent = '分红池：暂无';
             ['BNB','USDT','AIGC','BCBS','HSBC'].forEach(s => {
                 document.getElementById(`bal-${s}`).textContent = '0.0000';
                 document.getElementById(`usd-${s}`).textContent = '≈ $0.00';
