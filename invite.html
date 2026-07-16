@@ -63,7 +63,7 @@
         .progress-header { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; }
         .progress-header .right { color: #f90; }
         .progress-track { height: 12px; background: #1a1a2e; border-radius: 6px; overflow: hidden; margin-bottom: 6px; position: relative; }
-        .progress-fill { height: 100%; width: 0%; background: repeating-linear-gradient(45deg, #ff8c00, #ff8c00 10px, #ffaa00 10px, #ffaa00 20px); border-radius: 6px; box-shadow: 0 0 10px rgba(255,153,0,0.2); }
+        .progress-fill { height: 100%; width: 0%; background: repeating-linear-gradient(45deg, #ff8c00, #ff8c00 10px, #ffaa00 10px, #ffaa00 20px); border-radius: 6px; box-shadow: 0 0 10px rgba(255,153,0,0.2); transition: width 0.5s ease; }
         .progress-footer { display: flex; justify-content: space-between; font-size: 11px; color: #aaa; }
         .direct-row { display: flex; justify-content: space-between; font-size: 11px; color: #ccc; margin: 6px 0; }
         .node-progress { display: flex; gap: 1px; margin: 8px 0; align-items: center; flex-wrap: nowrap; }
@@ -97,111 +97,46 @@
             </div>
             <div class="page-title">📨 邀请好友</div>
 
-            <!-- 空投面板 -->
             <div class="panel airdrop-card">
-                <div class="airdrop-header">
-                    <span class="airdrop-icon">🎁</span>
-                    <div>
-                        <div class="airdrop-title">限量空投活动</div>
-                        <div class="airdrop-desc">新用户专享，推荐好友可奖励50HSBC</div>
-                    </div>
-                </div>
+                <div class="airdrop-header"><span class="airdrop-icon">🎁</span><div><div class="airdrop-title">限量空投活动</div><div class="airdrop-desc">新用户专享，推荐好友可奖励50HSBC</div></div></div>
                 <div class="airdrop-amount-box" id="airdropStatus">未领取</div>
                 <button class="airdrop-btn" id="claimAirdropBtn">立即领取</button>
             </div>
 
-            <!-- 节点申请面板 -->
             <div class="panel">
                 <div class="node-slider" id="nodeSlider">
-                    <div class="node-card">
-                        <div class="node-title">首富节点</div>
-                        <div class="node-reward">收益3倍</div>
-                        <div class="node-rights">S2权益 极差2%-10%</div>
-                        <div class="node-dividend">全球分红1%</div>
-                        <button class="node-apply-btn" data-node="rich">立即申请</button>
-                    </div>
-                    <div class="node-card">
-                        <div class="node-title">星链节点</div>
-                        <div class="node-reward">收益5倍</div>
-                        <div class="node-rights">S3权益 极差4%-15%</div>
-                        <div class="node-dividend">全球分红1.6%</div>
-                        <button class="node-apply-btn" data-node="starlink">立即申请</button>
-                    </div>
-                    <div class="node-card">
-                        <div class="node-title">创世节点</div>
-                        <div class="node-reward">收益10倍</div>
-                        <div class="node-rights">S8权益 极差15%-40%</div>
-                        <div class="node-dividend">全球分红2.4%</div>
-                        <button class="node-apply-btn" data-node="genesis">立即申请</button>
-                    </div>
+                    <div class="node-card"><div class="node-title">首富节点</div><div class="node-reward">收益3倍</div><div class="node-rights">S2权益 极差2%-10%</div><div class="node-dividend">全球分红1%</div><button class="node-apply-btn" data-node="rich">立即申请</button></div>
+                    <div class="node-card"><div class="node-title">星链节点</div><div class="node-reward">收益5倍</div><div class="node-rights">S3权益 极差4%-15%</div><div class="node-dividend">全球分红1.6%</div><button class="node-apply-btn" data-node="starlink">立即申请</button></div>
+                    <div class="node-card"><div class="node-title">创世节点</div><div class="node-reward">收益10倍</div><div class="node-rights">S8权益 极差15%-40%</div><div class="node-dividend">全球分红2.4%</div><button class="node-apply-btn" data-node="genesis">立即申请</button></div>
                 </div>
                 <button class="withdraw-reward-btn" id="withdrawRewardBtn">当前可提取 --</button>
             </div>
 
-            <!-- 业绩面板 -->
             <div class="panel">
-                <div class="header-row">
-                    <div class="header-title">📅 <span>最大区总业绩</span></div>
-                    <div class="header-title">📅 <span>最小区总业绩</span></div>
-                </div>
-                <div class="stats-row">
-                    <div class="stat-box">
-                        <div class="stat-label">累计交易量($)</div>
-                        <div class="stat-val" id="maxPerformance">0.00</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-label">累计交易量($)</div>
-                        <div class="stat-val" id="minPerformance">0.00</div>
-                    </div>
-                </div>
+                <div class="header-row"><div class="header-title">📅 <span>最大区总业绩</span></div><div class="header-title">📅 <span>最小区总业绩</span></div></div>
+                <div class="stats-row"><div class="stat-box"><div class="stat-label">累计交易量($)</div><div class="stat-val" id="maxPerformance">0.00</div></div><div class="stat-box"><div class="stat-label">累计交易量($)</div><div class="stat-val" id="minPerformance">0.00</div></div></div>
                 <div class="progress-area">
-                    <div class="progress-header">
-                        <span>考核进度</span>
-                        <span class="right" id="progressPercent">0.00%</span>
-                    </div>
-                    <div class="progress-track">
-                        <div class="progress-fill" id="progressFill" style="width:0%;"></div>
-                    </div>
-                    <div class="progress-footer">
-                        <span>个人持币目标: <span id="bcbseBalance">0.00</span> BCBSE</span>
-                        <span id="progressRemaining">未完成: $0.00</span>
-                    </div>
+                    <div class="progress-header"><span>考核进度</span><span class="right" id="progressPercent">0.00%</span></div>
+                    <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%;"></div></div>
+                    <div class="progress-footer"><span>个人持币目标: <span id="bcbseBalance">0.00</span> BCBSE</span><span id="progressDetail">节点0/15 | 业绩0/500</span></div>
                     <div style="margin-top:12px;">
-                        <div class="direct-row">
-                            <span>直推任务：15节点</span>
-                            <span>完成直推目标: <span id="completedNodes">0</span>节点</span>
-                        </div>
+                        <div class="direct-row"><span>直推任务：15节点</span><span>完成直推目标: <span id="completedNodes">0</span>节点</span></div>
                         <div class="node-progress" id="nodeProgress"></div>
-                        <div class="direct-row">
-                            <span>当前层级：<span id="identityLevel">--</span></span>
-                            <span>当前利率: <span id="rateLevel">--</span></span>
-                        </div>
+                        <div class="direct-row"><span>当前层级：<span id="identityLevel">--</span></span><span>当前利率: <span id="rateLevel">--</span></span></div>
                     </div>
                 </div>
             </div>
 
-            <!-- 流程面板 -->
             <div class="panel process-panel">
-                <div class="process-flow">
-                    <div class="process-step"><span class="step-icon">👤</span><span>老用户</span></div>
-                    <span class="process-arrow">→</span>
-                    <div class="process-step"><span class="step-icon">🔄</span><span>转AIGC</span></div>
-                    <span class="process-arrow">→</span>
-                    <div class="process-step"><span class="step-icon">🌱</span><span>新用户</span></div>
-                    <span class="process-arrow">→</span>
-                    <div class="process-step"><span class="step-icon">✅</span><span>绑定成功</span></div>
-                </div>
+                <div class="process-flow"><div class="process-step"><span class="step-icon">👤</span><span>老用户</span></div><span class="process-arrow">→</span><div class="process-step"><span class="step-icon">🔄</span><span>转AIGC</span></div><span class="process-arrow">→</span><div class="process-step"><span class="step-icon">🌱</span><span>新用户</span></div><span class="process-arrow">→</span><div class="process-step"><span class="step-icon">✅</span><span>绑定成功</span></div></div>
             </div>
 
-            <!-- 记录面板 -->
             <div class="panel">
                 <div class="record-tab-switch">
                     <div class="record-tab-btn active" data-tab="invite">邀请记录</div>
                     <div class="record-tab-btn" data-tab="claim">领取记录</div>
                 </div>
-                <div id="recordListContainer">
-                    <div style="text-align:center;color:#888;padding:20px;">请先连接钱包</div>
-                </div>
+                <div id="recordListContainer"><div style="text-align:center;color:#888;padding:20px;">请先连接钱包</div></div>
             </div>
         </div>
 
@@ -238,7 +173,6 @@
             "function identityLevel(address user) view returns (uint256)",
             "function getNodeLevel(address user) view returns (uint8)",
             "function userInfo(address user) view returns (uint256 depositUSDT, uint8 level, uint256 lastClaimTime, uint256 pendingReward, uint256 lastClaimAmount)",
-            "function directReferralCount(address user) view returns (uint256)",
             "function getDirectReferralCount(address user) view returns (uint256)",
             "function getDirectReferrals(address user) view returns (address[])",
             "function getDirectReferralsWithTime(address user) view returns (tuple(address user, uint256 timestamp)[])",
@@ -275,7 +209,10 @@
             genesis: { name: '创世节点', amount: '0.03' }
         };
 
-        // ======================== 初始化合约 ========================
+        // ✅ 考核目标常量
+        const TARGET_NODES = 15;           // 目标直推节点数
+        const TARGET_PERFORMANCE = 500;    // 目标最小业绩（美元）
+
         function initContracts() {
             if (provider && signer) {
                 hsbcContract = new ethers.Contract(HSBC_ADDRESS, HSBC_ABI, signer);
@@ -292,19 +229,17 @@
             
             console.log('🔄 刷新邀请页面数据...');
             
-            // ✅ 独立错误处理，部分失败不影响其他
-            try { await updateAirdropStatus(); } catch (e) { console.warn('空投状态更新失败:', e.message); }
-            try { await updateClaimableReward(); } catch (e) { console.warn('可提取奖励更新失败:', e.message); }
-            try { await updatePerformance(); } catch (e) { console.warn('业绩更新失败:', e.message); }
-            try { await updateBalanceAndTarget(); } catch (e) { console.warn('持币目标更新失败:', e.message); }
-            try { await updateDirectNodes(); } catch (e) { console.warn('直推节点更新失败:', e.message); }
-            try { await updateIdentityAndRate(); } catch (e) { console.warn('身份利率更新失败:', e.message); }
+            try { await updateAirdropStatus(); } catch (e) { console.warn('空投状态:', e.message); }
+            try { await updateClaimableReward(); } catch (e) { console.warn('可提取:', e.message); }
+            try { await updatePerformanceAndProgress(); } catch (e) { console.warn('业绩进度:', e.message); }
+            try { await updateBalanceAndTarget(); } catch (e) { console.warn('持币:', e.message); }
+            try { await updateDirectNodes(); } catch (e) { console.warn('直推:', e.message); }
+            try { await updateIdentityAndRate(); } catch (e) { console.warn('身份利率:', e.message); }
             
-            // 加载当前选中的记录
             if (currentTab === 'invite') {
-                try { await loadInviteRecords(); } catch (e) { console.warn('邀请记录加载失败:', e.message); }
+                try { await loadInviteRecords(); } catch (e) { console.warn('邀请记录:', e.message); }
             } else {
-                try { await loadClaimRecords(); } catch (e) { console.warn('领取记录加载失败:', e.message); }
+                try { await loadClaimRecords(); } catch (e) { console.warn('领取记录:', e.message); }
             }
         }
 
@@ -353,43 +288,21 @@
 
         // ======================== 提取奖励 ========================
         async function executeClaim() {
-            if (!currentAccount || !aigcContract) {
-                alert('请先连接钱包');
-                return;
-            }
-
+            if (!currentAccount || !aigcContract) { alert('请先连接钱包'); return; }
             withdrawBtn.disabled = true;
             withdrawBtn.innerHTML = '<span class="loading-spinner"></span> 检查中...';
-
             try {
                 const pending = await aigcContract.getPendingReward(currentAccount);
-                if (pending.isZero()) {
-                    alert('没有可提取的 AIGC');
-                    return;
-                }
-
+                if (pending.isZero()) { alert('没有可提取的 AIGC'); return; }
                 const minClaim = await aigcContract.getMinClaimRequirement(currentAccount);
-                if (pending.lt(minClaim)) {
-                    alert(`未达到最低提取要求（当前: ${ethers.utils.formatEther(pending)} AIGC, 最低: ${ethers.utils.formatEther(minClaim)} AIGC）`);
-                    return;
-                }
-
+                if (pending.lt(minClaim)) { alert(`未达到最低提取要求`); return; }
                 const bnbRequired = await aigcContract.getBnbRequiredForClaim(pending);
                 const userBalance = await provider.getBalance(currentAccount);
-                
-                if (userBalance.lt(bnbRequired.add(ethers.utils.parseEther('0.0005')))) {
-                    alert(`BNB 余额不足（需要: ${ethers.utils.formatEther(bnbRequired)} BNB + Gas）`);
-                    return;
-                }
-
-                if (!confirm(`确认提取 ${ethers.utils.formatEther(pending)} AIGC？\n需支付 ${ethers.utils.formatEther(bnbRequired)} BNB 手续费`)) {
-                    return;
-                }
-
+                if (userBalance.lt(bnbRequired.add(ethers.utils.parseEther('0.0005')))) { alert('BNB 余额不足'); return; }
+                if (!confirm(`确认提取 ${ethers.utils.formatEther(pending)} AIGC？`)) return;
                 withdrawBtn.innerHTML = '<span class="loading-spinner"></span> 交易中...';
                 const tx = await aigcContract.claimReward({ value: bnbRequired, gasLimit: 500000 });
                 await tx.wait();
-                
                 alert('✅ 提取成功！');
                 await updateClaimableReward();
                 await loadClaimRecords();
@@ -401,40 +314,55 @@
                 await updateClaimableReward();
             }
         }
-
         withdrawBtn.addEventListener('click', executeClaim);
 
-        // ======================== 业绩数据 ========================
-        async function updatePerformance() {
-            if (!bcbsContract) return;
+        // ======================== 业绩与考核进度 ========================
+        async function updatePerformanceAndProgress() {
+            if (!aigcContract || !bcbsContract) return;
+
+            let nodeCount = 0;
+            let minPerformance = 0;
+
             try {
+                // 获取直推节点数
                 const count = await aigcContract.getDirectReferralCount(currentAccount);
-                if (count.eq(0)) {
-                    document.getElementById('maxPerformance').textContent = '0.00';
-                    document.getElementById('minPerformance').textContent = '0.00';
-                    return;
-                }
+                nodeCount = parseInt(count.toString());
 
-                const refs = await aigcContract.getDirectReferrals(currentAccount);
-                let perfs = [];
-                
-                for (const ref of refs) {
-                    try {
-                        const perf = await bcbsContract.teamPerformance(ref);
-                        const val = parseFloat(ethers.utils.formatEther(perf));
-                        if (val > 0) perfs.push(val);
-                    } catch (e) {
-                        // 跳过失败的
+                // 获取所有直推的业绩，取最小值
+                if (nodeCount > 0) {
+                    const refs = await aigcContract.getDirectReferrals(currentAccount);
+                    let perfs = [];
+                    for (const ref of refs) {
+                        try {
+                            const perf = await bcbsContract.teamPerformance(ref);
+                            const val = parseFloat(ethers.utils.formatEther(perf));
+                            perfs.push(val);
+                        } catch (e) {
+                            perfs.push(0);
+                        }
                     }
-                }
+                    
+                    const maxPerf = perfs.length > 0 ? Math.max(...perfs) : 0;
+                    minPerformance = perfs.length > 0 ? Math.min(...perfs) : 0;
 
-                if (perfs.length > 0) {
-                    document.getElementById('maxPerformance').textContent = Math.max(...perfs).toFixed(2);
-                    document.getElementById('minPerformance').textContent = Math.min(...perfs).toFixed(2);
+                    document.getElementById('maxPerformance').textContent = maxPerf.toFixed(2);
+                    document.getElementById('minPerformance').textContent = minPerformance.toFixed(2);
                 } else {
                     document.getElementById('maxPerformance').textContent = '0.00';
                     document.getElementById('minPerformance').textContent = '0.00';
                 }
+
+                // ✅ 计算考核进度
+                // 节点进度权重 50%，业绩进度权重 50%
+                const nodeProgress = Math.min(nodeCount / TARGET_NODES, 1);
+                const perfProgress = Math.min(minPerformance / TARGET_PERFORMANCE, 1);
+                const totalProgress = ((nodeProgress + perfProgress) / 2) * 100;
+
+                document.getElementById('progressPercent').textContent = totalProgress.toFixed(2) + '%';
+                document.getElementById('progressFill').style.width = totalProgress.toFixed(2) + '%';
+                document.getElementById('progressDetail').textContent = 
+                    `节点${nodeCount}/${TARGET_NODES} | 业绩${minPerformance.toFixed(0)}/${TARGET_PERFORMANCE}`;
+
             } catch (e) {
                 console.warn('业绩查询失败:', e.message);
             }
@@ -457,43 +385,57 @@
                 const countNum = parseInt(count.toString());
                 document.getElementById('completedNodes').textContent = countNum;
                 renderNodeProgress(countNum);
-                
-                // 更新进度条
-                const progressPercent = Math.min((countNum / 15) * 100, 100);
-                document.getElementById('progressPercent').textContent = progressPercent.toFixed(1) + '%';
-                document.getElementById('progressFill').style.width = progressPercent + '%';
-                document.getElementById('progressRemaining').textContent = `未完成: ${15 - countNum} 节点`;
             } catch (e) {
                 console.warn('直推节点查询失败:', e.message);
             }
         }
 
+        // ✅ 修复：身份等级 = 直推节点数 × 2，利率从 BCBS 合约获取
         async function updateIdentityAndRate() {
-            try {
-                // 身份等级
-                if (aigcContract) {
-                    try {
-                        const identity = await aigcContract.identityLevel(currentAccount);
-                        const idNum = parseInt(identity.toString());
-                        document.getElementById('identityLevel').textContent = idNum > 0 ? `S${idNum}` : 'S0';
-                    } catch (e) {
-                        document.getElementById('identityLevel').textContent = '--';
-                    }
-                }
+            let nodeCount = 0;
 
-                // 利率
+            // 获取直推节点数
+            try {
+                if (aigcContract) {
+                    const count = await aigcContract.getDirectReferralCount(currentAccount);
+                    nodeCount = parseInt(count.toString());
+                }
+            } catch (e) {
+                console.warn('直推节点数获取失败:', e.message);
+            }
+
+            // ✅ 当前层级：直推1个=S2, 直推2个=S4, 以此类推（最多S15）
+            const identityFromNodes = Math.min(nodeCount * 2, 15);
+            document.getElementById('identityLevel').textContent = nodeCount > 0 ? `S${identityFromNodes}` : 'S0';
+
+            // ✅ 当前利率：从 BCBS 合约获取 userRate
+            let rateDisplay = '0.0%';
+            try {
                 if (bcbsContract) {
-                    try {
-                        const rate = await bcbsContract.userRate(currentAccount);
-                        const rateNum = parseFloat(ethers.utils.formatEther(rate));
-                        document.getElementById('rateLevel').textContent = (rateNum * 100).toFixed(1) + '%';
-                    } catch (e) {
-                        document.getElementById('rateLevel').textContent = '0.0%';
+                    const rawRate = await bcbsContract.userRate(currentAccount);
+                    const rateNum = parseFloat(ethers.utils.formatEther(rawRate));
+                    if (rateNum > 0) {
+                        rateDisplay = (rateNum * 100).toFixed(1) + '%';
+                    } else {
+                        // 如果 BCBS 未返回，根据节点等级计算
+                        try {
+                            const nodeLevel = await aigcContract.getNodeLevel(currentAccount);
+                            const baseRates = [0, 0.02, 0.04, 0.40];
+                            const level = parseInt(nodeLevel.toString());
+                            rateDisplay = (baseRates[level] * 100).toFixed(1) + '%';
+                        } catch (e2) {
+                            // 根据身份等级计算
+                            const identityRates = [0, 0.01, 0.02, 0.04, 0.06, 0.08, 0.10, 0.12, 0.15];
+                            const idx = Math.min(identityFromNodes, 8);
+                            rateDisplay = (identityRates[idx] * 100).toFixed(1) + '%';
+                        }
                     }
                 }
             } catch (e) {
-                console.warn('身份利率查询失败:', e.message);
+                console.warn('利率获取失败:', e.message);
             }
+            
+            document.getElementById('rateLevel').textContent = rateDisplay;
         }
 
         function renderNodeProgress(completed) {
@@ -507,27 +449,16 @@
 
         // ======================== 空投领取 ========================
         document.getElementById('claimAirdropBtn').addEventListener('click', async () => {
-            if (!currentAccount) {
-                alert('请先连接钱包');
-                return;
-            }
-
+            if (!currentAccount) { alert('请先连接钱包'); return; }
             const btn = document.getElementById('claimAirdropBtn');
             btn.disabled = true;
             btn.innerHTML = '<span class="loading-spinner"></span> 领取中...';
-
             try {
                 const canClaim = await hsbcContract.canClaim(currentAccount);
-                if (!canClaim) {
-                    alert('您已领取过空投或不符合条件');
-                    await updateAirdropStatus();
-                    return;
-                }
-
+                if (!canClaim) { alert('您已领取过空投或不符合条件'); await updateAirdropStatus(); return; }
                 const fee = await hsbcContract.getClaimFee();
                 const tx = await hsbcContract.claimHSBC({ value: fee, gasLimit: 300000 });
                 await tx.wait();
-                
                 alert('✅ 领取成功！获得 100 HSBC');
                 document.getElementById('airdropStatus').textContent = '已领取 100 HSBC';
                 btn.textContent = '已领取';
@@ -543,26 +474,15 @@
         // ======================== 节点申请 ========================
         document.querySelectorAll('.node-apply-btn').forEach(btn => {
             btn.addEventListener('click', async () => {
-                if (!currentAccount) {
-                    alert('请先连接钱包');
-                    return;
-                }
-
+                if (!currentAccount) { alert('请先连接钱包'); return; }
                 const nodeType = btn.dataset.node;
                 const info = nodeAmountMap[nodeType];
-                if (!info) {
-                    alert('未知节点类型');
-                    return;
-                }
-
+                if (!info) { alert('未知节点类型'); return; }
                 if (!confirm(`确认申请【${info.name}】？\n将充值 ${info.amount} USDT`)) return;
-
                 const amountWei = ethers.utils.parseUnits(info.amount, 18);
                 btn.disabled = true;
                 btn.textContent = '处理中...';
-
                 try {
-                    // 检查授权
                     const allowance = await usdtContract.allowance(currentAccount, AIGC_ADDRESS);
                     if (allowance.lt(amountWei)) {
                         btn.textContent = '请授权 USDT...';
@@ -573,11 +493,9 @@
                         btn.textContent = '立即申请';
                         return;
                     }
-
                     btn.textContent = '充值中...';
                     const tx = await aigcContract.depositUSDT(amountWei, { gasLimit: 500000 });
                     await tx.wait();
-                    
                     alert(`🎉 ${info.name}申请成功！`);
                     await refreshAllData();
                 } catch (e) {
@@ -590,33 +508,22 @@
             });
         });
 
-        // ======================== 记录面板切换 ========================
+        // ======================== 记录面板 ========================
         document.querySelectorAll('.record-tab-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.record-tab-btn').forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
                 currentTab = this.dataset.tab;
-                
-                if (currentTab === 'invite') {
-                    loadInviteRecords();
-                } else {
-                    loadClaimRecords();
-                }
+                if (currentTab === 'invite') loadInviteRecords();
+                else loadClaimRecords();
             });
         });
 
-        // ======================== 邀请记录 ========================
         async function loadInviteRecords() {
             const container = document.getElementById('recordListContainer');
-            if (!currentAccount) {
-                container.innerHTML = '<div style="text-align:center;color:#888;padding:20px;">请先连接钱包</div>';
-                return;
-            }
-
+            if (!currentAccount) { container.innerHTML = '<div style="text-align:center;color:#888;padding:20px;">请先连接钱包</div>'; return; }
             container.innerHTML = '<div style="text-align:center;color:#888;padding:20px;"><span class="loading-spinner"></span> 加载中...</div>';
-
             try {
-                // ✅ 方法1：尝试获取带时间戳的记录
                 try {
                     const records = await aigcContract.getDirectReferralsWithTime(currentAccount);
                     if (records && records.length > 0) {
@@ -625,49 +532,21 @@
                             const addr = record.user || record[0];
                             const timestamp = record.timestamp || record[1];
                             const shortAddr = `${addr.substring(0, 6)}...${addr.substring(addr.length - 4)}`;
-                            const time = timestamp > 0 
-                                ? new Date(timestamp.toNumber() * 1000).toLocaleString('zh-CN')
-                                : '--';
-                            html += `
-                                <div class="record-item">
-                                    <div class="field">
-                                        <div class="field-label">地址</div>
-                                        <div class="field-value">${shortAddr}</div>
-                                    </div>
-                                    <div class="field">
-                                        <div class="field-label">时间</div>
-                                        <div class="field-value">${time}</div>
-                                    </div>
-                                </div>`;
+                            const time = timestamp > 0 ? new Date(timestamp.toNumber() * 1000).toLocaleString('zh-CN') : '--';
+                            html += `<div class="record-item"><div class="field"><div class="field-label">地址</div><div class="field-value">${shortAddr}</div></div><div class="field"><div class="field-label">时间</div><div class="field-value">${time}</div></div></div>`;
                         }
                         container.innerHTML = html;
                         return;
                     }
                 } catch (e1) {
-                    console.log('getDirectReferralsWithTime 不可用，尝试备用方案:', e1.message);
+                    console.log('getDirectReferralsWithTime 不可用:', e1.message);
                 }
-
-                // ✅ 方法2：使用 getDirectReferrals
                 const addresses = await aigcContract.getDirectReferrals(currentAccount);
-                if (!addresses || addresses.length === 0) {
-                    container.innerHTML = '<div class="record-item" style="justify-content:center;color:#888;">暂无邀请记录</div>';
-                    return;
-                }
-
+                if (!addresses || addresses.length === 0) { container.innerHTML = '<div class="record-item" style="justify-content:center;color:#888;">暂无邀请记录</div>'; return; }
                 let html = '';
                 for (const addr of addresses) {
                     const shortAddr = `${addr.substring(0, 6)}...${addr.substring(addr.length - 4)}`;
-                    html += `
-                        <div class="record-item">
-                            <div class="field">
-                                <div class="field-label">地址</div>
-                                <div class="field-value">${shortAddr}</div>
-                            </div>
-                            <div class="field">
-                                <div class="field-label">时间</div>
-                                <div class="field-value">--</div>
-                            </div>
-                        </div>`;
+                    html += `<div class="record-item"><div class="field"><div class="field-label">地址</div><div class="field-value">${shortAddr}</div></div><div class="field"><div class="field-label">时间</div><div class="field-value">--</div></div></div>`;
                 }
                 container.innerHTML = html;
             } catch (e) {
@@ -676,47 +555,21 @@
             }
         }
 
-        // ======================== 领取记录 ========================
         async function loadClaimRecords() {
             const container = document.getElementById('recordListContainer');
-            if (!currentAccount) {
-                container.innerHTML = '<div style="text-align:center;color:#888;padding:20px;">请先连接钱包</div>';
-                return;
-            }
-
+            if (!currentAccount) { container.innerHTML = '<div style="text-align:center;color:#888;padding:20px;">请先连接钱包</div>'; return; }
             container.innerHTML = '<div style="text-align:center;color:#888;padding:20px;"><span class="loading-spinner"></span> 加载中...</div>';
-
             try {
                 const filter = aigcContract.filters.RewardClaimed(currentAccount);
                 const events = await aigcContract.queryFilter(filter, 0, 'latest');
-                
-                if (!events || events.length === 0) {
-                    container.innerHTML = '<div class="record-item" style="justify-content:center;color:#888;">暂无领取记录</div>';
-                    return;
-                }
-
+                if (!events || events.length === 0) { container.innerHTML = '<div class="record-item" style="justify-content:center;color:#888;">暂无领取记录</div>'; return; }
                 let html = '';
-                // 最新在前
                 const reversed = [...events].reverse();
                 for (const event of reversed) {
                     const { aigcAmount, bnbPaid } = event.args;
                     const block = await event.getBlock();
                     const time = new Date(block.timestamp * 1000).toLocaleString('zh-CN');
-                    html += `
-                        <div class="record-item">
-                            <div class="field">
-                                <div class="field-label">AIGC数量</div>
-                                <div class="field-value">${parseFloat(ethers.utils.formatEther(aigcAmount)).toFixed(4)}</div>
-                            </div>
-                            <div class="field">
-                                <div class="field-label">BNB费用</div>
-                                <div class="field-value">${parseFloat(ethers.utils.formatEther(bnbPaid)).toFixed(6)}</div>
-                            </div>
-                            <div class="field" style="flex:1 1 100%;">
-                                <div class="field-label">时间</div>
-                                <div class="field-value">${time}</div>
-                            </div>
-                        </div>`;
+                    html += `<div class="record-item"><div class="field"><div class="field-label">AIGC数量</div><div class="field-value">${parseFloat(ethers.utils.formatEther(aigcAmount)).toFixed(4)}</div></div><div class="field"><div class="field-label">BNB费用</div><div class="field-value">${parseFloat(ethers.utils.formatEther(bnbPaid)).toFixed(6)}</div></div><div class="field" style="flex:1 1 100%;"><div class="field-label">时间</div><div class="field-value">${time}</div></div></div>`;
                 }
                 container.innerHTML = html;
             } catch (e) {
@@ -743,7 +596,7 @@
             document.getElementById('rateLevel').textContent = '--';
             document.getElementById('progressPercent').textContent = '0.00%';
             document.getElementById('progressFill').style.width = '0%';
-            document.getElementById('progressRemaining').textContent = '未完成: 15 节点';
+            document.getElementById('progressDetail').textContent = '节点0/15 | 业绩0/500';
             document.getElementById('airdropStatus').textContent = '未领取';
             document.getElementById('claimAirdropBtn').disabled = false;
             document.getElementById('claimAirdropBtn').textContent = '立即领取';
@@ -752,18 +605,12 @@
         }
 
         async function connectWallet() {
-            if (!window.ethereum) {
-                alert('请安装 MetaMask 或使用内置 Web3 浏览器');
-                return;
-            }
-
+            if (!window.ethereum) { alert('请安装 MetaMask 或使用内置 Web3 浏览器'); return; }
             connectBtn.disabled = true;
             connectBtn.innerHTML = '<span class="loading-spinner"></span> 连接中...';
-
             try {
                 const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                 if (!accounts || accounts.length === 0) throw new Error('未获取到账户');
-
                 currentAccount = accounts[0];
                 provider = new ethers.providers.Web3Provider(window.ethereum);
                 signer = provider.getSigner();
@@ -772,16 +619,11 @@
                 await refreshAllData();
             } catch (e) {
                 console.error('连接失败:', e);
-                if (e.code === 4001) {
-                    alert('请在 MetaMask 中授权连接');
-                } else {
-                    alert('连接失败: ' + (e.message || '未知错误'));
-                }
+                if (e.code === 4001) alert('请在 MetaMask 中授权连接');
+                else alert('连接失败: ' + (e.message || '未知错误'));
             } finally {
                 connectBtn.disabled = false;
-                connectBtn.textContent = currentAccount ? 
-                    `${currentAccount.substring(0, 6)}...${currentAccount.substring(currentAccount.length - 4)}` : 
-                    'Connect wallet';
+                connectBtn.textContent = currentAccount ? `${currentAccount.substring(0, 6)}...${currentAccount.substring(currentAccount.length - 4)}` : 'Connect wallet';
                 if (currentAccount) connectBtn.classList.add('connected');
             }
         }
@@ -798,23 +640,15 @@
         }
 
         connectBtn.addEventListener('click', () => {
-            if (currentAccount) {
-                disconnectWallet();
-            } else {
-                connectWallet();
-            }
+            if (currentAccount) disconnectWallet();
+            else connectWallet();
         });
 
         // ======================== 自动连接 ========================
         async function autoConnect() {
-            if (!window.ethereum) {
-                console.log('⚠️ 未检测到 Web3 钱包');
-                return;
-            }
-
+            if (!window.ethereum) { console.log('⚠️ 未检测到 Web3 钱包'); return; }
             try {
                 const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-                
                 if (accounts && accounts.length > 0) {
                     currentAccount = accounts[0];
                     provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -823,14 +657,11 @@
                     updateUIForConnected(currentAccount);
                     await refreshAllData();
                 }
-            } catch (e) {
-                console.log('自动连接未就绪:', e.message);
-            }
+            } catch (e) { console.log('自动连接未就绪:', e.message); }
 
             window.ethereum.on('accountsChanged', (accounts) => {
-                if (!accounts || accounts.length === 0) {
-                    disconnectWallet();
-                } else {
+                if (!accounts || accounts.length === 0) disconnectWallet();
+                else {
                     currentAccount = accounts[0];
                     provider = new ethers.providers.Web3Provider(window.ethereum);
                     signer = provider.getSigner();
@@ -839,7 +670,6 @@
                     refreshAllData();
                 }
             });
-
             window.ethereum.on('chainChanged', () => {
                 if (currentAccount) {
                     provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -848,18 +678,10 @@
                     refreshAllData();
                 }
             });
-
-            window.ethereum.on('disconnect', () => {
-                disconnectWallet();
-            });
+            window.ethereum.on('disconnect', () => disconnectWallet());
         }
 
-        // ======================== 启动 ========================
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                autoConnect();
-            }, 500);
-        });
+        window.addEventListener('load', () => setTimeout(() => autoConnect(), 500));
     </script>
 </body>
 </html>
