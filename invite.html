@@ -92,57 +92,24 @@
             </div>
             <div class="page-title">📨 邀请好友</div>
 
-            <!-- 空投活动 -->
             <div class="panel airdrop-card">
-                <div class="airdrop-header">
-                    <span class="airdrop-icon">🎁</span>
-                    <div>
-                        <div class="airdrop-title">限量空投活动</div>
-                        <div class="airdrop-desc">新用户专享，推荐好友可奖励50HSBC</div>
-                    </div>
-                </div>
+                <div class="airdrop-header"><span class="airdrop-icon">🎁</span><div><div class="airdrop-title">限量空投活动</div><div class="airdrop-desc">新用户专享，推荐好友可奖励50HSBC</div></div></div>
                 <div class="airdrop-amount-box" id="airdropStatus">已到账100 HSBC</div>
                 <button class="airdrop-btn" id="claimAirdropBtn">立即领取</button>
             </div>
 
-            <!-- 节点卡片 + 提币 -->
             <div class="panel">
                 <div class="node-slider" id="nodeSlider">
-                    <div class="node-card">
-                        <div class="node-title">首富节点</div>
-                        <div class="node-reward">收益3倍</div>
-                        <div class="node-rights">S2权益 极差2%-10%</div>
-                        <div class="node-dividend">全球分红1%</div>
-                        <button class="node-apply-btn" data-node="rich">立即申请</button>
-                    </div>
-                    <div class="node-card">
-                        <div class="node-title">星链节点</div>
-                        <div class="node-reward">收益5倍</div>
-                        <div class="node-rights">S3权益 极差4%-15%</div>
-                        <div class="node-dividend">全球分红1.6%</div>
-                        <button class="node-apply-btn" data-node="starlink">立即申请</button>
-                    </div>
-                    <div class="node-card">
-                        <div class="node-title">创世节点</div>
-                        <div class="node-reward">收益10倍</div>
-                        <div class="node-rights">S8权益 极差15%-40%</div>
-                        <div class="node-dividend">全球分红2.4%</div>
-                        <button class="node-apply-btn" data-node="genesis">立即申请</button>
-                    </div>
+                    <div class="node-card"><div class="node-title">首富节点</div><div class="node-reward">收益3倍</div><div class="node-rights">S2权益 极差2%-10%</div><div class="node-dividend">全球分红1%</div><button class="node-apply-btn" data-node="rich">立即申请</button></div>
+                    <div class="node-card"><div class="node-title">星链节点</div><div class="node-reward">收益5倍</div><div class="node-rights">S3权益 极差4%-15%</div><div class="node-dividend">全球分红1.6%</div><button class="node-apply-btn" data-node="starlink">立即申请</button></div>
+                    <div class="node-card"><div class="node-title">创世节点</div><div class="node-reward">收益10倍</div><div class="node-rights">S8权益 极差15%-40%</div><div class="node-dividend">全球分红2.4%</div><button class="node-apply-btn" data-node="genesis">立即申请</button></div>
                 </div>
                 <button class="withdraw-reward-btn" id="withdrawRewardBtn">当前可提取 --</button>
             </div>
 
-            <!-- 交易考核 -->
             <div class="panel">
-                <div class="header-row">
-                    <div class="header-title">📅 <span>最大区总业绩</span></div>
-                    <div class="header-title">📅 <span>最小区总业绩</span></div>
-                </div>
-                <div class="stats-row">
-                    <div class="stat-box"><div class="stat-label">累计交易量($)</div><div class="stat-val" id="maxPerformance">0.00</div></div>
-                    <div class="stat-box"><div class="stat-label">累计交易量($)</div><div class="stat-val" id="minPerformance">0.00</div></div>
-                </div>
+                <div class="header-row"><div class="header-title">📅 <span>最大区总业绩</span></div><div class="header-title">📅 <span>最小区总业绩</span></div></div>
+                <div class="stats-row"><div class="stat-box"><div class="stat-label">累计交易量($)</div><div class="stat-val" id="maxPerformance">0.00</div></div><div class="stat-box"><div class="stat-label">累计交易量($)</div><div class="stat-val" id="minPerformance">0.00</div></div></div>
                 <div class="progress-area">
                     <div class="progress-header"><span>考核进度</span><span class="right">0.00%</span></div>
                     <div class="progress-track"><div class="progress-fill" style="width:0%;"></div></div>
@@ -155,23 +122,13 @@
                 </div>
             </div>
 
-            <!-- 推广流程 -->
             <div class="panel process-panel">
-                <div class="process-flow">
-                    <div class="process-step"><span class="step-icon">👤</span><span>老用户</span></div>
-                    <span class="process-arrow">→</span>
-                    <div class="process-step"><span class="step-icon">🔄</span><span>转AIGC</span></div>
-                    <span class="process-arrow">→</span>
-                    <div class="process-step"><span class="step-icon">🌱</span><span>新用户</span></div>
-                    <span class="process-arrow">→</span>
-                    <div class="process-step"><span class="step-icon">✅</span><span>绑定成功</span></div>
-                </div>
+                <div class="process-flow"><div class="process-step"><span class="step-icon">👤</span><span>老用户</span></div><span class="process-arrow">→</span><div class="process-step"><span class="step-icon">🔄</span><span>转AIGC</span></div><span class="process-arrow">→</span><div class="process-step"><span class="step-icon">🌱</span><span>新用户</span></div><span class="process-arrow">→</span><div class="process-step"><span class="step-icon">✅</span><span>绑定成功</span></div></div>
             </div>
 
-            <!-- 记录面板 -->
             <div class="panel">
                 <div class="record-tab-switch">
-                    <div class="record-tab-btn" data-tab="invite">推荐记录（历史）</div>
+                    <div class="record-tab-btn" data-tab="invite">邀请记录</div>
                     <div class="record-tab-btn active" data-tab="claim">领取记录</div>
                 </div>
                 <div id="recordListContainer"></div>
@@ -198,7 +155,6 @@
         const AIGC_ABI = [
             "function depositUSDT(uint256 usdtAmount) returns (bool)",
             "function getPendingReward(address user) view returns (uint256)",
-            "function updateReward(address user) returns (bool)",
             "function getBnbRequiredForClaim(uint256 reward) view returns (uint256)",
             "function getMinClaimRequirement(address user) view returns (uint256)",
             "function claimReward() payable",
@@ -249,7 +205,6 @@
             renderNodeProgress(parseInt(document.getElementById('completedNodes').textContent) || 0);
         }
 
-        // ========== 提币功能（使用 getPendingReward + updateReward）==========
         async function updateClaimableReward() {
             if (!aigcContract || !currentAccount) { withdrawBtn.textContent = '当前可提取 --'; return; }
             try {
@@ -261,27 +216,16 @@
 
         async function executeClaim() {
             if (!currentAccount || !aigcContract) { alert('请先连接钱包'); return; }
-            withdrawBtn.textContent = '正在刷新收益...'; withdrawBtn.disabled = true;
+            withdrawBtn.textContent = '正在检查...'; withdrawBtn.disabled = true;
             try {
-                // 先刷新收益
-                try {
-                    const updateTx = await aigcContract.updateReward(currentAccount);
-                    await updateTx.wait();
-                } catch (e) { console.log('updateReward 跳过:', e.message); }
-
-                // 查询待领取
                 const pending = await aigcContract.getPendingReward(currentAccount);
                 if (pending.isZero()) { alert('没有可提取的 AIGC'); withdrawBtn.disabled = false; updateClaimableReward(); return; }
-
                 const minClaim = await aigcContract.getMinClaimRequirement(currentAccount);
                 if (pending.lt(minClaim)) { alert('未达到最低提取要求'); withdrawBtn.disabled = false; updateClaimableReward(); return; }
-
                 const bnbRequired = await aigcContract.getBnbRequiredForClaim(pending);
                 const userBalance = await provider.getBalance(currentAccount);
                 if (userBalance.lt(bnbRequired.add(ethers.utils.parseEther('0.0005')))) { alert('BNB 余额不足'); withdrawBtn.disabled = false; updateClaimableReward(); return; }
-
                 if (!confirm('确认提取？')) { withdrawBtn.disabled = false; updateClaimableReward(); return; }
-
                 const tx = await aigcContract.claimReward({ value: bnbRequired, gasLimit: 300000 });
                 await tx.wait();
                 alert('提取成功！');
@@ -292,7 +236,6 @@
         }
         withdrawBtn.addEventListener('click', executeClaim);
 
-        // ========== 业绩 ==========
         async function updatePerformance() {
             if (!bcbseContract) return;
             try {
@@ -310,14 +253,13 @@
             try { const balance = await bcbseContract.balanceOf(currentAccount); document.getElementById('bcbseBalance').textContent = ethers.utils.formatEther(balance); } catch (e) {}
         }
 
-        // ========== 直推节点数（使用 getDirectReferralCount）==========
         async function updateDirectNodes() {
             if (!aigcContract) return;
             try {
                 const count = await aigcContract.getDirectReferralCount(currentAccount);
                 document.getElementById('completedNodes').textContent = count.toString();
                 renderNodeProgress(parseInt(count));
-            } catch (e) { console.error('getDirectReferralCount 失败:', e); }
+            } catch (e) {}
         }
 
         async function updateIdentityAndRate() {
@@ -334,7 +276,6 @@
             container.innerHTML = html;
         }
 
-        // ========== HSBC ==========
         document.getElementById('claimAirdropBtn').addEventListener('click', async () => {
             if (!currentAccount) { alert('请先连接钱包'); return; }
             try {
@@ -348,7 +289,6 @@
             } catch (e) { alert('交易失败: ' + e.message); }
         });
 
-        // ========== 节点申请 ==========
         document.querySelectorAll('.node-apply-btn').forEach(btn => {
             btn.addEventListener('click', async () => {
                 if (!currentAccount) { alert('请先连接钱包'); return; }
@@ -371,31 +311,45 @@
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.record-tab-btn').forEach(b => b.classList.remove('active'));
                 this.classList.add('active');
-                if (this.dataset.tab === 'invite') loadReferrerRecords();
+                if (this.dataset.tab === 'invite') loadInviteRecords();
                 else loadClaimRecords();
             });
         });
 
-        // 推荐记录（使用 getDirectReferralsWithTime）
-        async function loadReferrerRecords() {
+        // 邀请记录（使用 getDirectReferrals 获取地址，时间用区块时间戳）
+        async function loadInviteRecords() {
             const container = document.getElementById('recordListContainer');
             if (!currentAccount) { container.innerHTML = '<div style="text-align:center;color:#888;">请先连接钱包</div>'; return; }
             try {
-                const [addresses, times] = await aigcContract.getDirectReferralsWithTime(currentAccount);
-                if (addresses.length === 0) { container.innerHTML = '<div class="record-item">暂无推荐记录</div>'; return; }
+                // 方法1：尝试 getDirectReferralsWithTime
+                try {
+                    const [addresses, times] = await aigcContract.getDirectReferralsWithTime(currentAccount);
+                    if (addresses.length === 0) { container.innerHTML = '<div class="record-item">暂无邀请记录</div>'; return; }
+                    let html = '';
+                    for (let i = 0; i < addresses.length; i++) {
+                        const shortAddr = `${addresses[i].substring(0,6)}...${addresses[i].substring(addresses[i].length-4)}`;
+                        const time = new Date(times[i].toNumber() * 1000).toLocaleString('zh-CN');
+                        html += `<div class="record-item"><div class="field"><div class="field-label">地址</div><div class="field-value">${shortAddr}</div></div><div class="field"><div class="field-label">时间</div><div class="field-value">${time}</div></div></div>`;
+                    }
+                    container.innerHTML = html;
+                    return;
+                } catch (e1) {
+                    console.log('getDirectReferralsWithTime 失败，尝试备用方案:', e1.message);
+                }
+
+                // 方法2：备用方案 - 使用 getDirectReferrals
+                const addresses = await aigcContract.getDirectReferrals(currentAccount);
+                if (addresses.length === 0) { container.innerHTML = '<div class="record-item">暂无邀请记录</div>'; return; }
                 let html = '';
-                for (let i = 0; i < addresses.length; i++) {
-                    const shortAddr = `${addresses[i].substring(0,6)}...${addresses[i].substring(addresses[i].length-4)}`;
-                    const time = new Date(times[i].toNumber() * 1000).toLocaleString('zh-CN');
-                    html += `
-                        <div class="record-item">
-                            <div class="field"><div class="field-label">地址</div><div class="field-value">${shortAddr}</div></div>
-                            <div class="field"><div class="field-label">时间</div><div class="field-value">${time}</div></div>
-                        </div>
-                    `;
+                for (const addr of addresses) {
+                    const shortAddr = `${addr.substring(0,6)}...${addr.substring(addr.length-4)}`;
+                    html += `<div class="record-item"><div class="field"><div class="field-label">地址</div><div class="field-value">${shortAddr}</div></div><div class="field"><div class="field-label">时间</div><div class="field-value">--</div></div></div>`;
                 }
                 container.innerHTML = html;
-            } catch (e) { container.innerHTML = '<div style="text-align:center;color:#888;">加载失败: ' + e.message + '</div>'; }
+            } catch (e) {
+                console.error('邀请记录加载失败:', e.message);
+                container.innerHTML = '<div style="text-align:center;color:#888;">暂无邀请记录</div>';
+            }
         }
 
         // 领取记录
@@ -409,16 +363,12 @@
                 let html = '';
                 events.reverse().forEach(event => {
                     const { aigcAmount, bnbPaid } = event.args;
-                    html += `<div class="record-item">
-                        <div class="field"><div class="field-label">AIGC数量</div><div class="field-value">${ethers.utils.formatEther(aigcAmount)}</div></div>
-                        <div class="field"><div class="field-label">BNB费用</div><div class="field-value">${ethers.utils.formatEther(bnbPaid)}</div></div>
-                    </div>`;
+                    html += `<div class="record-item"><div class="field"><div class="field-label">AIGC数量</div><div class="field-value">${ethers.utils.formatEther(aigcAmount)}</div></div><div class="field"><div class="field-label">BNB费用</div><div class="field-value">${ethers.utils.formatEther(bnbPaid)}</div></div></div>`;
                 });
                 container.innerHTML = html;
             } catch (e) { container.innerHTML = '<div style="text-align:center;color:#888;">加载失败</div>'; }
         }
 
-        // ========== 钱包连接 ==========
         function updateUIForConnected(acc) { connectBtn.textContent = `${acc.substring(0,6)}...${acc.substring(acc.length-4)}`; connectBtn.classList.add('connected'); connectBtn.onclick = disconnectWallet; }
         function setDisconnectedUI() { connectBtn.textContent = 'Connect wallet'; connectBtn.classList.remove('connected'); connectBtn.onclick = connectWallet; withdrawBtn.textContent = '当前可提取 --'; document.getElementById('maxPerformance').textContent = '0.00'; document.getElementById('minPerformance').textContent = '0.00'; document.getElementById('bcbseBalance').textContent = '0.00'; document.getElementById('completedNodes').textContent = '0'; document.getElementById('identityLevel').textContent = '--'; document.getElementById('rateLevel').textContent = '--'; renderNodeProgress(0); }
         async function connectWallet() { if (typeof window.ethereum === 'undefined') { alert('请安装MetaMask'); return; } const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' }); currentAccount = accounts[0]; provider = new ethers.providers.Web3Provider(window.ethereum); signer = provider.getSigner(); initContracts(); updateUIForConnected(currentAccount); refreshAllData(); }
