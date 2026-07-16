@@ -42,7 +42,6 @@
         .stake-btn { width: 100%; background: linear-gradient(90deg, #f4a200, #ffd700); border: none; border-radius: 8px; padding: 14px; font-weight: bold; color: #111; cursor: pointer; box-shadow: 0 4px 15px rgba(255,170,0,0.3); font-size: 16px; }
         .order-list-title { font-size: 16px; color: #f90; margin-bottom: 12px; }
 
-        /* ========== 订单卡片 ========== */
         .stake-card {
             background: rgba(16, 26, 46, 0.7);
             border: 1px solid rgba(0, 180, 255, 0.12);
@@ -75,7 +74,6 @@
         .countdown { color: #ffd93d; font-weight: 600; }
         .pending-interest { color: #ffd93d; font-weight: 600; }
 
-        /* ========== 骨架屏 ========== */
         .skeleton {
             background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.03) 75%);
             background-size: 200% 100%;
@@ -142,7 +140,6 @@
         const BCBS_ADDRESS = '0xC2ED87266c9F35eeb6715624264A8163A361FCd7';
         const USDT_ADDRESS = '0x55d398326f99059fF775485246999027B3197955';
 
-        // ✅ 完整 ABI - 使用具名结构体
         const ERC20_ABI = ["function balanceOf(address) view returns (uint256)","function decimals() view returns (uint8)","function approve(address,uint256) returns (bool)","function allowance(address,address) view returns (uint256)"];
         const STAKE_ABI = [
             "function stakeAIGC(uint256,uint8) returns (bool)",
@@ -241,7 +238,7 @@
             await loadOrders();
         }
 
-        // ======================== 加载质押订单（修复版） ========================
+        // ======================== 加载质押订单 ========================
         async function loadOrders() {
             const container = document.getElementById('orderListContainer');
             if (!currentAccount) {
@@ -260,7 +257,6 @@
                     const stake = await stakeContract.getStakeInfo(id);
                     const pending = await stakeContract.getPendingInterest(id);
                     
-                    // ✅ 兼容访问：支持 . 和 [] 两种方式
                     const tokenType = stake.tokenType !== undefined ? stake.tokenType : stake[2];
                     const amount = stake.amount !== undefined ? stake.amount : stake[3];
                     const startTime = stake.startTime !== undefined ? stake.startTime : stake[4];
@@ -272,8 +268,7 @@
                     const decimals = tokenType === 0 ? await getDecimals(aigcContract) : await getDecimals(usdtContract);
                     const periodInfo = getPeriodName(period);
                     const dailyRate = getDailyRate(period);
-                    // 测试版：1天 = 5分钟 = 300秒，7天 = 35分钟
-                    const testSeconds = periodDays[period] * 300; // 300秒 = 5分钟
+                    const testSeconds = periodDays[period] * 300;
                     const endTime = parseInt(startTime) + testSeconds;
                     const status = getStatusLabel(redeemed, endTime);
                     const pendingVal = parseFloat(formatTokenAmount(pending));
@@ -470,7 +465,7 @@
             }
         });
 
-        // ======================== 钱包连接 ========================
+        // ======================== 钱包连接（自动 + 手动） ========================
         function updateUIForConnected(acc) {
             connectBtn.textContent = `${acc.substring(0,6)}...${acc.substring(acc.length-4)}`;
             connectBtn.classList.add('connected');
@@ -505,28 +500,35 @@
             if (accounts.length === 0) disconnectWallet();
             else { currentAccount = accounts[0]; provider = new ethers.providers.Web3Provider(window.ethereum); signer = provider.getSigner(); initContracts(); updateUIForConnected(currentAccount); refreshAll(); }
         }
+
+        // ✅ 自动连接（页面加载即弹出钱包请求）
         async function autoConnect() {
             if (typeof window.ethereum !== 'undefined') {
-                provider = new ethers.providers.Web3Provider(window.ethereum);
                 try {
-                    const accounts = await provider.listAccounts();
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                     if (accounts.length > 0) {
                         currentAccount = accounts[0];
+                        provider = new ethers.providers.Web3Provider(window.ethereum);
                         signer = provider.getSigner();
                         initContracts();
                         updateUIForConnected(currentAccount);
                         await refreshAll();
-                    } else setDisconnectedUI();
-                } catch (e) { setDisconnectedUI(); }
-                window.ethereum.on('accountsChanged', handleAccountsChanged);
-                window.ethereum.on('chainChanged', () => window.location.reload());
+                    } else {
+                        setDisconnectedUI();
+                    }
+                    window.ethereum.on('accountsChanged', handleAccountsChanged);
+                    window.ethereum.on('chainChanged', () => window.location.reload());
+                } catch (error) {
+                    console.warn('自动连接失败:', error.message);
+                    setDisconnectedUI();
+                }
             } else {
                 connectBtn.textContent = 'No Wallet';
                 connectBtn.disabled = true;
             }
         }
+
         window.addEventListener('load', autoConnect);
-        // 暴露重试函数给 HTML
         window.loadOrders = loadOrders;
     </script>
     <script async src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js" onload="autoConnect"></script>
