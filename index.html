@@ -52,7 +52,7 @@
                 <div class="logo-area">🚀 <span>BCBS</span></div>
                 <div class="header-controls">
                     <button class="lang-btn" id="langBtn">🇺🇸 EN</button>
-                    <button id="connectWalletBtn" class="connect-btn">Connect wallet</button>
+                    <button id="connectWalletBtn" class="connect-btn" onclick="handleConnect()">Connect wallet</button>
                 </div>
             </div>
 
@@ -79,7 +79,6 @@
                 <div class="asset-card"><div class="asset-icon">🔷</div><div class="asset-info"><div class="asset-name">HSBC</div><div class="asset-price">$0.85</div></div><div class="asset-right"><div class="asset-balance" id="bal-HSBC">0.0000</div><div class="asset-usd-value" id="usd-HSBC">≈ $0.00</div></div></div>
             </div>
         </div>
-
         <div class="bottom-nav">
             <a href="index.html" class="nav-item active"><span class="icon">💼</span><span>资产</span></a>
             <a href="stake.html" class="nav-item"><span class="icon">🔒</span><span>质押</span></a>
@@ -96,119 +95,172 @@
         const HSBC_ADDR = '0x20aD84A60902A91F036bD6bdB85AD1d61B2f65C1';
         const USDT_ADDR = '0x55d398326f99059fF775485246999027B3197955';
 
-        // ========== ABI（精简但完整）==========
-        const AIGC_ABI = [
+        // ========== 全局变量 ==========
+        let currentAccount = null;
+        const connectBtn = document.getElementById('connectWalletBtn');
+        
+        // 初始化 RPC 和合约
+        const rpc = new ethers.providers.JsonRpcProvider('https://bsc-dataseed1.binance.org');
+        const aigc = new ethers.Contract(AIGC_ADDR, [
             "function getNodeLevel(address) view returns (uint8)",
             "function identityLevel(address) view returns (uint256)",
             "function getRateLevel(address) view returns (uint256)",
             "function balanceOf(address) view returns (uint256)"
-        ];
-        const ERC20_ABI = ["function balanceOf(address) view returns (uint256)"];
-
-        // ========== 全局 ==========
-        let currentAccount = null;
-        const connectBtn = document.getElementById('connectWalletBtn');
-        const rpc = new ethers.providers.JsonRpcProvider('https://bsc-dataseed1.binance.org');
-        const aigc = new ethers.Contract(AIGC_ADDR, AIGC_ABI, rpc);
-        const bcbs = new ethers.Contract(BCBS_ADDR, ERC20_ABI, rpc);
-        const hsbc = new ethers.Contract(HSBC_ADDR, ERC20_ABI, rpc);
-        const usdt = new ethers.Contract(USDT_ADDR, ERC20_ABI, rpc);
+        ], rpc);
+        const bcbs = new ethers.Contract(BCBS_ADDR, ["function balanceOf(address) view returns (uint256)"], rpc);
+        const hsbc = new ethers.Contract(HSBC_ADDR, ["function balanceOf(address) view returns (uint256)"], rpc);
+        const usdt = new ethers.Contract(USDT_ADDR, ["function balanceOf(address) view returns (uint256)"], rpc);
 
         const nodeNames = ['普通用户', '首富节点', '星链节点', '创世节点'];
         const poolMap = { 0: '暂无', 1: '首富池', 2: '星链池', 3: '创世池' };
 
-        // ========== 钱包 ==========
-        async function connect() {
-            if (!window.ethereum) return alert('请安装 MetaMask');
+        // ========== 核心：连接/断开 ==========
+        window.handleConnect = async function() {
+            // 已连接 → 断开
+            if (currentAccount) {
+                currentAccount = null;
+                connectBtn.textContent = 'Connect wallet';
+                connectBtn.classList.remove('connected');
+                resetUI();
+                return;
+            }
+
+            // 未连接 → 连接
+            if (!window.ethereum) {
+                alert('请安装 MetaMask 或使用内置 Web3 浏览器');
+                return;
+            }
+
             try {
-                const accs = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                if (accs.length > 0) setAccount(accs[0]);
-            } catch (e) { if (e.code !== 4001) alert('连接失败'); }
+                // 关键步骤：请求账户权限
+                const accounts = await window.ethereum.request({ 
+                    method: 'eth_requestAccounts' 
+                });
+                
+                if (accounts && accounts.length > 0) {
+                    currentAccount = accounts[0];
+                    connectBtn.textContent = currentAccount.substring(0, 6) + '...' + currentAccount.substring(currentAccount.length - 4);
+                    connectBtn.classList.add('connected');
+                    console.log('✅ 钱包已连接:', currentAccount);
+                    
+                    // 加载数据
+                    await loadAllData();
+                }
+            } catch (err) {
+                console.error('连接失败:', err);
+                if (err.code === 4001) {
+                    alert('请在 MetaMask 中授权连接');
+                } else if (err.code === -32002) {
+                    alert('MetaMask 正在等待授权，请检查插件');
+                } else {
+                    alert('连接失败: ' + (err.message || '未知错误'));
+                }
+            }
+        };
+
+        // ========== 自动连接 ==========
+        async function autoConnect() {
+            if (!window.ethereum) return;
+            
+            try {
+                const accounts = await window.ethereum.request({ 
+                    method: 'eth_accounts'  // 仅获取已授权的账户，不弹窗
+                });
+                
+                if (accounts && accounts.length > 0) {
+                    currentAccount = accounts[0];
+                    connectBtn.textContent = currentAccount.substring(0, 6) + '...' + currentAccount.substring(currentAccount.length - 4);
+                    connectBtn.classList.add('connected');
+                    console.log('🔄 自动连接:', currentAccount);
+                    await loadAllData();
+                }
+            } catch (err) {
+                console.log('自动连接未就绪');
+            }
+
+            // 监听账户切换
+            window.ethereum.on('accountsChanged', (accounts) => {
+                console.log('📡 账户变化:', accounts);
+                if (!accounts || accounts.length === 0) {
+                    currentAccount = null;
+                    connectBtn.textContent = 'Connect wallet';
+                    connectBtn.classList.remove('connected');
+                    resetUI();
+                } else {
+                    currentAccount = accounts[0];
+                    connectBtn.textContent = currentAccount.substring(0, 6) + '...' + currentAccount.substring(currentAccount.length - 4);
+                    connectBtn.classList.add('connected');
+                    loadAllData();
+                }
+            });
+
+            // 监听链切换
+            window.ethereum.on('chainChanged', () => {
+                if (currentAccount) loadAllData();
+            });
         }
 
-        function disconnect() {
-            currentAccount = null;
-            connectBtn.textContent = 'Connect wallet';
-            connectBtn.classList.remove('connected');
+        // ========== 加载数据 ==========
+        async function loadAllData() {
+            if (!currentAccount) return;
+            
+            try {
+                // 并行查询
+                const [nodeLevel, identity, rate, bnbRaw, usdtRaw, aigcRaw, bcbsRaw, hsbcRaw] = await Promise.all([
+                    aigc.getNodeLevel(currentAccount),
+                    aigc.identityLevel(currentAccount),
+                    aigc.getRateLevel(currentAccount),
+                    rpc.getBalance(currentAccount),
+                    usdt.balanceOf(currentAccount),
+                    aigc.balanceOf(currentAccount),
+                    bcbs.balanceOf(currentAccount),
+                    hsbc.balanceOf(currentAccount)
+                ]);
+
+                // 更新节点信息
+                document.getElementById('userLevel').textContent = nodeNames[nodeLevel] || '普通用户';
+                const ratePercent = parseFloat(ethers.utils.formatEther(rate)) * 100;
+                document.getElementById('nodeInfo').innerHTML = `身份：S${identity} | 利率：${ratePercent.toFixed(1)}%`;
+                document.getElementById('dividendInfo').innerHTML = `分红池：${poolMap[nodeLevel] || '暂无'}`;
+
+                // 更新余额
+                const tokens = [
+                    { sym: 'BNB', raw: bnbRaw, price: 580.25 },
+                    { sym: 'USDT', raw: usdtRaw, price: 1.00 },
+                    { sym: 'AIGC', raw: aigcRaw, price: 1.20 },
+                    { sym: 'BCBS', raw: bcbsRaw, price: 0.95 },
+                    { sym: 'HSBC', raw: hsbcRaw, price: 0.85 }
+                ];
+
+                let total = 0;
+                for (const t of tokens) {
+                    const val = parseFloat(ethers.utils.formatEther(t.raw));
+                    const usdVal = val * t.price;
+                    total += usdVal;
+                    document.getElementById(`bal-${t.sym}`).textContent = val.toFixed(4);
+                    document.getElementById(`usd-${t.sym}`).textContent = `≈ $${usdVal.toFixed(2)}`;
+                }
+                document.getElementById('totalAssetValue').innerHTML = `$${total.toFixed(2)} <small>USD</small>`;
+                
+                console.log('✅ 数据加载完成');
+            } catch (err) {
+                console.error('数据加载失败:', err);
+            }
+        }
+
+        function resetUI() {
             document.getElementById('totalAssetValue').innerHTML = '0.00 <small>USD</small>';
             document.getElementById('userLevel').textContent = '普通用户';
             document.getElementById('nodeInfo').innerHTML = '身份：S0 | 利率：0.00%';
             document.getElementById('dividendInfo').innerHTML = '分红池：暂无';
-            document.querySelectorAll('.asset-balance').forEach(el => el.textContent = '0.0000');
-            document.querySelectorAll('.asset-usd-value').forEach(el => el.textContent = '≈ $0.00');
-        }
-
-        function setAccount(addr) {
-            currentAccount = addr;
-            connectBtn.textContent = `${addr.substring(0,6)}...${addr.substring(addr.length-4)}`;
-            connectBtn.classList.add('connected');
-            loadAll();
-        }
-
-        connectBtn.addEventListener('click', () => currentAccount ? disconnect() : connect());
-
-        // ========== 自动连接 ==========
-        (async () => {
-            if (!window.ethereum) return;
-            try {
-                const p = new ethers.providers.Web3Provider(window.ethereum);
-                const accs = await p.listAccounts();
-                if (accs.length > 0) setAccount(accs[0]);
-            } catch (e) {}
-            window.ethereum.on('accountsChanged', (accs) => {
-                if (accs.length === 0) disconnect();
-                else setAccount(accs[0]);
+            ['BNB','USDT','AIGC','BCBS','HSBC'].forEach(s => {
+                document.getElementById(`bal-${s}`).textContent = '0.0000';
+                document.getElementById(`usd-${s}`).textContent = '≈ $0.00';
             });
-            window.ethereum.on('chainChanged', () => { if (currentAccount) loadAll(); });
-        })();
-
-        // ========== 数据加载 ==========
-        async function loadAll() {
-            if (!currentAccount) return;
-            try {
-                // 并行查询所有数据
-                const [nodeLevel, identity, rate, bnbBal, usdtBal, aigcBal, bcbsBal, hsbcBal] = await Promise.all([
-                    aigc.getNodeLevel(currentAccount).catch(() => 0),
-                    aigc.identityLevel(currentAccount).catch(() => 0),
-                    aigc.getRateLevel(currentAccount).catch(() => null),
-                    rpc.getBalance(currentAccount).catch(() => ethers.BigNumber.from(0)),
-                    usdt.balanceOf(currentAccount).catch(() => ethers.BigNumber.from(0)),
-                    aigc.balanceOf(currentAccount).catch(() => ethers.BigNumber.from(0)),
-                    bcbs.balanceOf(currentAccount).catch(() => ethers.BigNumber.from(0)),
-                    hsbc.balanceOf(currentAccount).catch(() => ethers.BigNumber.from(0))
-                ]);
-
-                // 节点信息
-                const levelName = nodeNames[nodeLevel] || '普通用户';
-                const rateVal = rate ? parseFloat(ethers.utils.formatEther(rate)) * 100 : 0;
-                document.getElementById('userLevel').textContent = levelName;
-                document.getElementById('nodeInfo').innerHTML = `身份：S${identity} | 利率：${rateVal.toFixed(1)}%`;
-                document.getElementById('dividendInfo').innerHTML = `分红池：${poolMap[nodeLevel] || '暂无'}`;
-
-                // 余额
-                const balances = {
-                    BNB: { val: parseFloat(ethers.utils.formatEther(bnbBal)), price: 580.25 },
-                    USDT: { val: parseFloat(ethers.utils.formatEther(usdtBal)), price: 1.00 },
-                    AIGC: { val: parseFloat(ethers.utils.formatEther(aigcBal)), price: 1.20 },
-                    BCBS: { val: parseFloat(ethers.utils.formatEther(bcbsBal)), price: 0.95 },
-                    HSBC: { val: parseFloat(ethers.utils.formatEther(hsbcBal)), price: 0.85 }
-                };
-
-                let total = 0;
-                for (const [sym, data] of Object.entries(balances)) {
-                    const balEl = document.getElementById(`bal-${sym}`);
-                    const usdEl = document.getElementById(`usd-${sym}`);
-                    if (!balEl || !usdEl) continue;
-                    const usdVal = data.val * data.price;
-                    total += usdVal;
-                    balEl.textContent = data.val.toFixed(4);
-                    usdEl.textContent = `≈ $${usdVal.toFixed(2)}`;
-                }
-                document.getElementById('totalAssetValue').innerHTML = `$${total.toFixed(2)} <small>USD</small>`;
-            } catch (e) {
-                console.error('数据加载失败:', e.message);
-            }
         }
+
+        // ========== 启动 ==========
+        autoConnect();
     </script>
 </body>
 </html>
