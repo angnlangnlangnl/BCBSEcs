@@ -99,7 +99,7 @@
 
             <div class="panel airdrop-card">
                 <div class="airdrop-header"><span class="airdrop-icon">🎁</span><div><div class="airdrop-title">限量空投活动</div><div class="airdrop-desc">新用户专享，推荐好友可奖励50HSBC</div></div></div>
-                <div class="airdrop-amount-box" id="airdropStatus">可领取100HSSC</div>
+                <div class="airdrop-amount-box" id="airdropStatus">未领取</div>
                 <button class="airdrop-btn" id="claimAirdropBtn">立即领取</button>
             </div>
 
@@ -127,7 +127,6 @@
                 </div>
             </div>
 
-            <!-- ✅ 流程面板：🌱 改为 👥 -->
             <div class="panel process-panel">
                 <div class="process-flow">
                     <div class="process-step"><span class="step-icon">👤</span><span>老用户</span></div>
@@ -239,7 +238,6 @@
             else { try { await loadClaimRecords(); } catch (e) {} }
         }
 
-        // ======================== 空投 ========================
         async function updateAirdropStatus() {
             if (!hsbcContract) return;
             try {
@@ -261,7 +259,6 @@
             } catch (e) { withdrawBtn.textContent = '当前可提取 --'; }
         }
 
-        // ======================== 大区/小区业绩 + 考核进度 ========================
         async function updateTeamPerformance() {
             if (!aigcContract || !bcbsContract) return;
             try {
@@ -320,11 +317,15 @@
             } catch (e) {}
         }
 
+        // ✅ 修改：当前层级显示为 "2层" 格式
         async function updateIdentityAndRate() {
             let nodeCount = 0;
             try { if (aigcContract) { const count = await aigcContract.getDirectReferralCount(currentAccount); nodeCount = parseInt(count.toString()); } } catch (e) {}
+            
+            // ✅ 直推1个=2层, 直推2个=4层, 以此类推（最多15层）
             const identityFromNodes = Math.min(nodeCount * 2, 15);
-            document.getElementById('identityLevel').textContent = nodeCount > 0 ? `S${identityFromNodes}` : 'S0';
+            document.getElementById('identityLevel').textContent = nodeCount > 0 ? `${identityFromNodes}层` : '0层';
+
             let rateDisplay = '0.0%';
             try {
                 if (bcbsContract) {
@@ -353,7 +354,6 @@
             container.innerHTML = html;
         }
 
-        // ======================== 提币 ========================
         withdrawBtn.addEventListener('click', async () => {
             if (!currentAccount || !aigcContract) { alert('请先连接钱包'); return; }
             withdrawBtn.disabled = true;
@@ -377,7 +377,6 @@
             finally { withdrawBtn.disabled = false; await updateClaimableReward(); }
         });
 
-        // ======================== 空投领取 ========================
         document.getElementById('claimAirdropBtn').addEventListener('click', async () => {
             if (!currentAccount) { alert('请先连接钱包'); return; }
             const btn = document.getElementById('claimAirdropBtn');
@@ -396,7 +395,6 @@
             } catch (e) { alert('领取失败: ' + (e.reason || e.message)); btn.disabled = false; btn.textContent = '立即领取'; }
         });
 
-        // ======================== 节点申请 ========================
         document.querySelectorAll('.node-apply-btn').forEach(btn => {
             btn.addEventListener('click', async () => {
                 if (!currentAccount) { alert('请先连接钱包'); return; }
@@ -428,7 +426,6 @@
             });
         });
 
-        // ======================== 记录面板 ========================
         document.querySelectorAll('.record-tab-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.record-tab-btn').forEach(b => b.classList.remove('active'));
@@ -490,7 +487,6 @@
             } catch (e) { container.innerHTML = '<div class="record-item" style="justify-content:center;color:#888;">加载失败，请重试</div>'; }
         }
 
-        // ======================== 钱包 ========================
         function updateUIForConnected(acc) { connectBtn.textContent = `${acc.substring(0, 6)}...${acc.substring(acc.length - 4)}`; connectBtn.classList.add('connected'); }
         function setDisconnectedUI() {
             connectBtn.textContent = 'Connect wallet'; connectBtn.classList.remove('connected');
