@@ -47,6 +47,7 @@
                 <button id="connectBtn" class="connect-btn">Connect wallet</button>
             </div>
 
+            <!-- 用户信息卡片 -->
             <div class="panel profile-panel">
                 <div class="profile-left">
                     <div class="avatar-circle">👤</div>
@@ -61,6 +62,7 @@
                 </div>
             </div>
 
+            <!-- 资产卡片（静态HTML）-->
             <div id="cards">
                 <div class="asset-card"><div class="asset-icon">💛</div><div class="asset-info"><div class="asset-name">BNB</div><div class="asset-price">$580</div></div><div class="asset-right"><div class="asset-balance" id="b-BNB">--</div><div class="asset-usd" id="u-BNB">--</div></div></div>
                 <div class="asset-card"><div class="asset-icon">💵</div><div class="asset-info"><div class="asset-name">USDT</div><div class="asset-price">$1</div></div><div class="asset-right"><div class="asset-balance" id="b-USDT">--</div><div class="asset-usd" id="u-USDT">--</div></div></div>
@@ -80,44 +82,42 @@
     </div>
 
     <script>
-        // ==================== 合约地址（BCBSE 已合并到 BCBS）====================
+        // ==================== 1. 常量配置 ====================
         const ADDR = {
             AIGC: '0x49CaB5FCE501e3209d1933a745413D061879AA7a',
-            BCBS: '0xC2ED87266c9F35eeb6715624264A8163A361FCd7',  // 统一合约
+            BCBS: '0xC2ED87266c9F35eeb6715624264A8163A361FCd7',
             HSBC: '0x20aD84A60902A91F036bD6bdB85AD1d61B2f65C1',
             USDT: '0x55d398326f99059fF775485246999027B3197955'
         };
 
-        // 最小 ABI（只包含实际使用的方法）
+        // 最小 ABI
         const BAL_ABI = ['function balanceOf(address) view returns (uint256)'];
         const AIGC_ABI = [
             'function balanceOf(address) view returns (uint256)',
             'function getNodeLevel(address) view returns (uint8)',
             'function identityLevel(address) view returns (uint256)'
         ];
-        const BCBS_ABI = [
-            'function balanceOf(address) view returns (uint256)',
-            'function getRateLevel(address) view returns (uint256)',
-            'function getPendingDividend(address,uint8) view returns (uint256)'
-        ];
 
-        // ==================== 全局状态 ====================
+        // ==================== 2. 全局状态 ====================
         let account = null;
         const btn = document.getElementById('connectBtn');
+
+        // 使用 ethers 默认 Provider（更稳定）
         const provider = new ethers.providers.JsonRpcProvider('https://bsc-dataseed.binance.org');
+        const contracts = {
+            aigc: new ethers.Contract(ADDR.AIGC, AIGC_ABI, provider),
+            bcbs: new ethers.Contract(ADDR.BCBS, BAL_ABI, provider),
+            hsbc: new ethers.Contract(ADDR.HSBC, BAL_ABI, provider),
+            usdt: new ethers.Contract(ADDR.USDT, BAL_ABI, provider)
+        };
 
-        // 合约实例
-        const aigc = new ethers.Contract(ADDR.AIGC, AIGC_ABI, provider);
-        const bcbs = new ethers.Contract(ADDR.BCBS, BCBS_ABI, provider);
-        const hsbc = new ethers.Contract(ADDR.HSBC, BAL_ABI, provider);
-        const usdt = new ethers.Contract(ADDR.USDT, BAL_ABI, provider);
-
-        // ==================== UI ====================
+        // ==================== 3. UI 更新 ====================
         function setUI(acc) {
             account = acc;
             btn.textContent = acc ? `${acc.slice(0,6)}...${acc.slice(-4)}` : 'Connect wallet';
             btn.classList.toggle('connected', !!acc);
-            acc ? loadAll() : resetAll();
+            if (acc) loadAll();
+            else resetAll();
         }
 
         function resetAll() {
@@ -130,9 +130,10 @@
             });
         }
 
-        // ==================== 数据加载 ====================
+        // ==================== 4. 数据加载（每个独立 try-catch）====================
         async function loadAll() {
             if (!account) return;
+            // 并行加载，互不影响
             loadBalances();
             loadNodeInfo();
         }
@@ -141,75 +142,79 @@
             let total = 0;
             const items = [
                 { sym: 'BNB', price: 580, fn: async () => parseFloat(ethers.utils.formatEther(await provider.getBalance(account))) },
-                { sym: 'USDT', price: 1, fn: async () => parseFloat(ethers.utils.formatEther(await usdt.balanceOf(account))) },
-                { sym: 'AIGC', price: 1.2, fn: async () => parseFloat(ethers.utils.formatEther(await aigc.balanceOf(account))) },
-                { sym: 'BCBS', price: 0.95, fn: async () => parseFloat(ethers.utils.formatEther(await bcbs.balanceOf(account))) },
-                { sym: 'HSBC', price: 0.85, fn: async () => parseFloat(ethers.utils.formatEther(await hsbc.balanceOf(account))) }
+                { sym: 'USDT', price: 1, fn: async () => parseFloat(ethers.utils.formatEther(await contracts.usdt.balanceOf(account))) },
+                { sym: 'AIGC', price: 1.2, fn: async () => parseFloat(ethers.utils.formatEther(await contracts.aigc.balanceOf(account))) },
+                { sym: 'BCBS', price: 0.95, fn: async () => parseFloat(ethers.utils.formatEther(await contracts.bcbs.balanceOf(account))) },
+                { sym: 'HSBC', price: 0.85, fn: async () => parseFloat(ethers.utils.formatEther(await contracts.hsbc.balanceOf(account))) }
             ];
 
             for (const item of items) {
-                const bEl = document.getElementById('b-'+item.sym), uEl = document.getElementById('u-'+item.sym);
+                const bEl = document.getElementById('b-'+item.sym);
+                const uEl = document.getElementById('u-'+item.sym);
                 try {
                     const bal = await item.fn();
                     const usd = bal * item.price;
                     total += usd;
                     bEl.textContent = bal.toFixed(4);
                     uEl.textContent = '$' + usd.toFixed(2);
-                } catch (e) { bEl.textContent = '--'; uEl.textContent = '--'; }
+                } catch (e) {
+                    bEl.textContent = '--';
+                    uEl.textContent = '--';
+                }
             }
             document.getElementById('totalValue').innerHTML = `$${total.toFixed(2)} <small>USD</small>`;
         }
 
         async function loadNodeInfo() {
-            const badge = document.getElementById('levelBadge'), info = document.getElementById('nodeInfo');
+            const badge = document.getElementById('levelBadge');
+            const info = document.getElementById('nodeInfo');
             try {
-                // AIGC 合约查询节点等级
-                const level = await aigc.getNodeLevel(account);
+                const level = await contracts.aigc.getNodeLevel(account);
                 const names = ['普通用户','首富节点','星链节点','创世节点'];
                 badge.textContent = names[level] || '普通用户';
-
-                // AIGC 合约查询身份等级
+                
                 let idText = '--';
-                try { const id = await aigc.identityLevel(account); if (id > 0) idText = 'S' + id.toString(); } catch (e) {}
-
-                // BCBS 合约查询利率
-                let rateText = '--';
-                try { const rate = await bcbs.getRateLevel(account); rateText = (parseFloat(ethers.utils.formatEther(rate)) * 100).toFixed(1) + '%'; } catch (e) {}
-
-                // BCBS 合约查询分红
-                let totalDiv = 0;
-                const pools = ['首富池','星链池','创世池','S4池','S5池','S6池','S7池','S8池'];
-                for (let i = 0; i <= 7; i++) {
-                    try { const p = await bcbs.getPendingDividend(account, i); totalDiv += parseFloat(ethers.utils.formatEther(p)); } catch (e) {}
-                }
-
-                info.innerHTML = `${idText} | ${rateText} | 分红: $${totalDiv.toFixed(2)}`;
+                try {
+                    const id = await contracts.aigc.identityLevel(account);
+                    if (id > 0) idText = 'S' + id.toString();
+                } catch (e) {}
+                info.innerHTML = `身份等级：${idText}`;
             } catch (e) {
                 badge.textContent = '普通用户';
                 info.innerHTML = '';
             }
         }
 
-        // ==================== 钱包连接 ====================
+        // ==================== 5. 钱包连接 ====================
         btn.addEventListener('click', async () => {
-            if (account) { setUI(null); return; }
+            if (account) {
+                setUI(null);
+                return;
+            }
             if (!window.ethereum) return alert('请安装 MetaMask');
             try {
                 const accs = await window.ethereum.request({ method: 'eth_requestAccounts' });
                 if (accs.length > 0) setUI(accs[0]);
-            } catch (e) { if (e.code !== 4001) alert('连接失败'); }
+            } catch (e) {
+                if (e.code !== 4001) alert('连接失败');
+            }
         });
 
-        // ==================== 自动连接 ====================
-        (async () => {
+        // ==================== 6. 自动连接 ====================
+        async function autoConnect() {
             if (!window.ethereum) return;
             try {
                 const p = new ethers.providers.Web3Provider(window.ethereum);
                 const accs = await p.listAccounts();
                 if (accs.length > 0) setUI(accs[0]);
             } catch (e) {}
-            window.ethereum.on('accountsChanged', (accs) => setUI(accs.length > 0 ? accs[0] : null));
-        })();
+
+            window.ethereum.on('accountsChanged', (accs) => {
+                setUI(accs.length > 0 ? accs[0] : null);
+            });
+        }
+
+        autoConnect();
     </script>
 </body>
 </html>
