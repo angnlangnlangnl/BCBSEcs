@@ -67,16 +67,16 @@
                 </div>
                 <div class="total-value">
                     <div class="total-label">总资产价值</div>
-                    <div class="total-amount" id="totalAssetValue">-- <small>USD</small></div>
+                    <div class="total-amount" id="totalAssetValue">0.00 <small>USD</small></div>
                 </div>
             </div>
 
             <div id="assetListContainer">
-                <div class="asset-card"><div class="asset-icon">💛</div><div class="asset-info"><div class="asset-name">BNB</div><div class="asset-price">$580.25</div></div><div class="asset-right"><div class="asset-balance" id="bal-BNB">--</div><div class="asset-usd-value" id="usd-BNB">--</div></div></div>
-                <div class="asset-card"><div class="asset-icon">💵</div><div class="asset-info"><div class="asset-name">USDT</div><div class="asset-price">$1.00</div></div><div class="asset-right"><div class="asset-balance" id="bal-USDT">--</div><div class="asset-usd-value" id="usd-USDT">--</div></div></div>
-                <div class="asset-card"><div class="asset-icon">🟡</div><div class="asset-info"><div class="asset-name">AIGC</div><div class="asset-price">$1.20</div></div><div class="asset-right"><div class="asset-balance" id="bal-AIGC">--</div><div class="asset-usd-value" id="usd-AIGC">--</div></div></div>
-                <div class="asset-card"><div class="asset-icon">🏦</div><div class="asset-info"><div class="asset-name">BCBS</div><div class="asset-price">$0.95</div></div><div class="asset-right"><div class="asset-balance" id="bal-BCBS">--</div><div class="asset-usd-value" id="usd-BCBS">--</div></div></div>
-                <div class="asset-card"><div class="asset-icon">🔷</div><div class="asset-info"><div class="asset-name">HSBC</div><div class="asset-price">$0.85</div></div><div class="asset-right"><div class="asset-balance" id="bal-HSBC">--</div><div class="asset-usd-value" id="usd-HSBC">--</div></div></div>
+                <div class="asset-card"><div class="asset-icon">💛</div><div class="asset-info"><div class="asset-name">BNB</div><div class="asset-price">$580.25</div></div><div class="asset-right"><div class="asset-balance" id="bal-BNB">0.0000</div><div class="asset-usd-value" id="usd-BNB">≈ $0.00</div></div></div>
+                <div class="asset-card"><div class="asset-icon">💵</div><div class="asset-info"><div class="asset-name">USDT</div><div class="asset-price">$1.00</div></div><div class="asset-right"><div class="asset-balance" id="bal-USDT">0.0000</div><div class="asset-usd-value" id="usd-USDT">≈ $0.00</div></div></div>
+                <div class="asset-card"><div class="asset-icon">🟡</div><div class="asset-info"><div class="asset-name">AIGC</div><div class="asset-price">$1.20</div></div><div class="asset-right"><div class="asset-balance" id="bal-AIGC">0.0000</div><div class="asset-usd-value" id="usd-AIGC">≈ $0.00</div></div></div>
+                <div class="asset-card"><div class="asset-icon">🏦</div><div class="asset-info"><div class="asset-name">BCBS</div><div class="asset-price">$0.95</div></div><div class="asset-right"><div class="asset-balance" id="bal-BCBS">0.0000</div><div class="asset-usd-value" id="usd-BCBS">≈ $0.00</div></div></div>
+                <div class="asset-card"><div class="asset-icon">🔷</div><div class="asset-info"><div class="asset-name">HSBC</div><div class="asset-price">$0.85</div></div><div class="asset-right"><div class="asset-balance" id="bal-HSBC">0.0000</div><div class="asset-usd-value" id="usd-HSBC">≈ $0.00</div></div></div>
             </div>
         </div>
 
@@ -102,15 +102,13 @@
             "function identityLevel(address) view returns (uint256)",
             "function getRateLevel(address) view returns (uint256)",
             "function getPendingDividend(address,uint8) view returns (uint256)",
-            "function balanceOf(address) view returns (uint256)",
-            "function decimals() view returns (uint8)"
+            "function balanceOf(address) view returns (uint256)"
         ];
-        const ERC20_ABI = ["function balanceOf(address) view returns (uint256)","function decimals() view returns (uint8)"];
+        const ERC20_ABI = ["function balanceOf(address) view returns (uint256)"];
 
         // ========== 全局变量 ==========
-        let currentAccount = null, isEN = false, refreshTimer = null;
+        let currentAccount = null;
         const connectBtn = document.getElementById('connectWalletBtn');
-        const langBtn = document.getElementById('langBtn');
         const rpc = new ethers.providers.JsonRpcProvider('https://bsc-dataseed1.binance.org');
         const aigc = new ethers.Contract(AIGC_ADDR, AIGC_ABI, rpc);
         const bcbs = new ethers.Contract(BCBS_ADDR, ERC20_ABI, rpc);
@@ -118,9 +116,7 @@
         const usdt = new ethers.Contract(USDT_ADDR, ERC20_ABI, rpc);
 
         const nodeNames = ['普通用户', '首富节点', '星链节点', '创世节点'];
-        const nodeNamesEN = ['Normal', 'Rich', 'Starlink', 'Genesis'];
         const poolNames = ['首富池', '星链池', '创世池', 'S4池', 'S5池', 'S6池', 'S7池', 'S8池'];
-        const poolNamesEN = ['Rich', 'Starlink', 'Genesis', 'S4', 'S5', 'S6', 'S7', 'S8'];
 
         // ========== 钱包连接 ==========
         function updateConnectUI(account) {
@@ -129,31 +125,24 @@
                 connectBtn.textContent = `${account.substring(0,6)}...${account.substring(account.length-4)}`;
                 connectBtn.classList.add('connected');
                 refreshAll();
-                startAutoRefresh();
             } else {
                 currentAccount = null;
                 connectBtn.textContent = 'Connect wallet';
                 connectBtn.classList.remove('connected');
-                resetDisplay();
-                stopAutoRefresh();
+                resetToZero();
             }
         }
 
         connectBtn.addEventListener('click', async () => {
-            if (currentAccount) {
-                if (confirm('断开钱包连接？')) updateConnectUI(null);
-                return;
-            }
+            if (currentAccount) { if (confirm('断开钱包连接？')) updateConnectUI(null); return; }
             if (!window.ethereum) return alert('请安装 MetaMask');
             try {
                 const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                 if (accounts.length > 0) updateConnectUI(accounts[0]);
-            } catch (e) {
-                if (e.code !== 4001) alert('连接失败: ' + e.message);
-            }
+            } catch (e) { if (e.code !== 4001) alert('连接失败: ' + e.message); }
         });
 
-        // ========== 自动连接 + 全局监听 ==========
+        // ========== 自动连接 ==========
         async function initWallet() {
             if (!window.ethereum) return;
             try {
@@ -163,15 +152,6 @@
             } catch (e) {}
             window.ethereum.on('accountsChanged', (accounts) => updateConnectUI(accounts.length > 0 ? accounts[0] : null));
             window.ethereum.on('chainChanged', () => { if (currentAccount) refreshAll(); });
-        }
-
-        // ========== 自动刷新（每30秒）==========
-        function startAutoRefresh() {
-            stopAutoRefresh();
-            refreshTimer = setInterval(() => { if (currentAccount) refreshAll(); }, 30000);
-        }
-        function stopAutoRefresh() {
-            if (refreshTimer) { clearInterval(refreshTimer); refreshTimer = null; }
         }
 
         // ========== 数据刷新 ==========
@@ -188,31 +168,46 @@
             try {
                 const nodeLevel = await aigc.getNodeLevel(currentAccount);
                 const identity = await aigc.identityLevel(currentAccount);
-                let rateText = '--';
-                try { const rate = await aigc.getRateLevel(currentAccount); rateText = (parseFloat(ethers.utils.formatEther(rate)) * 100).toFixed(1) + '%'; } catch (e) {}
+                
+                // 利率
+                let rateText = '0.00%';
+                try {
+                    const rate = await aigc.getRateLevel(currentAccount);
+                    const rateNum = parseFloat(ethers.utils.formatEther(rate)) * 100;
+                    rateText = rateNum.toFixed(1) + '%';
+                } catch (e) {}
 
+                // 分红池
                 let activePools = [], totalDividend = 0;
                 for (let i = 0; i <= 7; i++) {
                     try {
                         const pending = await aigc.getPendingDividend(currentAccount, i);
                         const amt = parseFloat(ethers.utils.formatEther(pending));
-                        if (amt > 0) { activePools.push(isEN ? poolNamesEN[i] : poolNames[i]); totalDividend += amt; }
+                        if (amt > 0) { activePools.push(poolNames[i]); totalDividend += amt; }
                     } catch (e) {}
                 }
 
-                const levelName = isEN ? nodeNamesEN[nodeLevel] : nodeNames[nodeLevel];
-                userLevelEl.textContent = levelName || '普通用户';
-                nodeInfoEl.innerHTML = `当前级别：${identity > 0 ? 'S' + identity : '--'}  ${rateText}，全球分红：${totalDividend > 0 ? '$' + totalDividend.toFixed(2) : '--'}`;
+                // 动态获取节点等级名称
+                const levelName = nodeNames[nodeLevel] || '普通用户';
+                userLevelEl.textContent = levelName;
+                
+                // 身份等级（0 时显示 S0）
+                const identityText = 'S' + (identity ? identity.toString() : '0');
+                const dividendText = totalDividend > 0 ? '$' + totalDividend.toFixed(2) : '$0.00';
+                
+                nodeInfoEl.innerHTML = `当前级别：${identityText}  ${rateText}，全球分红：${dividendText}`;
                 dividendInfoEl.innerHTML = `分红池：${activePools.length > 0 ? activePools.join('、') : '暂无'}`;
             } catch (e) {
+                console.error('节点信息失败:', e.message);
                 userLevelEl.textContent = '普通用户';
-                nodeInfoEl.innerHTML = '';
-                dividendInfoEl.innerHTML = '';
+                nodeInfoEl.innerHTML = '当前级别：S0  0.00%，全球分红：$0.00';
+                dividendInfoEl.innerHTML = '分红池：暂无';
             }
         }
 
         async function fetchBalances() {
             if (!currentAccount) return;
+            
             const items = [
                 { sym: 'BNB', price: 580.25, fetch: async () => parseFloat(ethers.utils.formatEther(await rpc.getBalance(currentAccount))) },
                 { sym: 'USDT', price: 1.00, fetch: async () => parseFloat(ethers.utils.formatEther(await usdt.balanceOf(currentAccount))) },
@@ -233,28 +228,21 @@
                     balEl.textContent = balance.toFixed(4);
                     usdEl.textContent = `≈ $${usdVal.toFixed(2)}`;
                 } catch (e) {
-                    balEl.textContent = '--';
-                    usdEl.textContent = '--';
+                    balEl.textContent = '0.0000';
+                    usdEl.textContent = '≈ $0.00';
                 }
             }
             document.getElementById('totalAssetValue').innerHTML = `$${totalValue.toFixed(2)} <small>USD</small>`;
         }
 
-        function resetDisplay() {
-            document.getElementById('totalAssetValue').innerHTML = '-- <small>USD</small>';
+        function resetToZero() {
+            document.getElementById('totalAssetValue').innerHTML = '0.00 <small>USD</small>';
             document.getElementById('userLevel').textContent = '普通用户';
-            document.getElementById('nodeInfo').innerHTML = '';
-            document.getElementById('dividendInfo').innerHTML = '';
-            document.querySelectorAll('.asset-balance').forEach(el => el.textContent = '--');
-            document.querySelectorAll('.asset-usd-value').forEach(el => el.textContent = '--');
+            document.getElementById('nodeInfo').innerHTML = '当前级别：S0  0.00%，全球分红：$0.00';
+            document.getElementById('dividendInfo').innerHTML = '分红池：暂无';
+            document.querySelectorAll('.asset-balance').forEach(el => el.textContent = '0.0000');
+            document.querySelectorAll('.asset-usd-value').forEach(el => el.textContent = '≈ $0.00');
         }
-
-        // ========== 语言切换 ==========
-        langBtn.addEventListener('click', () => {
-            isEN = !isEN;
-            langBtn.textContent = isEN ? '🇨🇳 中文' : '🇺🇸 EN';
-            if (currentAccount) refreshAll();
-        });
 
         // ========== 启动 ==========
         initWallet();
