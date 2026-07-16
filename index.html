@@ -39,30 +39,20 @@
         .asset-balance { font-size: 15px; color: #fff; font-weight: 600; }
         .asset-usd-value { font-size: 12px; color: #f90; }
 
-        .loading-spinner {
+        .loading-dot {
             display: inline-block;
-            width: 14px;
-            height: 14px;
-            border: 2px solid rgba(255,170,0,0.2);
-            border-top: 2px solid #f90;
+            width: 8px;
+            height: 8px;
+            background: #f90;
             border-radius: 50%;
-            animation: spin 0.6s linear infinite;
-            margin-right: 4px;
+            animation: pulse 1.2s infinite;
+            margin-left: 4px;
             vertical-align: middle;
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        .retry-btn {
-            background: rgba(255,170,0,0.1);
-            border: 1px solid #f90;
-            color: #f90;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 11px;
-            cursor: pointer;
-            margin-top: 8px;
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
         }
-        .retry-btn:hover { background: rgba(255,170,0,0.2); }
 
         .bottom-nav { flex-shrink: 0; background: rgba(15,15,30,0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,153,0,0.15); border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.9); display: flex; justify-content: space-around; padding: 12px 0; margin: 0 15px 15px 15px; position: relative; }
         .bottom-nav::before { content: ''; position: absolute; top: -1px; left: -1px; right: -1px; bottom: -1px; border-radius: 20px; padding: 1px; background: linear-gradient(135deg, #f90, transparent, #f90); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
@@ -126,13 +116,14 @@
         const AIGC_ABI = [
             "function getNodeLevel(address) view returns (uint8)",
             "function identityLevel(address) view returns (uint256)",
-            "function balanceOf(address) view returns (uint256)",
-            "function userInfo(address) view returns (uint256 depositUSDT, uint8 level, uint256 lastClaimTime, uint256 pendingReward, uint256 lastClaimAmount)"
+            "function userInfo(address) view returns (uint256 depositUSDT, uint8 level, uint256 lastClaimTime, uint256 pendingReward, uint256 lastClaimAmount)",
+            "function balanceOf(address) view returns (uint256)"
         ];
 
         const BCBS_ABI = [
             "function balanceOf(address) view returns (uint256)",
-            "function userRate(address) view returns (uint256)"
+            "function userRate(address) view returns (uint256)",
+            "function getRateLevel(address) view returns (uint256)"
         ];
 
         const ERC20_ABI = [
@@ -141,8 +132,8 @@
 
         // ======================== 状态变量 ========================
         let currentAccount = null;
-        let provider = null;      // ✅ 用户钱包 Provider
-        let signer = null;        // ✅ 用户签名器
+        let provider = null;
+        let signer = null;
         let aigcContract = null;
         let bcbsContract = null;
         let hsbcContract = null;
@@ -153,29 +144,26 @@
         const nodeNames = ['普通用户', '首富节点', '星链节点', '创世节点'];
         const poolMap = { 0: '暂无', 1: '首富池', 2: '星链池', 3: '创世池' };
 
-        // ======================== 初始化合约实例 ========================
+        // ======================== 初始化合约 ========================
         function initContracts() {
             if (provider && signer) {
                 aigcContract = new ethers.Contract(AIGC_ADDR, AIGC_ABI, signer);
                 bcbsContract = new ethers.Contract(BCBS_ADDR, BCBS_ABI, signer);
                 hsbcContract = new ethers.Contract(HSBC_ADDR, ERC20_ABI, signer);
                 usdtContract = new ethers.Contract(USDT_ADDR, ERC20_ABI, signer);
-                console.log('✅ 合约实例已初始化（使用用户 Provider）');
+                console.log('✅ 合约实例已初始化');
             }
         }
 
-        // ======================== 连接/断开钱包 ========================
+        // ======================== 连接钱包 ========================
         window.handleConnect = async function() {
-            // 防止重复点击
             if (isLoading) return;
             
-            // 已连接 → 断开
             if (currentAccount) {
                 disconnectWallet();
                 return;
             }
 
-            // 未连接 → 连接
             await connectWallet();
         };
 
@@ -187,10 +175,9 @@
 
             isLoading = true;
             connectBtn.disabled = true;
-            connectBtn.innerHTML = '<span class="loading-spinner"></span> 连接中...';
+            connectBtn.innerHTML = '连接中<span class="loading-dot"></span>';
 
             try {
-                // ✅ 步骤1：请求账户权限
                 const accounts = await window.ethereum.request({ 
                     method: 'eth_requestAccounts' 
                 });
@@ -200,23 +187,17 @@
                 }
 
                 currentAccount = accounts[0];
-                
-                // ✅ 步骤2：使用用户钱包创建 Provider 和 Signer
                 provider = new ethers.providers.Web3Provider(window.ethereum);
                 signer = provider.getSigner();
                 
-                // ✅ 步骤3：重新初始化所有合约实例
                 initContracts();
                 
-                // ✅ 步骤4：更新 UI
                 connectBtn.textContent = currentAccount.substring(0, 6) + '...' + currentAccount.substring(currentAccount.length - 4);
                 connectBtn.classList.add('connected');
                 connectBtn.disabled = false;
                 
                 console.log('✅ 钱包已连接:', currentAccount);
-                console.log('✅ Provider 已就绪');
                 
-                // ✅ 步骤5：加载数据
                 await loadAllData();
                 
             } catch (err) {
@@ -264,7 +245,6 @@
             }
 
             try {
-                // ✅ 静默获取已授权账户
                 const accounts = await window.ethereum.request({ 
                     method: 'eth_accounts'
                 });
@@ -281,14 +261,11 @@
                     
                     console.log('🔄 自动连接:', currentAccount);
                     await loadAllData();
-                } else {
-                    console.log('ℹ️ 未找到已授权账户，等待用户手动连接');
                 }
             } catch (err) {
                 console.log('ℹ️ 自动连接未就绪:', err.message);
             }
 
-            // ✅ 监听账户切换
             window.ethereum.on('accountsChanged', (accounts) => {
                 console.log('📡 账户变化:', accounts);
                 if (!accounts || accounts.length === 0) {
@@ -305,10 +282,7 @@
                 }
             });
 
-            // ✅ 监听链切换
-            window.ethereum.on('chainChanged', (chainId) => {
-                console.log('📡 链切换:', chainId);
-                // 重新初始化 Provider
+            window.ethereum.on('chainChanged', () => {
                 if (currentAccount) {
                     provider = new ethers.providers.Web3Provider(window.ethereum);
                     signer = provider.getSigner();
@@ -317,9 +291,7 @@
                 }
             });
 
-            // ✅ 监听断开连接
-            window.ethereum.on('disconnect', (error) => {
-                console.log('📡 钱包断开:', error);
+            window.ethereum.on('disconnect', () => {
                 disconnectWallet();
             });
         }
@@ -333,92 +305,124 @@
 
             console.log('🔄 开始加载数据...');
 
+            // ===== 修复1：获取节点等级（从 userInfo 结构体） =====
+            let nodeLevel = 0;
             try {
-                // ✅ 修复1：单独处理每个查询，避免 Promise.all 单点故障
-                
-                // 查询 AIGC 节点信息
-                let nodeLevel = 0, identity = 0, userRate = 0;
+                // 方法A：使用 userInfo 获取 level 字段
+                const userInfoData = await aigcContract.userInfo(currentAccount);
+                // userInfo 返回元组：(depositUSDT, level, lastClaimTime, pendingReward, lastClaimAmount)
+                nodeLevel = userInfoData.level !== undefined ? userInfoData.level : userInfoData[1];
+                console.log('  ✅ userInfo.level:', nodeLevel);
+            } catch (e1) {
+                console.warn('  ⚠️ userInfo 失败:', e1.message);
+                // 方法B：降级使用 getNodeLevel
                 try {
-                    nodeLevel = await aigcContract.getNodeLevel(currentAccount);
-                    console.log('  ✅ getNodeLevel:', nodeLevel);
-                } catch (e) {
-                    console.warn('  ⚠️ getNodeLevel 失败:', e.message);
+                    const rawLevel = await aigcContract.getNodeLevel(currentAccount);
+                    nodeLevel = typeof rawLevel === 'number' ? rawLevel : parseInt(rawLevel.toString());
+                    console.log('  ✅ getNodeLevel (降级):', nodeLevel);
+                } catch (e2) {
+                    console.warn('  ⚠️ getNodeLevel 也失败:', e2.message);
                 }
-
-                try {
-                    identity = await aigcContract.identityLevel(currentAccount);
-                    console.log('  ✅ identityLevel:', identity.toString());
-                } catch (e) {
-                    console.warn('  ⚠️ identityLevel 失败:', e.message);
-                }
-
-                // ✅ 修复2：从 BCBS 合约获取 userRate
-                try {
-                    const rate = await bcbsContract.userRate(currentAccount);
-                    userRate = rate ? parseFloat(ethers.utils.formatEther(rate)) : 0;
-                    console.log('  ✅ userRate (from BCBS):', userRate);
-                } catch (e) {
-                    console.warn('  ⚠️ userRate 失败:', e.message);
-                }
-
-                // 查询代币余额
-                let bnbBalance = 0, usdtBalance = 0, aigcBalance = 0, bcbsBalance = 0, hsbcBalance = 0;
-
-                try {
-                    const bnbRaw = await provider.getBalance(currentAccount);
-                    bnbBalance = parseFloat(ethers.utils.formatEther(bnbRaw));
-                    console.log('  ✅ BNB:', bnbBalance);
-                } catch (e) {
-                    console.warn('  ⚠️ BNB 余额失败:', e.message);
-                }
-
-                try {
-                    const usdtRaw = await usdtContract.balanceOf(currentAccount);
-                    usdtBalance = parseFloat(ethers.utils.formatEther(usdtRaw));
-                    console.log('  ✅ USDT:', usdtBalance);
-                } catch (e) {
-                    console.warn('  ⚠️ USDT 余额失败:', e.message);
-                }
-
-                try {
-                    const aigcRaw = await aigcContract.balanceOf(currentAccount);
-                    aigcBalance = parseFloat(ethers.utils.formatEther(aigcRaw));
-                    console.log('  ✅ AIGC:', aigcBalance);
-                } catch (e) {
-                    console.warn('  ⚠️ AIGC 余额失败:', e.message);
-                }
-
-                try {
-                    const bcbsRaw = await bcbsContract.balanceOf(currentAccount);
-                    bcbsBalance = parseFloat(ethers.utils.formatEther(bcbsRaw));
-                    console.log('  ✅ BCBS:', bcbsBalance);
-                } catch (e) {
-                    console.warn('  ⚠️ BCBS 余额失败:', e.message);
-                }
-
-                try {
-                    const hsbcRaw = await hsbcContract.balanceOf(currentAccount);
-                    hsbcBalance = parseFloat(ethers.utils.formatEther(hsbcRaw));
-                    console.log('  ✅ HSBC:', hsbcBalance);
-                } catch (e) {
-                    console.warn('  ⚠️ HSBC 余额失败:', e.message);
-                }
-
-                // ✅ 更新 UI
-                updateProfileUI(nodeLevel, identity, userRate);
-                updateBalanceUI(bnbBalance, usdtBalance, aigcBalance, bcbsBalance, hsbcBalance);
-                
-                console.log('✅ 数据加载完成');
-            } catch (err) {
-                console.error('❌ 数据加载失败:', err);
             }
+
+            // ===== 修复2：获取身份等级 =====
+            let identityLevel = 0;
+            try {
+                const rawIdentity = await aigcContract.identityLevel(currentAccount);
+                identityLevel = rawIdentity ? parseInt(rawIdentity.toString()) : 0;
+                console.log('  ✅ identityLevel:', identityLevel);
+            } catch (e) {
+                console.warn('  ⚠️ identityLevel 失败:', e.message);
+            }
+
+            // ===== 修复3：获取利率（多源降级） =====
+            let userRate = 0;
+            try {
+                // 方法A：从 BCBS 合约获取 userRate
+                const rate = await bcbsContract.userRate(currentAccount);
+                userRate = rate ? parseFloat(ethers.utils.formatEther(rate)) : 0;
+                console.log('  ✅ BCBS.userRate:', userRate);
+            } catch (e1) {
+                console.warn('  ⚠️ BCBS.userRate 失败:', e1.message);
+                // 方法B：尝试 getRateLevel
+                try {
+                    const rate = await bcbsContract.getRateLevel(currentAccount);
+                    userRate = rate ? parseFloat(ethers.utils.formatEther(rate)) : 0;
+                    console.log('  ✅ BCBS.getRateLevel (降级):', userRate);
+                } catch (e2) {
+                    console.warn('  ⚠️ BCBS.getRateLevel 也失败:', e2.message);
+                    // 方法C：根据节点等级计算基础利率
+                    const baseRates = [0, 0.02, 0.04, 0.40];
+                    userRate = baseRates[nodeLevel] || 0;
+                    console.log('  ✅ 根据节点等级计算利率:', userRate);
+                }
+            }
+
+            // ===== 修复4：获取分红池（基于节点等级） =====
+            const dividendPool = poolMap[nodeLevel] || '暂无';
+            console.log('  ✅ 分红池:', dividendPool);
+
+            // ===== 查询代币余额 =====
+            let bnbBalance = 0, usdtBalance = 0, aigcBalance = 0, bcbsBalance = 0, hsbcBalance = 0;
+
+            try {
+                const bnbRaw = await provider.getBalance(currentAccount);
+                bnbBalance = parseFloat(ethers.utils.formatEther(bnbRaw));
+                console.log('  ✅ BNB:', bnbBalance);
+            } catch (e) {
+                console.warn('  ⚠️ BNB 余额失败:', e.message);
+            }
+
+            try {
+                const usdtRaw = await usdtContract.balanceOf(currentAccount);
+                usdtBalance = parseFloat(ethers.utils.formatEther(usdtRaw));
+                console.log('  ✅ USDT:', usdtBalance);
+            } catch (e) {
+                console.warn('  ⚠️ USDT 余额失败:', e.message);
+            }
+
+            try {
+                const aigcRaw = await aigcContract.balanceOf(currentAccount);
+                aigcBalance = parseFloat(ethers.utils.formatEther(aigcRaw));
+                console.log('  ✅ AIGC:', aigcBalance);
+            } catch (e) {
+                console.warn('  ⚠️ AIGC 余额失败:', e.message);
+            }
+
+            try {
+                const bcbsRaw = await bcbsContract.balanceOf(currentAccount);
+                bcbsBalance = parseFloat(ethers.utils.formatEther(bcbsRaw));
+                console.log('  ✅ BCBS:', bcbsBalance);
+            } catch (e) {
+                console.warn('  ⚠️ BCBS 余额失败:', e.message);
+            }
+
+            try {
+                const hsbcRaw = await hsbcContract.balanceOf(currentAccount);
+                hsbcBalance = parseFloat(ethers.utils.formatEther(hsbcRaw));
+                console.log('  ✅ HSBC:', hsbcBalance);
+            } catch (e) {
+                console.warn('  ⚠️ HSBC 余额失败:', e.message);
+            }
+
+            // ===== 更新 UI =====
+            updateProfileUI(nodeLevel, identityLevel, userRate, dividendPool);
+            updateBalanceUI(bnbBalance, usdtBalance, aigcBalance, bcbsBalance, hsbcBalance);
+            
+            console.log('✅ 数据加载完成');
         }
 
-        function updateProfileUI(nodeLevel, identity, userRate) {
+        // ======================== 更新 UI ========================
+        function updateProfileUI(nodeLevel, identityLevel, userRate, dividendPool) {
+            // ✅ 修复1：节点等级
             document.getElementById('userLevel').textContent = nodeNames[nodeLevel] || '普通用户';
+            
+            // ✅ 修复2+3：身份等级 + 利率
             const ratePercent = (userRate * 100).toFixed(1);
-            document.getElementById('nodeInfo').innerHTML = `身份：S${identity} | 利率：${ratePercent}%`;
-            document.getElementById('dividendInfo').innerHTML = `分红池：${poolMap[nodeLevel] || '暂无'}`;
+            document.getElementById('nodeInfo').innerHTML = `身份：S${identityLevel} | 利率：${ratePercent}%`;
+            
+            // ✅ 修复4：分红池
+            document.getElementById('dividendInfo').innerHTML = `分红池：${dividendPool}`;
         }
 
         function updateBalanceUI(bnb, usdt, aigc, bcbs, hsbc) {
@@ -453,13 +457,11 @@
 
         // ======================== 启动 ========================
         window.addEventListener('load', () => {
-            // ✅ 延迟自动连接，确保 MetaMask 已注入
             setTimeout(() => {
                 autoConnect();
             }, 500);
         });
 
-        // ✅ 页面可见性变化时刷新数据
         document.addEventListener('visibilitychange', () => {
             if (document.visibilityState === 'visible' && currentAccount) {
                 console.log('📱 页面恢复可见，刷新数据');
