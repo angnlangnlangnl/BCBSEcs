@@ -11,7 +11,592 @@
         .scroll-area { flex: 1; overflow-y: auto; padding: 15px; -webkit-overflow-scrolling: touch; }
         .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; }
         .logo-area { display: flex; align-items: center; font-size: 16px; font-weight: bold; background: linear-gradient(to right, #aaa, #fff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .logo-area span { margin-left: 5px; }<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>邀请 - BCBS</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: #050505; display: flex; justify-content: center; align-items: center; height: 100dvh; overflow: hidden; color: #ffffff; }
+        .app-container { width: 100%; max-width: 420px; height: 100dvh; background: radial-gradient(circle at center, #111 0%, #030303 100%); border-radius: 20px; box-shadow: 0 0 30px rgba(0,0,0,0.8); display: flex; flex-direction: column; position: relative; overflow: hidden; }
+        .scroll-area { flex: 1; overflow-y: auto; padding: 15px; -webkit-overflow-scrolling: touch; }
+        .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; }
+        .logo-area { display: flex; align-items: center; font-size: 16px; font-weight: bold; background: linear-gradient(to right, #aaa, #fff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .logo-area span { margin-left: 5px; }
+        .header-controls { display: flex; gap: 10px; align-items: center; }
+        .lang-btn { background: transparent; border: 1px solid #333; color: #aaa; padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer; }
+        .connect-btn { background: transparent; border: 1px solid #f90; color: #f90; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; box-shadow: 0 0 10px rgba(255,153,0,0.1); transition: all 0.2s; white-space: nowrap; }
+        .connect-btn.connected { background: rgba(255,153,0,0.2); border-color: #ffaa00; color: #ffd700; }
+        .connect-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .panel { background: rgba(20,20,30,0.6); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #333; position: relative; box-shadow: inset 0 0 20px rgba(255,170,0,0.02); }
+        .panel::before { content: ''; position: absolute; top: -1px; left: -1px; right: -1px; bottom: -1px; border-radius: 12px; padding: 1px; background: linear-gradient(135deg, #f90, transparent, #f90); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
+        .page-title { font-size: 24px; color: #f90; text-align: center; margin: 10px 0 20px; }
+        .airdrop-card { background: linear-gradient(135deg, rgba(255,170,0,0.15), rgba(255,170,0,0.02)); border: 1px solid rgba(255,170,0,0.3); }
+        .airdrop-card .airdrop-header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+        .airdrop-card .airdrop-icon { font-size: 36px; }
+        .airdrop-card .airdrop-title { color: #f90; font-size: 18px; font-weight: 700; }
+        .airdrop-card .airdrop-amount-box { background: rgba(0,0,0,0.4); border: 1px solid #333; border-radius: 6px; padding: 12px; text-align: center; color: #ffffff; font-size: 24px; font-weight: 700; margin: 8px 0 12px 0; }
+        .airdrop-card .airdrop-desc { color: #ccc; font-size: 12px; margin-bottom: 12px; }
+        .airdrop-btn { width: 100%; background: linear-gradient(90deg, #f4a200, #ffd700); border: none; border-radius: 8px; padding: 12px; font-weight: bold; color: #111; cursor: pointer; box-shadow: 0 0 15px rgba(255,102,0,0.3); font-size: 15px; }
+        .airdrop-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .node-slider { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 0; -webkit-overflow-scrolling: touch; scrollbar-width: thin; scrollbar-color: #f90 #1a1a2e; }
+        .node-slider::-webkit-scrollbar { height: 4px; }
+        .node-slider::-webkit-scrollbar-track { background: #1a1a2e; border-radius: 2px; }
+        .node-slider::-webkit-scrollbar-thumb { background: #f90; border-radius: 2px; }
+        .node-card { flex: 0 0 70%; background: linear-gradient(135deg, rgba(30,30,40,0.9), rgba(20,20,30,0.8)); border: 1px solid #444; border-radius: 12px; padding: 20px 15px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); transition: transform 0.2s; }
+        .node-card:active { transform: scale(0.98); }
+        .node-title { font-size: 20px; font-weight: 700; color: #f90; letter-spacing: 1px; }
+        .node-reward { font-size: 16px; color: #ffd700; }
+        .node-rights { font-size: 14px; color: #ffffff; background: rgba(255,170,0,0.1); padding: 2px 10px; border-radius: 10px; }
+        .node-dividend { font-size: 14px; color: #4caf50; background: rgba(76,175,80,0.1); padding: 2px 10px; border-radius: 10px; }
+        .node-apply-btn { width: 100%; background: linear-gradient(135deg, #1a1a1a, #2d2d2d) padding-box, linear-gradient(90deg, #f90, #ffcc00) border-box; border: 1px solid transparent; border-radius: 8px; padding: 12px; font-weight: bold; color: #f90; cursor: pointer; box-shadow: 0 4px 15px rgba(255,170,0,0.3); font-size: 15px; margin-top: 5px; transition: all 0.2s; }
+        .node-apply-btn:active { transform: scale(0.98); box-shadow: 0 2px 10px rgba(255,170,0,0.4); }
+        .withdraw-reward-btn { width: 100%; background: linear-gradient(90deg, #f4a200, #ffd700); border: none; border-radius: 8px; padding: 14px; font-size: 16px; font-weight: bold; color: #111; cursor: pointer; box-shadow: 0 6px 20px rgba(255,136,0,0.3); margin-top: 15px; transition: transform 0.1s; }
+        .withdraw-reward-btn:active { transform: scale(0.98); }
+        .withdraw-reward-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .record-tab-switch { display: flex; gap: 10px; margin-bottom: 15px; }
+        .record-tab-btn { flex: 1; padding: 10px; background: rgba(30,30,40,0.8); border: 1px solid #444; border-radius: 8px; color: #aaa; font-size: 14px; cursor: pointer; text-align: center; transition: all 0.2s; }
+        .record-tab-btn.active { background: linear-gradient(135deg, rgba(255,170,0,0.2), rgba(255,170,0,0.05)); border-color: #f90; color: #f90; box-shadow: 0 0 10px rgba(255,170,0,0.2); }
+        .record-item { background: rgba(30,30,40,0.5); border: 1px solid #333; border-radius: 8px; padding: 12px; margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 8px; }
+        .record-item .field { flex: 1 1 45%; min-width: 120px; }
+        .record-item .field-label { font-size: 10px; color: #888; margin-bottom: 2px; }
+        .record-item .field-value { font-size: 13px; color: #fff; word-break: break-all; }
+        .header-row { display: flex; justify-content: space-between; margin-bottom: 20px; }
+        .header-title { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #888; }
+        .header-title span { color: #ccc; }
+        .stats-row { display: flex; margin-bottom: 20px; }
+        .stat-box { flex: 1; padding: 0 10px; }
+        .stat-box:first-child { border-right: 1px solid #333; padding-left: 0; }
+        .stat-box:last-child { padding-right: 0; }
+        .stat-label { font-size: 11px; color: #888; margin-bottom: 5px; }
+        .stat-val { font-size: 24px; font-weight: 600; letter-spacing: 0.5px; }
+        .progress-area { background: rgba(0,0,0,0.3); border-radius: 8px; padding: 10px; }
+        .progress-header { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; }
+        .progress-header .right { color: #f90; }
+        .progress-track { height: 12px; background: #1a1a2e; border-radius: 6px; overflow: hidden; margin-bottom: 6px; position: relative; }
+        .progress-fill { height: 100%; width: 0%; background: repeating-linear-gradient(45deg, #ff8c00, #ff8c00 10px, #ffaa00 10px, #ffaa00 20px); border-radius: 6px; box-shadow: 0 0 10px rgba(255,153,0,0.2); transition: width 0.5s ease; }
+        .progress-footer { display: flex; justify-content: space-between; font-size: 11px; color: #aaa; }
+        .direct-row { display: flex; justify-content: space-between; font-size: 11px; color: #ccc; margin: 6px 0; }
+        .node-progress { display: flex; gap: 1px; margin: 8px 0; align-items: center; flex-wrap: nowrap; }
+        .node-item { width: 18px; height: 18px; background: #1a1a2e; border: 1px solid #333; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 8px; color: #555; flex-shrink: 0; transition: all 0.3s; }
+        .node-item.active { background: #f90; border-color: #f90; color: #000; font-weight: bold; box-shadow: 0 0 8px #f90, inset 0 0 4px #fff; }
+        .process-panel { background: rgba(20,20,30,0.6); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #333; position: relative; }
+        .process-panel::before { content: ''; position: absolute; top: -1px; left: -1px; right: -1px; bottom: -1px; border-radius: 12px; padding: 1px; background: linear-gradient(135deg, #f90, transparent, #f90); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
+        .process-flow { display: flex; align-items: center; justify-content: space-around; }
+        .process-step { display: flex; flex-direction: column; align-items: center; gap: 6px; color: #ccc; font-size: 12px; }
+        .process-step .step-icon { font-size: 28px; }
+        .process-arrow { color: #f90; font-size: 22px; margin: 0 -5px; }
+        .loading-spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,170,0,0.2); border-top: 2px solid #f90; border-radius: 50%; animation: spin 0.6s linear infinite; margin-right: 4px; vertical-align: middle; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .bottom-nav { flex-shrink: 0; background: rgba(15,15,30,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,153,0,0.15); border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.9); display: flex; justify-content: space-around; padding: 12px 0; margin: 0 15px 15px 15px; position: relative; }
+        .bottom-nav::before { content: ''; position: absolute; top: -1px; left: -1px; right: -1px; bottom: -1px; border-radius: 20px; padding: 1px; background: linear-gradient(135deg, #f90, transparent, #f90); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: #666; font-size: 11px; gap: 4px; cursor: pointer; padding: 5px 10px; transition: all 0.2s ease; text-decoration: none; }
+        .nav-item .icon { font-size: 20px; }
+        .nav-item.active { color: #f90; position: relative; }
+        .nav-item.active::after { content: ''; position: absolute; top: -6px; left: 50%; transform: translateX(-50%); width: 20px; height: 2px; background: #f90; border-radius: 5px; box-shadow: 0 0 10px #f90; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="scroll-area">
+            <div class="header">
+                <div class="logo-area">🚀 <span>BCBS</span></div>
+                <div class="header-controls">
+                    <button class="lang-btn">🇺🇸 EN ⌄</button>
+                    <button id="connectWalletBtn" class="connect-btn">Connect wallet</button>
+                </div>
+            </div>
+            <div class="page-title">📨 邀请好友</div>
+
+            <div class="panel airdrop-card">
+                <div class="airdrop-header"><span class="airdrop-icon">🎁</span><div><div class="airdrop-title">限量空投活动</div><div class="airdrop-desc">新用户专享，推荐好友可奖励50HSBC</div></div></div>
+                <div class="airdrop-amount-box" id="airdropStatus">未领取</div>
+                <button class="airdrop-btn" id="claimAirdropBtn">立即领取</button>
+            </div>
+
+            <div class="panel">
+                <div class="node-slider" id="nodeSlider">
+                    <div class="node-card"><div class="node-title">首富节点</div><div class="node-reward">收益3倍</div><div class="node-rights">S2权益 极差2%-10%</div><div class="node-dividend">全球分红1%</div><button class="node-apply-btn" data-node="rich">立即申请</button></div>
+                    <div class="node-card"><div class="node-title">星链节点</div><div class="node-reward">收益5倍</div><div class="node-rights">S3权益 极差4%-15%</div><div class="node-dividend">全球分红1.6%</div><button class="node-apply-btn" data-node="starlink">立即申请</button></div>
+                    <div class="node-card"><div class="node-title">创世节点</div><div class="node-reward">收益10倍</div><div class="node-rights">S8权益 极差15%-40%</div><div class="node-dividend">全球分红2.4%</div><button class="node-apply-btn" data-node="genesis">立即申请</button></div>
+                </div>
+                <button class="withdraw-reward-btn" id="withdrawRewardBtn">当前可提取 --</button>
+            </div>
+
+            <div class="panel">
+                <div class="header-row"><div class="header-title">📅 <span>大区总业绩</span></div><div class="header-title">📅 <span>小区总业绩</span></div></div>
+                <div class="stats-row"><div class="stat-box"><div class="stat-label">累计交易量($)</div><div class="stat-val" id="maxPerformance">0.00</div></div><div class="stat-box"><div class="stat-label">累计交易量($)</div><div class="stat-val" id="minPerformance">0.00</div></div></div>
+                <div class="progress-area">
+                    <div class="progress-header"><span>考核进度</span><span class="right" id="progressPercent">0.00%</span></div>
+                    <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%;"></div></div>
+                    <div class="progress-footer"><span>个人持币目标: <span id="bcbseBalance">0.00</span> BCBSE</span><span id="progressDetail">业绩0/500</span></div>
+                    <div style="margin-top:12px;">
+                        <div class="direct-row"><span>直推任务：15节点</span><span>完成直推目标: <span id="completedNodes">0</span>节点</span></div>
+                        <div class="node-progress" id="nodeProgress"></div>
+                        <div class="direct-row"><span>当前层级：<span id="identityLevel">--</span></span><span>当前利率: <span id="rateLevel">--</span></span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel process-panel">
+                <div class="process-flow"><div class="process-step"><span class="step-icon">👤</span><span>老用户</span></div><span class="process-arrow">→</span><div class="process-step"><span class="step-icon">🔄</span><span>转AIGC</span></div><span class="process-arrow">→</span><div class="process-step"><span class="step-icon">🌱</span><span>新用户</span></div><span class="process-arrow">→</span><div class="process-step"><span class="step-icon">✅</span><span>绑定成功</span></div></div>
+            </div>
+
+            <div class="panel">
+                <div class="record-tab-switch">
+                    <div class="record-tab-btn active" data-tab="invite">邀请记录</div>
+                    <div class="record-tab-btn" data-tab="claim">领取记录</div>
+                </div>
+                <div id="recordListContainer"><div style="text-align:center;color:#888;padding:20px;">请先连接钱包</div></div>
+            </div>
+        </div>
+
+        <div class="bottom-nav">
+            <a href="index.html" class="nav-item"><span class="icon">💼</span><span>资产</span></a>
+            <a href="stake.html" class="nav-item"><span class="icon">🔒</span><span>质押</span></a>
+            <a href="liquidity.html" class="nav-item"><span class="icon">💧</span><span>流动性</span></a>
+            <a href="invite.html" class="nav-item active"><span class="icon">📨</span><span>邀请</span></a>
+            <a href="ecosystem.html" class="nav-item"><span class="icon">🌐</span><span>生态</span></a>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+    <script>
+        // ======================== 合约地址 ========================
+        const AIGC_ADDRESS = '0x49CaB5FCE501e3209d1933a745413D061879AA7a';
+        const BCBS_ADDRESS = '0xC2ED87266c9F35eeb6715624264A8163A361FCd7';
+        const HSBC_ADDRESS = '0x20aD84A60902A91F036bD6bdB85AD1d61B2f65C1';
+        const USDT_ADDRESS = '0x55d398326f99059fF775485246999027B3197955';
+
+        const USDT_ABI = [
+            "function allowance(address owner, address spender) view returns (uint256)",
+            "function approve(address spender, uint256 amount) returns (bool)",
+            "function decimals() view returns (uint8)"
+        ];
+
+        const AIGC_ABI = [
+            "function depositUSDT(uint256 usdtAmount) returns (bool)",
+            "function getPendingReward(address user) view returns (uint256)",
+            "function getBnbRequiredForClaim(uint256 reward) view returns (uint256)",
+            "function getMinClaimRequirement(address user) view returns (uint256)",
+            "function claimReward() payable",
+            "function identityLevel(address user) view returns (uint256)",
+            "function getNodeLevel(address user) view returns (uint8)",
+            "function userInfo(address user) view returns (uint256 depositUSDT, uint8 level, uint256 lastClaimTime, uint256 pendingReward, uint256 lastClaimAmount)",
+            "function getDirectReferralCount(address user) view returns (uint256)",
+            "function getDirectReferrals(address user) view returns (address[])",
+            "function getDirectReferralsWithTime(address user) view returns (tuple(address user, uint256 timestamp)[])",
+            "event RewardClaimed(address indexed user, uint256 aigcAmount, uint256 bnbPaid)"
+        ];
+
+        const BCBS_ABI = [
+            "function balanceOf(address user) view returns (uint256)",
+            "function userRate(address user) view returns (uint256)",
+            "function getDirectReferrals(address user) view returns (address[])",
+            "function teamPerformance(address user) view returns (uint256)",
+            "function directReferrals(address user, uint256 index) view returns (address)"
+        ];
+
+        const HSBC_ABI = [
+            "function canClaim(address user) view returns (bool)",
+            "function getClaimFee() view returns (uint256)",
+            "function claimHSBC() payable",
+            "function hasClaimed(address user) view returns (bool)"
+        ];
+
+        let provider, signer, currentAccount;
+        let hsbcContract, aigcContract, bcbsContract, usdtContract;
+        let currentTab = 'invite';
+
+        const connectBtn = document.getElementById('connectWalletBtn');
+        const withdrawBtn = document.getElementById('withdrawRewardBtn');
+
+        const nodeAmountMap = {
+            rich: { name: '首富节点', amount: '0.01' },
+            starlink: { name: '星链节点', amount: '0.02' },
+            genesis: { name: '创世节点', amount: '0.03' }
+        };
+
+        const TARGET_NODES = 15;
+        const TARGET_PERFORMANCE = 500;
+
+        function initContracts() {
+            if (provider && signer) {
+                hsbcContract = new ethers.Contract(HSBC_ADDRESS, HSBC_ABI, signer);
+                aigcContract = new ethers.Contract(AIGC_ADDRESS, AIGC_ABI, signer);
+                bcbsContract = new ethers.Contract(BCBS_ADDRESS, BCBS_ABI, signer);
+                usdtContract = new ethers.Contract(USDT_ADDRESS, USDT_ABI, signer);
+            }
+        }
+
+        async function refreshAllData() {
+            if (!currentAccount || !aigcContract || !bcbsContract) return;
+            try { await updateAirdropStatus(); } catch (e) {}
+            try { await updateClaimableReward(); } catch (e) {}
+            try { await updateTeamPerformance(); } catch (e) {}
+            try { await updateBalanceAndTarget(); } catch (e) {}
+            try { await updateDirectNodes(); } catch (e) {}
+            try { await updateIdentityAndRate(); } catch (e) {}
+            if (currentTab === 'invite') { try { await loadInviteRecords(); } catch (e) {} }
+            else { try { await loadClaimRecords(); } catch (e) {} }
+        }
+
+        // ======================== 空投 ========================
+        async function updateAirdropStatus() {
+            if (!hsbcContract) return;
+            try {
+                const hasClaimed = await hsbcContract.hasClaimed(currentAccount);
+                const canClaim = await hsbcContract.canClaim(currentAccount);
+                const statusEl = document.getElementById('airdropStatus');
+                const claimBtn = document.getElementById('claimAirdropBtn');
+                if (hasClaimed) { statusEl.textContent = '已领取 100 HSBC'; claimBtn.textContent = '已领取'; claimBtn.disabled = true; }
+                else if (canClaim) { statusEl.textContent = '可领取 100 HSBC'; claimBtn.textContent = '立即领取'; claimBtn.disabled = false; }
+                else { statusEl.textContent = '不可领取'; claimBtn.textContent = '立即领取'; claimBtn.disabled = true; }
+            } catch (e) {}
+        }
+
+        async function updateClaimableReward() {
+            if (!aigcContract) { withdrawBtn.textContent = '当前可提取 --'; return; }
+            try {
+                const pending = await aigcContract.getPendingReward(currentAccount);
+                withdrawBtn.textContent = `当前可提取 ${parseFloat(ethers.utils.formatEther(pending)).toFixed(4)} AIGC`;
+            } catch (e) { withdrawBtn.textContent = '当前可提取 --'; }
+        }
+
+        // ======================== 大区/小区业绩 + 考核进度 ========================
+        async function updateTeamPerformance() {
+            if (!aigcContract || !bcbsContract) return;
+
+            try {
+                const count = await aigcContract.getDirectReferralCount(currentAccount);
+                const nodeCount = parseInt(count.toString());
+
+                if (nodeCount === 0) {
+                    document.getElementById('maxPerformance').textContent = '0.00';
+                    document.getElementById('minPerformance').textContent = '0.00';
+                    document.getElementById('progressPercent').textContent = '0.00%';
+                    document.getElementById('progressFill').style.width = '0%';
+                    document.getElementById('progressDetail').textContent = `业绩0/${TARGET_PERFORMANCE}`;
+                    return;
+                }
+
+                // ✅ 获取所有直推人地址
+                const refs = await aigcContract.getDirectReferrals(currentAccount);
+                
+                // ✅ 遍历获取每个直推人的团队业绩
+                let maxPerf = 0, minPerf = Infinity;
+                let successCount = 0;
+
+                for (const ref of refs) {
+                    try {
+                        const perfRaw = await bcbsContract.teamPerformance(ref);
+                        const perf = parseFloat(ethers.utils.formatEther(perfRaw));
+                        if (perf > maxPerf) maxPerf = perf;
+                        if (perf < minPerf) minPerf = perf;
+                        successCount++;
+                    } catch (e) {
+                        // 跳过查询失败的直推人
+                    }
+                }
+
+                // ✅ 如果所有查询都失败，使用默认值
+                if (successCount === 0) {
+                    maxPerf = 0;
+                    minPerf = 0;
+                } else if (minPerf === Infinity) {
+                    minPerf = 0;
+                }
+
+                // ✅ 显示大区业绩（最大值）
+                document.getElementById('maxPerformance').textContent = maxPerf.toFixed(2);
+                
+                // ✅ 显示小区业绩（最小值）
+                document.getElementById('minPerformance').textContent = minPerf.toFixed(2);
+
+                // ✅ 考核进度：仅基于最小业绩
+                const perfProgress = Math.min(minPerf / TARGET_PERFORMANCE, 1) * 100;
+                document.getElementById('progressPercent').textContent = perfProgress.toFixed(2) + '%';
+                document.getElementById('progressFill').style.width = perfProgress.toFixed(2) + '%';
+                document.getElementById('progressDetail').textContent = `业绩${minPerf.toFixed(0)}/${TARGET_PERFORMANCE}`;
+
+            } catch (e) {
+                console.warn('业绩查询失败:', e.message);
+                document.getElementById('maxPerformance').textContent = '0.00';
+                document.getElementById('minPerformance').textContent = '0.00';
+                document.getElementById('progressDetail').textContent = `业绩0/${TARGET_PERFORMANCE}`;
+            }
+        }
+
+        async function updateBalanceAndTarget() {
+            if (!bcbsContract) return;
+            try {
+                const balance = await bcbsContract.balanceOf(currentAccount);
+                document.getElementById('bcbseBalance').textContent = parseFloat(ethers.utils.formatEther(balance)).toFixed(4);
+            } catch (e) {}
+        }
+
+        async function updateDirectNodes() {
+            if (!aigcContract) return;
+            try {
+                const count = await aigcContract.getDirectReferralCount(currentAccount);
+                const countNum = parseInt(count.toString());
+                document.getElementById('completedNodes').textContent = countNum;
+                renderNodeProgress(countNum);
+            } catch (e) {}
+        }
+
+        async function updateIdentityAndRate() {
+            let nodeCount = 0;
+            try {
+                if (aigcContract) {
+                    const count = await aigcContract.getDirectReferralCount(currentAccount);
+                    nodeCount = parseInt(count.toString());
+                }
+            } catch (e) {}
+
+            const identityFromNodes = Math.min(nodeCount * 2, 15);
+            document.getElementById('identityLevel').textContent = nodeCount > 0 ? `S${identityFromNodes}` : 'S0';
+
+            let rateDisplay = '0.0%';
+            try {
+                if (bcbsContract) {
+                    const rawRate = await bcbsContract.userRate(currentAccount);
+                    const rateNum = parseFloat(ethers.utils.formatEther(rawRate));
+                    if (rateNum > 0) {
+                        rateDisplay = (rateNum * 100).toFixed(1) + '%';
+                    } else {
+                        try {
+                            const nodeLevel = await aigcContract.getNodeLevel(currentAccount);
+                            const baseRates = [0, 0.02, 0.04, 0.40];
+                            rateDisplay = (baseRates[parseInt(nodeLevel.toString())] * 100).toFixed(1) + '%';
+                        } catch (e2) {
+                            const identityRates = [0, 0.01, 0.02, 0.04, 0.06, 0.08, 0.10, 0.12, 0.15];
+                            rateDisplay = (identityRates[Math.min(identityFromNodes, 8)] * 100).toFixed(1) + '%';
+                        }
+                    }
+                }
+            } catch (e) {}
+            document.getElementById('rateLevel').textContent = rateDisplay;
+        }
+
+        function renderNodeProgress(completed) {
+            const container = document.getElementById('nodeProgress');
+            let html = '';
+            for (let i = 1; i <= 15; i++) {
+                html += `<div class="node-item ${i <= completed ? 'active' : ''}">${i}</div>`;
+            }
+            container.innerHTML = html;
+        }
+
+        // ======================== 提币 ========================
+        withdrawBtn.addEventListener('click', async () => {
+            if (!currentAccount || !aigcContract) { alert('请先连接钱包'); return; }
+            withdrawBtn.disabled = true;
+            withdrawBtn.innerHTML = '<span class="loading-spinner"></span> 检查中...';
+            try {
+                const pending = await aigcContract.getPendingReward(currentAccount);
+                if (pending.isZero()) { alert('没有可提取的 AIGC'); return; }
+                const minClaim = await aigcContract.getMinClaimRequirement(currentAccount);
+                if (pending.lt(minClaim)) { alert('未达到最低提取要求'); return; }
+                const bnbRequired = await aigcContract.getBnbRequiredForClaim(pending);
+                const userBalance = await provider.getBalance(currentAccount);
+                if (userBalance.lt(bnbRequired.add(ethers.utils.parseEther('0.0005')))) { alert('BNB 余额不足'); return; }
+                if (!confirm(`确认提取 ${ethers.utils.formatEther(pending)} AIGC？`)) return;
+                withdrawBtn.innerHTML = '<span class="loading-spinner"></span> 交易中...';
+                const tx = await aigcContract.claimReward({ value: bnbRequired, gasLimit: 500000 });
+                await tx.wait();
+                alert('✅ 提取成功！');
+                await updateClaimableReward();
+                await loadClaimRecords();
+            } catch (e) { alert('提币失败: ' + (e.reason || e.message)); }
+            finally { withdrawBtn.disabled = false; await updateClaimableReward(); }
+        });
+
+        // ======================== 空投领取 ========================
+        document.getElementById('claimAirdropBtn').addEventListener('click', async () => {
+            if (!currentAccount) { alert('请先连接钱包'); return; }
+            const btn = document.getElementById('claimAirdropBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading-spinner"></span> 领取中...';
+            try {
+                const canClaim = await hsbcContract.canClaim(currentAccount);
+                if (!canClaim) { alert('您已领取过空投或不符合条件'); await updateAirdropStatus(); return; }
+                const fee = await hsbcContract.getClaimFee();
+                const tx = await hsbcContract.claimHSBC({ value: fee, gasLimit: 300000 });
+                await tx.wait();
+                alert('✅ 领取成功！获得 100 HSBC');
+                document.getElementById('airdropStatus').textContent = '已领取 100 HSBC';
+                btn.textContent = '已领取';
+                btn.disabled = true;
+            } catch (e) { alert('领取失败: ' + (e.reason || e.message)); btn.disabled = false; btn.textContent = '立即领取'; }
+        });
+
+        // ======================== 节点申请 ========================
+        document.querySelectorAll('.node-apply-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                if (!currentAccount) { alert('请先连接钱包'); return; }
+                const nodeType = btn.dataset.node;
+                const info = nodeAmountMap[nodeType];
+                if (!info) { alert('未知节点类型'); return; }
+                if (!confirm(`确认申请【${info.name}】？\n将充值 ${info.amount} USDT`)) return;
+                const amountWei = ethers.utils.parseUnits(info.amount, 18);
+                btn.disabled = true;
+                btn.textContent = '处理中...';
+                try {
+                    const allowance = await usdtContract.allowance(currentAccount, AIGC_ADDRESS);
+                    if (allowance.lt(amountWei)) {
+                        btn.textContent = '请授权 USDT...';
+                        const approveTx = await usdtContract.approve(AIGC_ADDRESS, amountWei);
+                        await approveTx.wait();
+                        alert('✅ 授权成功！请再次点击申请按钮。');
+                        btn.disabled = false;
+                        btn.textContent = '立即申请';
+                        return;
+                    }
+                    btn.textContent = '充值中...';
+                    const tx = await aigcContract.depositUSDT(amountWei, { gasLimit: 500000 });
+                    await tx.wait();
+                    alert(`🎉 ${info.name}申请成功！`);
+                    await refreshAllData();
+                } catch (e) { alert('操作失败: ' + (e.reason || e.message)); }
+                finally { btn.disabled = false; btn.textContent = '立即申请'; }
+            });
+        });
+
+        // ======================== 记录面板 ========================
+        document.querySelectorAll('.record-tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.record-tab-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentTab = this.dataset.tab;
+                if (currentTab === 'invite') loadInviteRecords();
+                else loadClaimRecords();
+            });
+        });
+
+        async function loadInviteRecords() {
+            const container = document.getElementById('recordListContainer');
+            if (!currentAccount) { container.innerHTML = '<div style="text-align:center;color:#888;padding:20px;">请先连接钱包</div>'; return; }
+            container.innerHTML = '<div style="text-align:center;color:#888;padding:20px;"><span class="loading-spinner"></span> 加载中...</div>';
+            try {
+                try {
+                    const records = await aigcContract.getDirectReferralsWithTime(currentAccount);
+                    if (records && records.length > 0) {
+                        let html = '';
+                        for (const record of records) {
+                            const addr = record.user || record[0];
+                            const timestamp = record.timestamp || record[1];
+                            const shortAddr = `${addr.substring(0, 6)}...${addr.substring(addr.length - 4)}`;
+                            const time = timestamp > 0 ? new Date(timestamp.toNumber() * 1000).toLocaleString('zh-CN') : '--';
+                            html += `<div class="record-item"><div class="field"><div class="field-label">地址</div><div class="field-value">${shortAddr}</div></div><div class="field"><div class="field-label">时间</div><div class="field-value">${time}</div></div></div>`;
+                        }
+                        container.innerHTML = html;
+                        return;
+                    }
+                } catch (e1) {}
+                const addresses = await aigcContract.getDirectReferrals(currentAccount);
+                if (!addresses || addresses.length === 0) { container.innerHTML = '<div class="record-item" style="justify-content:center;color:#888;">暂无邀请记录</div>'; return; }
+                let html = '';
+                for (const addr of addresses) {
+                    const shortAddr = `${addr.substring(0, 6)}...${addr.substring(addr.length - 4)}`;
+                    html += `<div class="record-item"><div class="field"><div class="field-label">地址</div><div class="field-value">${shortAddr}</div></div><div class="field"><div class="field-label">时间</div><div class="field-value">--</div></div></div>`;
+                }
+                container.innerHTML = html;
+            } catch (e) { container.innerHTML = '<div class="record-item" style="justify-content:center;color:#888;">加载失败，请重试</div>'; }
+        }
+
+        async function loadClaimRecords() {
+            const container = document.getElementById('recordListContainer');
+            if (!currentAccount) { container.innerHTML = '<div style="text-align:center;color:#888;padding:20px;">请先连接钱包</div>'; return; }
+            container.innerHTML = '<div style="text-align:center;color:#888;padding:20px;"><span class="loading-spinner"></span> 加载中...</div>';
+            try {
+                const filter = aigcContract.filters.RewardClaimed(currentAccount);
+                const events = await aigcContract.queryFilter(filter, 0, 'latest');
+                if (!events || events.length === 0) { container.innerHTML = '<div class="record-item" style="justify-content:center;color:#888;">暂无领取记录</div>'; return; }
+                let html = '';
+                const reversed = [...events].reverse();
+                for (const event of reversed) {
+                    const { aigcAmount, bnbPaid } = event.args;
+                    const block = await event.getBlock();
+                    const time = new Date(block.timestamp * 1000).toLocaleString('zh-CN');
+                    html += `<div class="record-item"><div class="field"><div class="field-label">AIGC数量</div><div class="field-value">${parseFloat(ethers.utils.formatEther(aigcAmount)).toFixed(4)}</div></div><div class="field"><div class="field-label">BNB费用</div><div class="field-value">${parseFloat(ethers.utils.formatEther(bnbPaid)).toFixed(6)}</div></div><div class="field" style="flex:1 1 100%;"><div class="field-label">时间</div><div class="field-value">${time}</div></div></div>`;
+                }
+                container.innerHTML = html;
+            } catch (e) { container.innerHTML = '<div class="record-item" style="justify-content:center;color:#888;">加载失败，请重试</div>'; }
+        }
+
+        // ======================== 钱包 ========================
+        function updateUIForConnected(acc) { connectBtn.textContent = `${acc.substring(0, 6)}...${acc.substring(acc.length - 4)}`; connectBtn.classList.add('connected'); }
+        function setDisconnectedUI() {
+            connectBtn.textContent = 'Connect wallet'; connectBtn.classList.remove('connected');
+            withdrawBtn.textContent = '当前可提取 --';
+            document.getElementById('maxPerformance').textContent = '0.00';
+            document.getElementById('minPerformance').textContent = '0.00';
+            document.getElementById('bcbseBalance').textContent = '0.00';
+            document.getElementById('completedNodes').textContent = '0';
+            document.getElementById('identityLevel').textContent = '--';
+            document.getElementById('rateLevel').textContent = '--';
+            document.getElementById('progressPercent').textContent = '0.00%';
+            document.getElementById('progressFill').style.width = '0%';
+            document.getElementById('progressDetail').textContent = `业绩0/${TARGET_PERFORMANCE}`;
+            document.getElementById('airdropStatus').textContent = '未领取';
+            document.getElementById('claimAirdropBtn').disabled = false;
+            document.getElementById('claimAirdropBtn').textContent = '立即领取';
+            renderNodeProgress(0);
+            document.getElementById('recordListContainer').innerHTML = '<div style="text-align:center;color:#888;padding:20px;">请先连接钱包</div>';
+        }
+
+        async function connectWallet() {
+            if (!window.ethereum) { alert('请安装 MetaMask'); return; }
+            connectBtn.disabled = true; connectBtn.innerHTML = '<span class="loading-spinner"></span> 连接中...';
+            try {
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                if (!accounts || accounts.length === 0) throw new Error('未获取到账户');
+                currentAccount = accounts[0];
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                signer = provider.getSigner();
+                initContracts();
+                updateUIForConnected(currentAccount);
+                await refreshAllData();
+            } catch (e) { if (e.code === 4001) alert('请在 MetaMask 中授权连接'); else alert('连接失败: ' + (e.message || '未知错误')); }
+            finally { connectBtn.disabled = false; connectBtn.textContent = currentAccount ? `${currentAccount.substring(0, 6)}...${currentAccount.substring(currentAccount.length - 4)}` : 'Connect wallet'; if (currentAccount) connectBtn.classList.add('connected'); }
+        }
+
+        function disconnectWallet() {
+            currentAccount = null; signer = null; provider = null;
+            hsbcContract = null; aigcContract = null; bcbsContract = null; usdtContract = null;
+            setDisconnectedUI();
+        }
+
+        connectBtn.addEventListener('click', () => { if (currentAccount) disconnectWallet(); else connectWallet(); });
+
+        async function autoConnect() {
+            if (!window.ethereum) return;
+            try {
+                const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+                if (accounts && accounts.length > 0) {
+                    currentAccount = accounts[0];
+                    provider = new ethers.providers.Web3Provider(window.ethereum);
+                    signer = provider.getSigner();
+                    initContracts();
+                    updateUIForConnected(currentAccount);
+                    await refreshAllData();
+                }
+            } catch (e) {}
+            window.ethereum.on('accountsChanged', (accounts) => {
+                if (!accounts || accounts.length === 0) disconnectWallet();
+                else { currentAccount = accounts[0]; provider = new ethers.providers.Web3Provider(window.ethereum); signer = provider.getSigner(); initContracts(); updateUIForConnected(currentAccount); refreshAllData(); }
+            });
+            window.ethereum.on('chainChanged', () => { if (currentAccount) { provider = new ethers.providers.Web3Provider(window.ethereum); signer = provider.getSigner(); initContracts(); refreshAllData(); } });
+            window.ethereum.on('disconnect', () => disconnectWallet());
+        }
+
+        window.addEventListener('load', () => setTimeout(() => autoConnect(), 500));
+    </script>
+</body>
+</html>
         .header-controls { display: flex; gap: 10px; align-items: center; }
         .lang-btn { background: transparent; border: 1px solid #333; color: #aaa; padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer; }
         .connect-btn { background: transparent; border: 1px solid #f90; color: #f90; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; box-shadow: 0 0 10px rgba(255,153,0,0.1); transition: all 0.2s; white-space: nowrap; }
