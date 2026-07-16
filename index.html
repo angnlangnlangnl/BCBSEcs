@@ -82,18 +82,14 @@
     </div>
 
     <script>
-        // ---------- 合约地址 ----------
-        const AIGC_ADDRESS = '0x49CaB5FCE501e3209d1933a745413D061879AA7a';
+        const AIGC_ADDRESS = '0x059451F7f591E43a0Ad58616ed403dB64ab5e170';
         const BCBS_ADDRESS = '0xC2ED87266c9F35eeb6715624264A8163A361FCd7';
         const HSBC_ADDRESS = '0x20aD84A60902A91F036bD6bdB85AD1d61B2f65C1';
-        const BCBSE_ADDRESS = '0x...'; // 如需使用请替换
 
         const AIGC_ABI = [ /* AIGC ABI */ ];
-        const BCBS_ABI = [ /* BCBS ABI */ ];
-        const HSBC_ABI = [ /* HSBC ABI */ ];
 
         let provider, signer, currentAccount;
-        let aigcContract, bcbsContract, hsbcContract;
+        let aigcContract;
         const connectBtn = document.getElementById('connectWalletBtn');
         const totalAssetValueEl = document.getElementById('totalAssetValue');
         const userLevelEl = document.getElementById('userLevel');
@@ -110,8 +106,6 @@
         function initContracts() {
             if (provider && signer) {
                 aigcContract = new ethers.Contract(AIGC_ADDRESS, AIGC_ABI, signer);
-                bcbsContract = new ethers.Contract(BCBS_ADDRESS, BCBS_ABI, signer);
-                hsbcContract = new ethers.Contract(HSBC_ADDRESS, HSBC_ABI, signer);
             }
         }
 
@@ -161,27 +155,6 @@
             return { BNB: 2.35, USDT: 1520.00, AIGC: 1250.50, BCBS: 800.00, HSBC: 200.00 };
         }
 
-        async function initWallet() {
-            if (typeof window.ethereum !== 'undefined') {
-                provider = new ethers.providers.Web3Provider(window.ethereum);
-                try {
-                    const accounts = await provider.listAccounts();
-                    if (accounts.length > 0) {
-                        currentAccount = accounts[0];
-                        signer = provider.getSigner();
-                        initContracts();
-                        updateUIForConnected(currentAccount);
-                    } else setDisconnectedUI();
-                } catch (err) { setDisconnectedUI(); }
-                window.ethereum.on('accountsChanged', handleAccountsChanged);
-                window.ethereum.on('chainChanged', () => window.location.reload());
-            } else {
-                connectBtn.textContent = 'No Wallet';
-                connectBtn.disabled = true;
-            }
-            await refreshAll();
-        }
-
         async function refreshAll() {
             await refreshBalances();
             await updateNodeInfo();
@@ -200,13 +173,15 @@
 
         async function connectWallet() {
             if (typeof window.ethereum === 'undefined') { alert('请安装 MetaMask！'); return; }
-            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-            currentAccount = accounts[0];
-            provider = new ethers.providers.Web3Provider(window.ethereum);
-            signer = provider.getSigner();
-            initContracts();
-            updateUIForConnected(currentAccount);
-            await refreshAll();
+            try {
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                currentAccount = accounts[0];
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                signer = provider.getSigner();
+                initContracts();
+                updateUIForConnected(currentAccount);
+                await refreshAll();
+            } catch (e) { console.error('连接失败:', e); }
         }
 
         function updateUIForConnected(account) {
@@ -217,13 +192,14 @@
 
         function disconnectWallet() {
             currentAccount = null; signer = null;
-            aigcContract = null; bcbsContract = null; hsbcContract = null;
+            aigcContract = null;
             setDisconnectedUI();
         }
 
         function handleAccountsChanged(accounts) {
-            if (accounts.length === 0) disconnectWallet();
-            else {
+            if (accounts.length === 0) {
+                disconnectWallet();
+            } else {
                 currentAccount = accounts[0];
                 provider = new ethers.providers.Web3Provider(window.ethereum);
                 signer = provider.getSigner();
@@ -255,8 +231,34 @@
             container.innerHTML = html;
         }
 
+        // ========== 自动连接钱包 ==========
+        async function autoConnect() {
+            if (typeof window.ethereum !== 'undefined') {
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                try {
+                    const accounts = await provider.listAccounts();
+                    if (accounts.length > 0) {
+                        currentAccount = accounts[0];
+                        signer = provider.getSigner();
+                        initContracts();
+                        updateUIForConnected(currentAccount);
+                        await refreshAll();
+                    } else {
+                        setDisconnectedUI();
+                    }
+                } catch (e) {
+                    setDisconnectedUI();
+                }
+                window.ethereum.on('accountsChanged', handleAccountsChanged);
+                window.ethereum.on('chainChanged', () => window.location.reload());
+            } else {
+                connectBtn.textContent = 'No Wallet';
+                connectBtn.disabled = true;
+            }
+        }
+
         renderAssetSkeleton();
-        window.addEventListener('load', initWallet);
+        window.addEventListener('load', autoConnect);
     </script>
 </body>
 </html>
