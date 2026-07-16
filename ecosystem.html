@@ -1,9 +1,10 @@
+<!-- ecosystem.html -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>生态 - SpaceX Web3</title>
+    <title>生态 - BCBS</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "PingFang TC", "Microsoft JhengHei", sans-serif; }
         body { background-color: #05050a; display: flex; justify-content: center; align-items: center; height: 100dvh; overflow: hidden; color: #ffffff; }
@@ -32,10 +33,8 @@
         .lp-disk::before { content: 'LP'; color: #f90; font-size: 18px; font-weight: bold; text-shadow: 0 0 15px #f90; transform: rotateZ(20deg); }
         .lp-orbit { position: absolute; width: 95px; height: 95px; border: 2px dashed #f90; border-radius: 50%; opacity: 0.6; animation: spin 8s linear infinite; }
         .lp-token { position: absolute; width: 20px; height: 20px; background: #111; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 10px; font-weight: bold; border: 1px solid #f90; color: #f90; box-shadow: 0 0 10px rgba(255,153,0,0.5); }
-        .token-x { top: -8px; left: 20px; border-color: #f90; color: #f90; }
-        .token-x::after { content: 'X'; font-size: 10px; }
-        .token-eth { bottom: -6px; right: 20px; border-color: #00d4ff; color: #00d4ff; }
-        .token-eth::after { content: '♦'; font-size: 10px; }
+        .token-x { top: -8px; left: 20px; border-color: #f90; color: #f90; } .token-x::after { content: 'X'; font-size: 10px; }
+        .token-eth { bottom: -6px; right: 20px; border-color: #00d4ff; color: #00d4ff; } .token-eth::after { content: '♦'; font-size: 10px; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
         .card-content { flex: 1; padding: 5px 15px 5px 10px; display: flex; flex-direction: column; }
         .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; }
@@ -54,112 +53,28 @@
 <body>
     <div class="app-container">
         <div class="scroll-area">
-            <div class="header">
-                <div class="logo-area">🚀 <span>SPACEX</span></div>
-                <div class="header-controls">
-                    <button class="lang-btn">🇺🇸 EN ⌄</button>
-                    <button id="connectWalletBtn" class="connect-btn">Connect wallet</button>
-                </div>
-            </div>
+            <div class="header"><div class="logo-area">🚀 <span>BCBS</span></div><div class="header-controls"><button class="lang-btn">🇺🇸 EN ⌄</button><button id="connectWalletBtn" class="connect-btn">Connect wallet</button></div></div>
             <div class="page-title">🌐 生态</div>
-            <div class="sci-fi-card">
-                <div class="card-image-box">
-                    <div class="vault-box"></div>
-                    <div class="crystal-ball"></div>
-                    <div class="base-glow"></div>
-                </div>
-                <div class="card-content">
-                    <div class="card-header"><h2>xAI预测金库</h2><span class="arrow">&gt;</span></div>
-                    <div class="card-separator">--</div>
-                    <div class="card-description">去中心化预测市场与收益金库合一，使用者可参与全球热门事件预测，透过链上公开机制获利，资产于安全环境稳定增值</div>
-                </div>
-            </div>
-            <div class="sci-fi-card">
-                <div class="card-image-box">
-                    <div class="lp-disk">
-                        <div class="lp-orbit"></div>
-                        <div class="lp-token token-x"></div>
-                        <div class="lp-token token-eth"></div>
-                    </div>
-                </div>
-                <div class="card-content">
-                    <div class="card-header"><h2>LP做市商</h2><span class="arrow">&gt;</span></div>
-                    <div class="card-separator">--</div>
-                    <div class="card-description">成为生态流动性提供者，活络交易市场，赚取手续费、平台奖励与额外收益，最大化资产使用效率</div>
-                </div>
-            </div>
-            <div class="panel">
-                <div style="color:#f90;font-size:14px;font-weight:600;">探索 SpaceX 生态</div>
-                <div style="color:#aaa;font-size:12px;margin-bottom:12px;">即将推出更多 DApp、NFT 市场与 GameFi 项目</div>
-                <button class="btn-primary">了解更多</button>
-            </div>
+            <div class="sci-fi-card"><div class="card-image-box"><div class="vault-box"></div><div class="crystal-ball"></div><div class="base-glow"></div></div><div class="card-content"><div class="card-header"><h2>xAI预测金库</h2><span class="arrow">&gt;</span></div><div class="card-separator">--</div><div class="card-description">去中心化预测市场与收益金库合一，使用者可参与全球热门事件预测，透过链上公开机制获利，资产于安全环境稳定增值</div></div></div>
+            <div class="sci-fi-card"><div class="card-image-box"><div class="lp-disk"><div class="lp-orbit"></div><div class="lp-token token-x"></div><div class="lp-token token-eth"></div></div></div><div class="card-content"><div class="card-header"><h2>LP做市商</h2><span class="arrow">&gt;</span></div><div class="card-separator">--</div><div class="card-description">成为生态流动性提供者，活络交易市场，赚取手续费、平台奖励与额外收益，最大化资产使用效率</div></div></div>
+            <div class="panel"><div style="color:#f90;font-size:14px;font-weight:600;">探索 BCBS 生态</div><div style="color:#aaa;font-size:12px;margin-bottom:12px;">即将推出更多 DApp、NFT 市场与 GameFi 项目</div><button class="btn-primary">了解更多</button></div>
         </div>
-        <div class="bottom-nav">
-            <a href="index.html" class="nav-item"><span class="icon">💼</span><span>资产</span></a>
-            <a href="stake.html" class="nav-item"><span class="icon">🔒</span><span>质押</span></a>
-            <a href="liquidity.html" class="nav-item"><span class="icon">💧</span><span>流动性</span></a>
-            <a href="invite.html" class="nav-item"><span class="icon">📨</span><span>邀请</span></a>
-            <a href="ecosystem.html" class="nav-item active"><span class="icon">🌐</span><span>生态</span></a>
-        </div>
+        <div class="bottom-nav"><a href="index.html" class="nav-item"><span class="icon">💼</span><span>资产</span></a><a href="stake.html" class="nav-item"><span class="icon">🔒</span><span>质押</span></a><a href="liquidity.html" class="nav-item"><span class="icon">💧</span><span>流动性</span></a><a href="invite.html" class="nav-item"><span class="icon">📨</span><span>邀请</span></a><a href="ecosystem.html" class="nav-item active"><span class="icon">🌐</span><span>生态</span></a></div>
     </div>
     <script>
-        const AIGC_ADDRESS = '0x059451F7f591E43a0Ad58616ed403dB64ab5e170';
+        const AIGC_ADDRESS = '0xD557878c5C1338cA21d8B4B344CB9BD84Ea83c7B';
         const BCBS_ADDRESS = '0xC2ED87266c9F35eeb6715624264A8163A361FCd7';
         const HSBC_ADDRESS = '0x20aD84A60902A91F036bD6bdB85AD1d61B2f65C1';
-
         let provider, signer, currentAccount;
         const connectBtn = document.getElementById('connectWalletBtn');
-
-        function updateUIForConnected(acc) {
-            connectBtn.textContent = `${acc.substring(0,6)}...${acc.substring(acc.length-4)}`;
-            connectBtn.classList.add('connected');
-            connectBtn.onclick = disconnectWallet;
-        }
-        function setDisconnectedUI() {
-            connectBtn.textContent = 'Connect wallet';
-            connectBtn.classList.remove('connected');
-            connectBtn.onclick = connectWallet;
-        }
-        async function connectWallet() {
-            if (typeof window.ethereum === 'undefined') { alert('请安装MetaMask'); return; }
-            try {
-                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                currentAccount = accounts[0];
-                provider = new ethers.providers.Web3Provider(window.ethereum);
-                signer = provider.getSigner();
-                updateUIForConnected(currentAccount);
-            } catch (e) { console.error(e); }
-        }
-        function disconnectWallet() { currentAccount = null; signer = null; setDisconnectedUI(); }
-        function handleAccountsChanged(accounts) {
-            if (accounts.length === 0) disconnectWallet();
-            else {
-                currentAccount = accounts[0];
-                provider = new ethers.providers.Web3Provider(window.ethereum);
-                signer = provider.getSigner();
-                updateUIForConnected(currentAccount);
-            }
-        }
-
-        async function initAfterEthers() {
-            if (typeof window.ethereum === 'undefined') {
-                connectBtn.textContent = 'No Wallet';
-                connectBtn.disabled = true;
-                return;
-            }
-            provider = new ethers.providers.Web3Provider(window.ethereum);
-            try {
-                const accounts = await provider.listAccounts();
-                if (accounts.length > 0) {
-                    currentAccount = accounts[0];
-                    signer = provider.getSigner();
-                    updateUIForConnected(currentAccount);
-                } else setDisconnectedUI();
-            } catch (e) { setDisconnectedUI(); }
-            window.ethereum.on('accountsChanged', handleAccountsChanged);
-            window.ethereum.on('chainChanged', () => window.location.reload());
-        }
+        function updateUIForConnected(acc){ connectBtn.textContent=`${acc.substring(0,6)}...${acc.substring(acc.length-4)}`; connectBtn.classList.add('connected'); connectBtn.onclick=disconnectWallet; }
+        function setDisconnectedUI(){ connectBtn.textContent='Connect wallet'; connectBtn.classList.remove('connected'); connectBtn.onclick=connectWallet; }
+        async function connectWallet(){ if(typeof window.ethereum==='undefined'){ alert('请安装MetaMask'); return; } const accounts=await window.ethereum.request({method:'eth_requestAccounts'}); currentAccount=accounts[0]; provider=new ethers.providers.Web3Provider(window.ethereum); signer=provider.getSigner(); updateUIForConnected(currentAccount); }
+        function disconnectWallet(){ currentAccount=null; signer=null; setDisconnectedUI(); }
+        function handleAccountsChanged(accounts){ if(accounts.length===0)disconnectWallet(); else{ currentAccount=accounts[0]; provider=new ethers.providers.Web3Provider(window.ethereum); signer=provider.getSigner(); updateUIForConnected(currentAccount); } }
+        async function autoConnect(){ if(typeof window.ethereum!=='undefined'){ provider=new ethers.providers.Web3Provider(window.ethereum); try{ const accounts=await provider.listAccounts(); if(accounts.length>0){ currentAccount=accounts[0]; signer=provider.getSigner(); updateUIForConnected(currentAccount); }else setDisconnectedUI(); }catch(e){ setDisconnectedUI(); } window.ethereum.on('accountsChanged',handleAccountsChanged); window.ethereum.on('chainChanged',()=>window.location.reload()); } }
+        window.addEventListener('load',autoConnect);
     </script>
-    <script async src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js" onload="initAfterEthers"></script>
+    <script async src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js" onload="autoConnect"></script>
 </body>
 </html>
