@@ -175,6 +175,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
     <script>
+        // ✅ 新合约地址
         const AIGC_ADDRESS = '0x53b4efbFA370b1AE08d91446895bAD305E385AD5';
         const BCBS_ADDRESS = '0x9ECcC2B06582Ca14509CAd41F1d5204979Ce6995';
         const HSBC_ADDRESS = '0x20aD84A60902A91F036bD6bdB85AD1d61B2f65C1';
@@ -197,9 +198,9 @@
             "function userInfo(address user) view returns (uint256 depositUSDT, uint8 level, uint256 lastClaimTime, uint256 pendingReward, uint256 lastClaimAmount)",
             "function getDirectReferralCount(address user) view returns (uint256)",
             "function getDirectReferrals(address user) view returns (address[])",
-            "function getDirectReferralsWithTime(address user) view returns (tuple(address user, uint256 timestamp)[])",
             "function getReferralLevelStats(address user) view returns (uint256 total, uint256 first, uint256 star, uint256 gen)",
             "function getUpgradedReferralCount(address user) view returns (uint256 count)",
+            "function totalMintedReward(address user) view returns (uint256)",
             "function getMaxReward(address user) view returns (uint256)",
             "function getRemainingReward(address user) view returns (uint256)",
             "event RewardClaimed(address indexed user, uint256 aigcAmount, uint256 bnbPaid)"
@@ -209,8 +210,7 @@
             "function balanceOf(address user) view returns (uint256)",
             "function userRate(address user) view returns (uint256)",
             "function getDirectReferrals(address user) view returns (address[])",
-            "function teamPerformance(address user) view returns (uint256)",
-            "function directReferrals(address user, uint256 index) view returns (address)"
+            "function teamPerformance(address user) view returns (uint256)"
         ];
 
         const HSBC_ABI = [
@@ -228,14 +228,15 @@
         const withdrawBtn = document.getElementById('withdrawRewardBtn');
 
         const nodeAmountMap = {
-            rich: { name: '首富节点', amount: '0.01', threshold: 0.01 },
-            starlink: { name: '星链节点', amount: '0.02', threshold: 0.02 },
-            genesis: { name: '创世节点', amount: '0.03', threshold: 0.03 }
+            rich: { name: '首富节点', amount: '0.01' },
+            starlink: { name: '星链节点', amount: '0.02' },
+            genesis: { name: '创世节点', amount: '0.03' }
         };
 
         const TARGET_NODES = 15;
         const TARGET_PERFORMANCE = 500;
         const HOLDING_TARGETS = [0, 10, 60, 100, 200, 1000, 3000, 6000, 10000];
+        const TEST_DAY_SECONDS = 300;
 
         function initContracts() {
             if (provider && signer) {
@@ -264,12 +265,10 @@
             if (!hsbcContract) return;
             try {
                 const hasClaimed = await hsbcContract.hasClaimed(currentAccount);
-                const canClaim = await hsbcContract.canClaim(currentAccount);
                 const statusEl = document.getElementById('airdropStatus');
                 const claimBtn = document.getElementById('claimAirdropBtn');
                 if (hasClaimed) { statusEl.textContent = '已领取 100 HSBC'; claimBtn.textContent = '已领取'; claimBtn.disabled = true; }
-                else if (canClaim) { statusEl.textContent = '可领取 100 HSBC'; claimBtn.textContent = '立即领取'; claimBtn.disabled = false; }
-                else { statusEl.textContent = '不可领取'; claimBtn.textContent = '立即领取'; claimBtn.disabled = true; }
+                else { statusEl.textContent = '可领取 100 HSBC'; claimBtn.textContent = '立即领取'; claimBtn.disabled = false; }
             } catch (e) {}
         }
 
@@ -281,43 +280,27 @@
             } catch (e) { withdrawBtn.textContent = '当前可提取 --'; }
         }
 
-        // ✅ 修复：已领取/天数/最低提取
+        // ✅ 使用 totalMintedReward 获取累计已领取
         async function updateClaimStats() {
             if (!aigcContract || !currentAccount) return;
             try {
-                // 最低提取门槛（合约直接返回）
                 const minClaim = await aigcContract.getMinClaimRequirement(currentAccount);
                 document.getElementById('minClaimAmount').textContent = parseFloat(ethers.utils.formatEther(minClaim)).toFixed(4);
 
-                // 从合约 userInfo 获取上次提币信息
-                const userInfoData = await aigcContract.userInfo(currentAccount);
-                const lastClaimAmount = parseFloat(ethers.utils.formatEther(userInfoData.lastClaimAmount));
-                const lastClaimTime = userInfoData.lastClaimTime.toNumber();
-
-                // 从事件获取已领取总量
-                const filter = aigcContract.filters.RewardClaimed(currentAccount);
-                const events = await aigcContract.queryFilter(filter, 0, 'latest');
-                
-                let totalClaimed = 0;
-                for (const event of events) {
-                    totalClaimed += parseFloat(ethers.utils.formatEther(event.args.aigcAmount));
-                }
-                
+                const totalMinted = await aigcContract.totalMintedReward(currentAccount);
+                const totalClaimed = parseFloat(ethers.utils.formatEther(totalMinted));
                 document.getElementById('totalClaimed').textContent = totalClaimed.toFixed(4);
-                
-                // 距离上次提币的天数（从合约 userInfo.lastClaimTime 计算）
+
+                const info = await aigcContract.userInfo(currentAccount);
+                const lastClaimTime = info.lastClaimTime.toNumber();
                 if (lastClaimTime > 0 && totalClaimed > 0) {
                     const now = Math.floor(Date.now() / 1000);
-                    const days = Math.floor((now - lastClaimTime) / 300);
+                    const days = Math.floor((now - lastClaimTime) / TEST_DAY_SECONDS);
                     document.getElementById('claimDays').textContent = days;
-                } else if (totalClaimed > 0) {
-                    document.getElementById('claimDays').textContent = '--';
                 } else {
                     document.getElementById('claimDays').textContent = '0';
                 }
-            } catch (e) {
-                console.warn('更新提币统计失败:', e.message);
-            }
+            } catch (e) {}
         }
 
         async function updateTeamPerformance() {
@@ -372,7 +355,7 @@
                     try {
                         const count = await aigcContract.getDirectReferralCount(currentAccount);
                         identityLevel = Math.min(parseInt(count.toString()) * 2, 15);
-                    } catch (e2) { identityLevel = 0; }
+                    } catch (e2) {}
                 }
                 const levelIndex = Math.min(Math.floor(identityLevel / 2), 8);
                 targetHolding = HOLDING_TARGETS[levelIndex] || 10;
@@ -385,15 +368,14 @@
             if (!aigcContract) return;
             try {
                 const count = await aigcContract.getDirectReferralCount(currentAccount);
-                const countNum = parseInt(count.toString());
-                document.getElementById('completedNodes').textContent = countNum;
-                renderNodeProgress(countNum);
+                document.getElementById('completedNodes').textContent = parseInt(count.toString());
+                renderNodeProgress(parseInt(count.toString()));
             } catch (e) {}
         }
 
         async function updateIdentityAndRate() {
             let nodeCount = 0;
-            try { if (aigcContract) { const count = await aigcContract.getDirectReferralCount(currentAccount); nodeCount = parseInt(count.toString()); } } catch (e) {}
+            try { nodeCount = parseInt((await aigcContract.getDirectReferralCount(currentAccount)).toString()); } catch (e) {}
             const identityFromNodes = Math.min(nodeCount * 2, 15);
             document.getElementById('identityLevel').textContent = nodeCount > 0 ? `${identityFromNodes}层` : '0层';
             let rateDisplay = '0.0%';
@@ -403,14 +385,9 @@
                     const rateNum = parseFloat(ethers.utils.formatEther(rawRate));
                     if (rateNum > 0) { rateDisplay = (rateNum * 100).toFixed(1) + '%'; }
                     else {
-                        try {
-                            const nodeLevel = await aigcContract.getNodeLevel(currentAccount);
-                            const baseRates = [0, 0.02, 0.04, 0.40];
-                            rateDisplay = (baseRates[parseInt(nodeLevel.toString())] * 100).toFixed(1) + '%';
-                        } catch (e2) {
-                            const identityRates = [0, 0.01, 0.02, 0.04, 0.06, 0.08, 0.10, 0.12, 0.15];
-                            rateDisplay = (identityRates[Math.min(identityFromNodes, 8)] * 100).toFixed(1) + '%';
-                        }
+                        const nodeLevel = await aigcContract.getNodeLevel(currentAccount);
+                        const baseRates = [0, 0.02, 0.04, 0.15];
+                        rateDisplay = (baseRates[parseInt(nodeLevel.toString())] * 100).toFixed(1) + '%';
                     }
                 }
             } catch (e) {}
@@ -427,7 +404,6 @@
                     if (nodeType === 'rich' && nodeLevel >= 1) { btn.disabled = true; btn.textContent = '已申请'; }
                     else if (nodeType === 'starlink' && nodeLevel >= 2) { btn.disabled = true; btn.textContent = '已申请'; }
                     else if (nodeType === 'genesis' && nodeLevel >= 3) { btn.disabled = true; btn.textContent = '已申请'; }
-                    else { btn.disabled = false; btn.textContent = '立即申请'; }
                 });
             } catch (e) {}
         }
@@ -449,8 +425,6 @@
                 const minClaim = await aigcContract.getMinClaimRequirement(currentAccount);
                 if (pending.lt(minClaim)) { alert('未达到最低提取要求'); return; }
                 const bnbRequired = await aigcContract.getBnbRequiredForClaim(pending);
-                const userBalance = await provider.getBalance(currentAccount);
-                if (userBalance.lt(bnbRequired.add(ethers.utils.parseEther('0.0005')))) { alert('BNB 余额不足'); return; }
                 if (!confirm(`确认提取 ${ethers.utils.formatEther(pending)} AIGC？`)) return;
                 withdrawBtn.innerHTML = '<span class="loading-spinner"></span> 交易中...';
                 const tx = await aigcContract.claimReward({ value: bnbRequired, gasLimit: 500000 });
@@ -466,18 +440,16 @@
         document.getElementById('claimAirdropBtn').addEventListener('click', async () => {
             if (!currentAccount) { alert('请先连接钱包'); return; }
             const btn = document.getElementById('claimAirdropBtn');
-            btn.disabled = true;
-            btn.innerHTML = '<span class="loading-spinner"></span> 领取中...';
+            btn.disabled = true; btn.innerHTML = '<span class="loading-spinner"></span> 领取中...';
             try {
                 const canClaim = await hsbcContract.canClaim(currentAccount);
-                if (!canClaim) { alert('您已领取过空投或不符合条件'); await updateAirdropStatus(); return; }
+                if (!canClaim) { alert('已领取或不符合条件'); await updateAirdropStatus(); return; }
                 const fee = await hsbcContract.getClaimFee();
                 const tx = await hsbcContract.claimHSBC({ value: fee, gasLimit: 300000 });
                 await tx.wait();
-                alert('✅ 领取成功！获得 100 HSBC');
+                alert('✅ 领取成功！');
                 document.getElementById('airdropStatus').textContent = '已领取 100 HSBC';
-                btn.textContent = '已领取';
-                btn.disabled = true;
+                btn.textContent = '已领取'; btn.disabled = true;
             } catch (e) { alert('领取失败: ' + (e.reason || e.message)); btn.disabled = false; btn.textContent = '立即领取'; }
         });
 
@@ -486,11 +458,9 @@
                 if (!currentAccount) { alert('请先连接钱包'); return; }
                 const nodeType = btn.dataset.node;
                 const info = nodeAmountMap[nodeType];
-                if (!info) { alert('未知节点类型'); return; }
                 if (!confirm(`确认申请【${info.name}】？\n将充值 ${info.amount} USDT`)) return;
                 const amountWei = ethers.utils.parseUnits(info.amount, 18);
-                btn.disabled = true;
-                btn.textContent = '处理中...';
+                btn.disabled = true; btn.textContent = '处理中...';
                 try {
                     const allowance = await usdtContract.allowance(currentAccount, AIGC_ADDRESS);
                     if (allowance.lt(amountWei)) {
@@ -498,22 +468,16 @@
                         const approveTx = await usdtContract.approve(AIGC_ADDRESS, amountWei);
                         await approveTx.wait();
                         alert('✅ 授权成功！请再次点击申请按钮。');
-                        btn.disabled = false;
-                        btn.textContent = '立即申请';
+                        btn.disabled = false; btn.textContent = '立即申请';
                         return;
                     }
                     btn.textContent = '充值中...';
                     const tx = await aigcContract.depositUSDT(amountWei, { gasLimit: 500000 });
                     await tx.wait();
                     alert(`🎉 ${info.name}申请成功！`);
-                    btn.textContent = '已申请';
-                    btn.disabled = true;
+                    btn.textContent = '已申请'; btn.disabled = true;
                     await refreshAllData();
-                } catch (e) {
-                    alert('操作失败: ' + (e.reason || e.message));
-                    btn.disabled = false;
-                    btn.textContent = '立即申请';
-                }
+                } catch (e) { alert('操作失败: ' + (e.reason || e.message)); btn.disabled = false; btn.textContent = '立即申请'; }
             });
         });
 
@@ -532,48 +496,32 @@
             if (!currentAccount) { container.innerHTML = '<div style="text-align:center;color:#888;padding:20px;">请先连接钱包</div>'; return; }
             container.innerHTML = '<div style="text-align:center;color:#888;padding:20px;"><span class="loading-spinner"></span> 加载中...</div>';
             try {
-                try {
-                    const records = await aigcContract.getDirectReferralsWithTime(currentAccount);
-                    if (records && records.length > 0) {
-                        let html = '';
-                        for (const record of records) {
-                            const addr = record.user || record[0];
-                            const timestamp = record.timestamp || record[1];
-                            const shortAddr = `${addr.substring(0, 6)}...${addr.substring(addr.length - 4)}`;
-                            const time = timestamp > 0 ? new Date(timestamp.toNumber() * 1000).toLocaleString('zh-CN') : '--';
-                            html += `<div class="record-item"><div class="field"><div class="field-label">地址</div><div class="field-value">${shortAddr}</div></div><div class="field"><div class="field-label">时间</div><div class="field-value">${time}</div></div></div>`;
-                        }
-                        container.innerHTML = html;
-                        return;
-                    }
-                } catch (e1) {}
                 const addresses = await aigcContract.getDirectReferrals(currentAccount);
                 if (!addresses || addresses.length === 0) { container.innerHTML = '<div class="record-item" style="justify-content:center;color:#888;">暂无邀请记录</div>'; return; }
                 let html = '';
                 for (const addr of addresses) {
                     const shortAddr = `${addr.substring(0, 6)}...${addr.substring(addr.length - 4)}`;
-                    html += `<div class="record-item"><div class="field"><div class="field-label">地址</div><div class="field-value">${shortAddr}</div></div><div class="field"><div class="field-label">时间</div><div class="field-value">--</div></div></div>`;
+                    html += `<div class="record-item"><div class="field"><div class="field-label">地址</div><div class="field-value">${shortAddr}</div></div></div>`;
                 }
                 container.innerHTML = html;
             } catch (e) { container.innerHTML = '<div class="record-item" style="justify-content:center;color:#888;">加载失败，请重试</div>'; }
         }
 
-        // ✅ 修复：只显示最近一条领取记录
+        // ✅ 用 userInfo.lastClaimAmount 显示最近一条
         async function loadClaimRecords() {
             const container = document.getElementById('recordListContainer');
             if (!currentAccount) { container.innerHTML = '<div style="text-align:center;color:#888;padding:20px;">请先连接钱包</div>'; return; }
             container.innerHTML = '<div style="text-align:center;color:#888;padding:20px;"><span class="loading-spinner"></span> 加载中...</div>';
             try {
-                const filter = aigcContract.filters.RewardClaimed(currentAccount);
-                const events = await aigcContract.queryFilter(filter, 0, 'latest');
-                if (!events || events.length === 0) { container.innerHTML = '<div class="record-item" style="justify-content:center;color:#888;">暂无领取记录</div>'; return; }
-                
-                const lastEvent = events[events.length - 1];
-                const { aigcAmount, bnbPaid } = lastEvent.args;
-                const block = await lastEvent.getBlock();
-                const time = new Date(block.timestamp * 1000).toLocaleString('zh-CN');
-                
-                const html = `<div class="record-item"><div class="field"><div class="field-label">AIGC数量</div><div class="field-value">${parseFloat(ethers.utils.formatEther(aigcAmount)).toFixed(4)}</div></div><div class="field"><div class="field-label">BNB费用</div><div class="field-value">${parseFloat(ethers.utils.formatEther(bnbPaid)).toFixed(6)}</div></div><div class="field" style="flex:1 1 100%;"><div class="field-label">时间</div><div class="field-value">${time}</div></div></div>`;
+                const info = await aigcContract.userInfo(currentAccount);
+                const lastClaimAmount = parseFloat(ethers.utils.formatEther(info.lastClaimAmount));
+                const lastClaimTime = info.lastClaimTime.toNumber();
+                if (lastClaimAmount === 0 || lastClaimTime === 0) {
+                    container.innerHTML = '<div class="record-item" style="justify-content:center;color:#888;">暂无领取记录</div>';
+                    return;
+                }
+                const time = new Date(lastClaimTime * 1000).toLocaleString('zh-CN');
+                const html = `<div class="record-item"><div class="field"><div class="field-label">最近提币数量</div><div class="field-value">${lastClaimAmount.toFixed(4)} AIGC</div></div><div class="field" style="flex:1 1 100%;"><div class="field-label">时间</div><div class="field-value">${time}</div></div></div>`;
                 container.innerHTML = html;
             } catch (e) { container.innerHTML = '<div class="record-item" style="justify-content:center;color:#888;">加载失败，请重试</div>'; }
         }
@@ -596,8 +544,7 @@
             document.getElementById('progressFill').style.width = '0%';
             document.getElementById('progressDetail').textContent = `业绩0/${TARGET_PERFORMANCE}`;
             document.getElementById('airdropStatus').textContent = '未领取';
-            document.getElementById('claimAirdropBtn').disabled = false;
-            document.getElementById('claimAirdropBtn').textContent = '立即领取';
+            document.getElementById('claimAirdropBtn').disabled = false; document.getElementById('claimAirdropBtn').textContent = '立即领取';
             document.querySelectorAll('.node-apply-btn').forEach(btn => { btn.disabled = false; btn.textContent = '立即申请'; });
             renderNodeProgress(0);
             document.getElementById('recordListContainer').innerHTML = '<div style="text-align:center;color:#888;padding:20px;">请先连接钱包</div>';
@@ -608,15 +555,14 @@
             connectBtn.disabled = true; connectBtn.innerHTML = '<span class="loading-spinner"></span> 连接中...';
             try {
                 const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                if (!accounts || accounts.length === 0) throw new Error('未获取到账户');
                 currentAccount = accounts[0];
                 provider = new ethers.providers.Web3Provider(window.ethereum);
                 signer = provider.getSigner();
                 initContracts();
                 updateUIForConnected(currentAccount);
                 await refreshAllData();
-            } catch (e) { if (e.code === 4001) alert('请在 MetaMask 中授权连接'); else alert('连接失败: ' + (e.message || '未知错误')); }
-            finally { connectBtn.disabled = false; connectBtn.textContent = currentAccount ? `${currentAccount.substring(0, 6)}...${currentAccount.substring(currentAccount.length - 4)}` : 'Connect wallet'; if (currentAccount) connectBtn.classList.add('connected'); }
+            } catch (e) { alert('连接失败: ' + (e.message || '未知错误')); }
+            finally { connectBtn.disabled = false; }
         }
 
         function disconnectWallet() {
@@ -645,7 +591,6 @@
                 else { currentAccount = accounts[0]; provider = new ethers.providers.Web3Provider(window.ethereum); signer = provider.getSigner(); initContracts(); updateUIForConnected(currentAccount); refreshAllData(); }
             });
             window.ethereum.on('chainChanged', () => { if (currentAccount) { provider = new ethers.providers.Web3Provider(window.ethereum); signer = provider.getSigner(); initContracts(); refreshAllData(); } });
-            window.ethereum.on('disconnect', () => disconnectWallet());
         }
 
         window.addEventListener('load', () => setTimeout(() => autoConnect(), 500));
