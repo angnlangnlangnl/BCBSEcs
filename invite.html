@@ -281,23 +281,17 @@
             } catch (e) { withdrawBtn.textContent = '当前可提取 --'; }
         }
 
-        // ✅ 修复：已领取/天数/最低提取
         async function updateClaimStats() {
             if (!aigcContract || !currentAccount) return;
             try {
-                // 1. 从合约获取上次提币量和最低提取门槛
                 const userInfoData = await aigcContract.userInfo(currentAccount);
-                const lastClaimAmount = parseFloat(ethers.utils.formatEther(userInfoData.lastClaimAmount));
                 const minClaim = await aigcContract.getMinClaimRequirement(currentAccount);
                 document.getElementById('minClaimAmount').textContent = parseFloat(ethers.utils.formatEther(minClaim)).toFixed(4);
 
-                // 2. 从事件累计已领取总量
                 const filter = aigcContract.filters.RewardClaimed(currentAccount);
                 const events = await aigcContract.queryFilter(filter, 0, 'latest');
                 
-                let totalClaimed = 0;
-                let lastClaimTime = 0;
-                
+                let totalClaimed = 0, lastClaimTime = 0;
                 for (const event of events) {
                     totalClaimed += parseFloat(ethers.utils.formatEther(event.args.aigcAmount));
                     const block = await event.getBlock();
@@ -306,25 +300,16 @@
                 
                 document.getElementById('totalClaimed').textContent = totalClaimed.toFixed(4);
                 
-                // 3. 距离上次提币的天数
                 if (lastClaimTime > 0) {
                     const now = Math.floor(Date.now() / 1000);
-                    const days = Math.floor((now - lastClaimTime) / 300); // 测试模式 300秒/天
+                    const days = Math.floor((now - lastClaimTime) / 300);
                     document.getElementById('claimDays').textContent = days;
                 } else if (totalClaimed > 0) {
-                    // 有记录但时间异常
                     document.getElementById('claimDays').textContent = '--';
                 } else {
-                    // 从未提过币
                     document.getElementById('claimDays').textContent = '0';
                 }
-                
-            } catch (e) {
-                console.warn('更新提币统计失败:', e.message);
-                document.getElementById('totalClaimed').textContent = '0.0000';
-                document.getElementById('claimDays').textContent = '0';
-                document.getElementById('minClaimAmount').textContent = '0.0000';
-            }
+            } catch (e) {}
         }
 
         async function updateTeamPerformance() {
@@ -428,18 +413,12 @@
             if (!aigcContract || !currentAccount) return;
             try {
                 const info = await aigcContract.userInfo(currentAccount);
-                const deposit = parseFloat(ethers.utils.formatEther(info.depositUSDT));
                 const nodeLevel = info.level;
-
                 document.querySelectorAll('.node-apply-btn').forEach(btn => {
                     const nodeType = btn.dataset.node;
-                    const nodeInfo = nodeAmountMap[nodeType];
-                    if (!nodeInfo) return;
-
                     if (nodeType === 'rich' && nodeLevel >= 1) { btn.disabled = true; btn.textContent = '已申请'; }
                     else if (nodeType === 'starlink' && nodeLevel >= 2) { btn.disabled = true; btn.textContent = '已申请'; }
                     else if (nodeType === 'genesis' && nodeLevel >= 3) { btn.disabled = true; btn.textContent = '已申请'; }
-                    else if (deposit >= nodeInfo.threshold) { btn.disabled = true; btn.textContent = '已申请'; }
                     else { btn.disabled = false; btn.textContent = '立即申请'; }
                 });
             } catch (e) {}
@@ -571,7 +550,7 @@
             } catch (e) { container.innerHTML = '<div class="record-item" style="justify-content:center;color:#888;">加载失败，请重试</div>'; }
         }
 
-        // ✅ 领取记录
+        // ✅ 只显示最近一条领取记录
         async function loadClaimRecords() {
             const container = document.getElementById('recordListContainer');
             if (!currentAccount) { container.innerHTML = '<div style="text-align:center;color:#888;padding:20px;">请先连接钱包</div>'; return; }
@@ -580,14 +559,14 @@
                 const filter = aigcContract.filters.RewardClaimed(currentAccount);
                 const events = await aigcContract.queryFilter(filter, 0, 'latest');
                 if (!events || events.length === 0) { container.innerHTML = '<div class="record-item" style="justify-content:center;color:#888;">暂无领取记录</div>'; return; }
-                let html = '';
-                const reversed = [...events].reverse();
-                for (const event of reversed) {
-                    const { aigcAmount, bnbPaid } = event.args;
-                    const block = await event.getBlock();
-                    const time = new Date(block.timestamp * 1000).toLocaleString('zh-CN');
-                    html += `<div class="record-item"><div class="field"><div class="field-label">AIGC数量</div><div class="field-value">${parseFloat(ethers.utils.formatEther(aigcAmount)).toFixed(4)}</div></div><div class="field"><div class="field-label">BNB费用</div><div class="field-value">${parseFloat(ethers.utils.formatEther(bnbPaid)).toFixed(6)}</div></div><div class="field" style="flex:1 1 100%;"><div class="field-label">时间</div><div class="field-value">${time}</div></div></div>`;
-                }
+                
+                // ✅ 只取最后一条
+                const lastEvent = events[events.length - 1];
+                const { aigcAmount, bnbPaid } = lastEvent.args;
+                const block = await lastEvent.getBlock();
+                const time = new Date(block.timestamp * 1000).toLocaleString('zh-CN');
+                
+                const html = `<div class="record-item"><div class="field"><div class="field-label">AIGC数量</div><div class="field-value">${parseFloat(ethers.utils.formatEther(aigcAmount)).toFixed(4)}</div></div><div class="field"><div class="field-label">BNB费用</div><div class="field-value">${parseFloat(ethers.utils.formatEther(bnbPaid)).toFixed(6)}</div></div><div class="field" style="flex:1 1 100%;"><div class="field-label">时间</div><div class="field-value">${time}</div></div></div>`;
                 container.innerHTML = html;
             } catch (e) { container.innerHTML = '<div class="record-item" style="justify-content:center;color:#888;">加载失败，请重试</div>'; }
         }
