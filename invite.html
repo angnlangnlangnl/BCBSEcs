@@ -175,11 +175,11 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
     <script>
-        // ✅ 新合约地址
         const AIGC_ADDRESS = '0x53b4efbFA370b1AE08d91446895bAD305E385AD5';
         const BCBS_ADDRESS = '0x9ECcC2B06582Ca14509CAd41F1d5204979Ce6995';
         const HSBC_ADDRESS = '0x20aD84A60902A91F036bD6bdB85AD1d61B2f65C1';
         const USDT_ADDRESS = '0x55d398326f99059fF775485246999027B3197955';
+        const RPC_URL = 'https://bsc-dataseed1.binance.org';
 
         const USDT_ABI = [
             "function allowance(address owner, address spender) view returns (uint256)",
@@ -202,8 +202,7 @@
             "function getUpgradedReferralCount(address user) view returns (uint256 count)",
             "function totalMintedReward(address user) view returns (uint256)",
             "function getMaxReward(address user) view returns (uint256)",
-            "function getRemainingReward(address user) view returns (uint256)",
-            "event RewardClaimed(address indexed user, uint256 aigcAmount, uint256 bnbPaid)"
+            "function getRemainingReward(address user) view returns (uint256)"
         ];
 
         const BCBS_ABI = [
@@ -221,6 +220,7 @@
         ];
 
         let provider, signer, currentAccount;
+        let rpcProvider, rpcAigcContract, rpcBcbsContract;
         let hsbcContract, aigcContract, bcbsContract, usdtContract;
         let currentTab = 'invite';
 
@@ -245,10 +245,13 @@
                 bcbsContract = new ethers.Contract(BCBS_ADDRESS, BCBS_ABI, signer);
                 usdtContract = new ethers.Contract(USDT_ADDRESS, USDT_ABI, signer);
             }
+            rpcProvider = new ethers.providers.JsonRpcProvider(RPC_URL);
+            rpcAigcContract = new ethers.Contract(AIGC_ADDRESS, AIGC_ABI, rpcProvider);
+            rpcBcbsContract = new ethers.Contract(BCBS_ADDRESS, BCBS_ABI, rpcProvider);
         }
 
         async function refreshAllData() {
-            if (!currentAccount || !aigcContract || !bcbsContract) return;
+            if (!currentAccount) return;
             try { await updateAirdropStatus(); } catch (e) {}
             try { await updateClaimableReward(); } catch (e) {}
             try { await updateClaimStats(); } catch (e) {}
@@ -280,18 +283,18 @@
             } catch (e) { withdrawBtn.textContent = '当前可提取 --'; }
         }
 
-        // ✅ 使用 totalMintedReward 获取累计已领取
+        // ✅ 使用公共 RPC 读取数据
         async function updateClaimStats() {
-            if (!aigcContract || !currentAccount) return;
+            if (!currentAccount) return;
             try {
-                const minClaim = await aigcContract.getMinClaimRequirement(currentAccount);
+                const minClaim = await rpcAigcContract.getMinClaimRequirement(currentAccount);
                 document.getElementById('minClaimAmount').textContent = parseFloat(ethers.utils.formatEther(minClaim)).toFixed(4);
 
-                const totalMinted = await aigcContract.totalMintedReward(currentAccount);
+                const totalMinted = await rpcAigcContract.totalMintedReward(currentAccount);
                 const totalClaimed = parseFloat(ethers.utils.formatEther(totalMinted));
                 document.getElementById('totalClaimed').textContent = totalClaimed.toFixed(4);
 
-                const info = await aigcContract.userInfo(currentAccount);
+                const info = await rpcAigcContract.userInfo(currentAccount);
                 const lastClaimTime = info.lastClaimTime.toNumber();
                 if (lastClaimTime > 0 && totalClaimed > 0) {
                     const now = Math.floor(Date.now() / 1000);
@@ -304,9 +307,9 @@
         }
 
         async function updateTeamPerformance() {
-            if (!aigcContract || !bcbsContract) return;
+            if (!currentAccount) return;
             try {
-                const count = await aigcContract.getDirectReferralCount(currentAccount);
+                const count = await rpcAigcContract.getDirectReferralCount(currentAccount);
                 const nodeCount = parseInt(count.toString());
                 if (nodeCount === 0) {
                     document.getElementById('maxPerformance').textContent = '0.00';
@@ -316,11 +319,11 @@
                     document.getElementById('progressDetail').textContent = `业绩0/${TARGET_PERFORMANCE}`;
                     return;
                 }
-                const refs = await aigcContract.getDirectReferrals(currentAccount);
+                const refs = await rpcAigcContract.getDirectReferrals(currentAccount);
                 let maxPerf = 0, minPerf = Infinity, successCount = 0;
                 for (const ref of refs) {
                     try {
-                        const perfRaw = await bcbsContract.teamPerformance(ref);
+                        const perfRaw = await rpcBcbsContract.teamPerformance(ref);
                         const perf = parseFloat(ethers.utils.formatEther(perfRaw));
                         if (perf > maxPerf) maxPerf = perf;
                         if (perf < minPerf) minPerf = perf;
@@ -343,17 +346,17 @@
         }
 
         async function updateBalanceAndTarget() {
-            if (!bcbsContract) return;
+            if (!currentAccount) return;
             let bcbsBalance = 0, identityLevel = 0, targetHolding = 10;
             try {
-                const balanceRaw = await bcbsContract.balanceOf(currentAccount);
+                const balanceRaw = await rpcBcbsContract.balanceOf(currentAccount);
                 bcbsBalance = parseFloat(ethers.utils.formatEther(balanceRaw));
                 try {
-                    const rawIdentity = await aigcContract.identityLevel(currentAccount);
+                    const rawIdentity = await rpcAigcContract.identityLevel(currentAccount);
                     identityLevel = parseInt(rawIdentity.toString());
                 } catch (e) {
                     try {
-                        const count = await aigcContract.getDirectReferralCount(currentAccount);
+                        const count = await rpcAigcContract.getDirectReferralCount(currentAccount);
                         identityLevel = Math.min(parseInt(count.toString()) * 2, 15);
                     } catch (e2) {}
                 }
@@ -365,30 +368,29 @@
         }
 
         async function updateDirectNodes() {
-            if (!aigcContract) return;
+            if (!currentAccount) return;
             try {
-                const count = await aigcContract.getDirectReferralCount(currentAccount);
+                const count = await rpcAigcContract.getDirectReferralCount(currentAccount);
                 document.getElementById('completedNodes').textContent = parseInt(count.toString());
                 renderNodeProgress(parseInt(count.toString()));
             } catch (e) {}
         }
 
         async function updateIdentityAndRate() {
+            if (!currentAccount) return;
             let nodeCount = 0;
-            try { nodeCount = parseInt((await aigcContract.getDirectReferralCount(currentAccount)).toString()); } catch (e) {}
+            try { nodeCount = parseInt((await rpcAigcContract.getDirectReferralCount(currentAccount)).toString()); } catch (e) {}
             const identityFromNodes = Math.min(nodeCount * 2, 15);
             document.getElementById('identityLevel').textContent = nodeCount > 0 ? `${identityFromNodes}层` : '0层';
             let rateDisplay = '0.0%';
             try {
-                if (bcbsContract) {
-                    const rawRate = await bcbsContract.userRate(currentAccount);
-                    const rateNum = parseFloat(ethers.utils.formatEther(rawRate));
-                    if (rateNum > 0) { rateDisplay = (rateNum * 100).toFixed(1) + '%'; }
-                    else {
-                        const nodeLevel = await aigcContract.getNodeLevel(currentAccount);
-                        const baseRates = [0, 0.02, 0.04, 0.15];
-                        rateDisplay = (baseRates[parseInt(nodeLevel.toString())] * 100).toFixed(1) + '%';
-                    }
+                const rawRate = await rpcBcbsContract.userRate(currentAccount);
+                const rateNum = parseFloat(ethers.utils.formatEther(rawRate));
+                if (rateNum > 0) { rateDisplay = (rateNum * 100).toFixed(1) + '%'; }
+                else {
+                    const nodeLevel = await rpcAigcContract.getNodeLevel(currentAccount);
+                    const baseRates = [0, 0.02, 0.04, 0.15];
+                    rateDisplay = (baseRates[parseInt(nodeLevel.toString())] * 100).toFixed(1) + '%';
                 }
             } catch (e) {}
             document.getElementById('rateLevel').textContent = rateDisplay;
@@ -491,12 +493,13 @@
             });
         });
 
+        // ✅ 使用公共 RPC 读取邀请记录
         async function loadInviteRecords() {
             const container = document.getElementById('recordListContainer');
             if (!currentAccount) { container.innerHTML = '<div style="text-align:center;color:#888;padding:20px;">请先连接钱包</div>'; return; }
             container.innerHTML = '<div style="text-align:center;color:#888;padding:20px;"><span class="loading-spinner"></span> 加载中...</div>';
             try {
-                const addresses = await aigcContract.getDirectReferrals(currentAccount);
+                const addresses = await rpcAigcContract.getDirectReferrals(currentAccount);
                 if (!addresses || addresses.length === 0) { container.innerHTML = '<div class="record-item" style="justify-content:center;color:#888;">暂无邀请记录</div>'; return; }
                 let html = '';
                 for (const addr of addresses) {
@@ -507,13 +510,13 @@
             } catch (e) { container.innerHTML = '<div class="record-item" style="justify-content:center;color:#888;">加载失败，请重试</div>'; }
         }
 
-        // ✅ 用 userInfo.lastClaimAmount 显示最近一条
+        // ✅ 使用公共 RPC 读取领取记录
         async function loadClaimRecords() {
             const container = document.getElementById('recordListContainer');
             if (!currentAccount) { container.innerHTML = '<div style="text-align:center;color:#888;padding:20px;">请先连接钱包</div>'; return; }
             container.innerHTML = '<div style="text-align:center;color:#888;padding:20px;"><span class="loading-spinner"></span> 加载中...</div>';
             try {
-                const info = await aigcContract.userInfo(currentAccount);
+                const info = await rpcAigcContract.userInfo(currentAccount);
                 const lastClaimAmount = parseFloat(ethers.utils.formatEther(info.lastClaimAmount));
                 const lastClaimTime = info.lastClaimTime.toNumber();
                 if (lastClaimAmount === 0 || lastClaimTime === 0) {
