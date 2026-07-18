@@ -438,7 +438,7 @@
 
             // ✅ 如果 BCBS 未返回利率，根据 AIGC 节点等级计算基础利率
             if (userRate === 0) {
-                const baseRates = [0, 0.02, 0.04, 0.40]; // 普通/首富/星链/创世
+                const baseRates = [0, 0.02, 0.04, 0.15]; // 普通/首富/星链/创世
                 userRate = baseRates[nodeLevel] || 0;
                 
                 // 如果基础利率也为 0，检查身份等级
