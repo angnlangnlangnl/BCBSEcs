@@ -113,11 +113,9 @@
                 </div>
                 <div class="claim-stats-row">
                     <div style="text-align: left;">
-                        <span style="font-size: 12px; color: #888;">已领取 </span>
+                        <span style="font-size: 12px; color: #888;">累计铸币 </span>
                         <span style="font-size: 14px; color: #ffd700; font-weight: 600;" id="totalClaimed">0.0000</span>
-                        <span style="font-size: 12px; color: #888;"> AIGC / </span>
-                        <span style="font-size: 14px; color: #ffd700; font-weight: 600;" id="claimDays">0</span>
-                        <span style="font-size: 12px; color: #888;"> 天</span>
+                        <span style="font-size: 12px; color: #888;"> AIGC</span>
                     </div>
                     <div style="text-align: right;">
                         <span style="font-size: 12px; color: #888;">本次最低提取 </span>
@@ -236,7 +234,6 @@
         const TARGET_NODES = 15;
         const TARGET_PERFORMANCE = 500;
         const HOLDING_TARGETS = [0, 10, 60, 100, 200, 1000, 3000, 6000, 10000];
-        const TEST_DAY_SECONDS = 300;
 
         function initContracts() {
             if (provider && signer) {
@@ -283,6 +280,7 @@
             } catch (e) { withdrawBtn.textContent = '当前可提取 --'; }
         }
 
+        // ✅ 累计铸币 = totalMintedReward
         async function updateClaimStats() {
             if (!currentAccount) return;
             try {
@@ -290,18 +288,7 @@
                 document.getElementById('minClaimAmount').textContent = parseFloat(ethers.utils.formatEther(minClaim)).toFixed(4);
 
                 const totalMinted = await rpcAigcContract.totalMintedReward(currentAccount);
-                const totalClaimed = parseFloat(ethers.utils.formatEther(totalMinted));
-                document.getElementById('totalClaimed').textContent = totalClaimed.toFixed(4);
-
-                const info = await rpcAigcContract.userInfo(currentAccount);
-                const lastClaimTime = info.lastClaimTime.toNumber();
-                if (lastClaimTime > 0 && totalClaimed > 0) {
-                    const now = Math.floor(Date.now() / 1000);
-                    const days = Math.floor((now - lastClaimTime) / TEST_DAY_SECONDS);
-                    document.getElementById('claimDays').textContent = days;
-                } else {
-                    document.getElementById('claimDays').textContent = '0';
-                }
+                document.getElementById('totalClaimed').textContent = parseFloat(ethers.utils.formatEther(totalMinted)).toFixed(4);
             } catch (e) {}
         }
 
@@ -310,7 +297,6 @@
             try {
                 const refs = await rpcAigcContract.getDirectReferrals(currentAccount);
                 const totalCount = refs ? refs.length : 0;
-                
                 if (totalCount === 0) {
                     document.getElementById('maxPerformance').textContent = '0.00';
                     document.getElementById('minPerformance').textContent = '0.00';
@@ -319,7 +305,6 @@
                     document.getElementById('progressDetail').textContent = `业绩0/${TARGET_PERFORMANCE}`;
                     return;
                 }
-                
                 let maxPerf = 0, minPerf = Infinity, successCount = 0;
                 for (const ref of refs) {
                     try {
@@ -367,7 +352,6 @@
             document.getElementById('targetHolding').textContent = targetHolding.toFixed(2);
         }
 
-        // ✅ 修复：显示有效直推节点数（已升级的）
         async function updateDirectNodes() {
             if (!currentAccount) return;
             try {
@@ -534,7 +518,6 @@
             connectBtn.textContent = 'Connect wallet'; connectBtn.classList.remove('connected');
             withdrawBtn.textContent = '当前可提取 --';
             document.getElementById('totalClaimed').textContent = '0.0000';
-            document.getElementById('claimDays').textContent = '0';
             document.getElementById('minClaimAmount').textContent = '0.0000';
             document.getElementById('maxPerformance').textContent = '0.00';
             document.getElementById('minPerformance').textContent = '0.00';
