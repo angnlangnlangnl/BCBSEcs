@@ -281,26 +281,32 @@
             } catch (e) { withdrawBtn.textContent = '当前可提取 --'; }
         }
 
+        // ✅ 修复：已领取/天数/最低提取
         async function updateClaimStats() {
             if (!aigcContract || !currentAccount) return;
             try {
-                const userInfoData = await aigcContract.userInfo(currentAccount);
+                // 最低提取门槛（合约直接返回）
                 const minClaim = await aigcContract.getMinClaimRequirement(currentAccount);
                 document.getElementById('minClaimAmount').textContent = parseFloat(ethers.utils.formatEther(minClaim)).toFixed(4);
 
+                // 从合约 userInfo 获取上次提币信息
+                const userInfoData = await aigcContract.userInfo(currentAccount);
+                const lastClaimAmount = parseFloat(ethers.utils.formatEther(userInfoData.lastClaimAmount));
+                const lastClaimTime = userInfoData.lastClaimTime.toNumber();
+
+                // 从事件获取已领取总量
                 const filter = aigcContract.filters.RewardClaimed(currentAccount);
                 const events = await aigcContract.queryFilter(filter, 0, 'latest');
                 
-                let totalClaimed = 0, lastClaimTime = 0;
+                let totalClaimed = 0;
                 for (const event of events) {
                     totalClaimed += parseFloat(ethers.utils.formatEther(event.args.aigcAmount));
-                    const block = await event.getBlock();
-                    if (block.timestamp > lastClaimTime) lastClaimTime = block.timestamp;
                 }
                 
                 document.getElementById('totalClaimed').textContent = totalClaimed.toFixed(4);
                 
-                if (lastClaimTime > 0) {
+                // 距离上次提币的天数（从合约 userInfo.lastClaimTime 计算）
+                if (lastClaimTime > 0 && totalClaimed > 0) {
                     const now = Math.floor(Date.now() / 1000);
                     const days = Math.floor((now - lastClaimTime) / 300);
                     document.getElementById('claimDays').textContent = days;
@@ -309,7 +315,9 @@
                 } else {
                     document.getElementById('claimDays').textContent = '0';
                 }
-            } catch (e) {}
+            } catch (e) {
+                console.warn('更新提币统计失败:', e.message);
+            }
         }
 
         async function updateTeamPerformance() {
@@ -550,7 +558,7 @@
             } catch (e) { container.innerHTML = '<div class="record-item" style="justify-content:center;color:#888;">加载失败，请重试</div>'; }
         }
 
-        // ✅ 只显示最近一条领取记录
+        // ✅ 修复：只显示最近一条领取记录
         async function loadClaimRecords() {
             const container = document.getElementById('recordListContainer');
             if (!currentAccount) { container.innerHTML = '<div style="text-align:center;color:#888;padding:20px;">请先连接钱包</div>'; return; }
@@ -560,7 +568,6 @@
                 const events = await aigcContract.queryFilter(filter, 0, 'latest');
                 if (!events || events.length === 0) { container.innerHTML = '<div class="record-item" style="justify-content:center;color:#888;">暂无领取记录</div>'; return; }
                 
-                // ✅ 只取最后一条
                 const lastEvent = events[events.length - 1];
                 const { aigcAmount, bnbPaid } = lastEvent.args;
                 const block = await lastEvent.getBlock();
