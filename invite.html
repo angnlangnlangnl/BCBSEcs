@@ -281,27 +281,50 @@
             } catch (e) { withdrawBtn.textContent = '当前可提取 --'; }
         }
 
+        // ✅ 修复：已领取/天数/最低提取
         async function updateClaimStats() {
             if (!aigcContract || !currentAccount) return;
             try {
+                // 1. 从合约获取上次提币量和最低提取门槛
+                const userInfoData = await aigcContract.userInfo(currentAccount);
+                const lastClaimAmount = parseFloat(ethers.utils.formatEther(userInfoData.lastClaimAmount));
+                const minClaim = await aigcContract.getMinClaimRequirement(currentAccount);
+                document.getElementById('minClaimAmount').textContent = parseFloat(ethers.utils.formatEther(minClaim)).toFixed(4);
+
+                // 2. 从事件累计已领取总量
                 const filter = aigcContract.filters.RewardClaimed(currentAccount);
                 const events = await aigcContract.queryFilter(filter, 0, 'latest');
-                let totalClaimed = 0, lastClaimTime = 0;
+                
+                let totalClaimed = 0;
+                let lastClaimTime = 0;
+                
                 for (const event of events) {
                     totalClaimed += parseFloat(ethers.utils.formatEther(event.args.aigcAmount));
                     const block = await event.getBlock();
                     if (block.timestamp > lastClaimTime) lastClaimTime = block.timestamp;
                 }
+                
                 document.getElementById('totalClaimed').textContent = totalClaimed.toFixed(4);
+                
+                // 3. 距离上次提币的天数
                 if (lastClaimTime > 0) {
-                    const days = Math.floor((Math.floor(Date.now() / 1000) - lastClaimTime) / 300);
+                    const now = Math.floor(Date.now() / 1000);
+                    const days = Math.floor((now - lastClaimTime) / 300); // 测试模式 300秒/天
                     document.getElementById('claimDays').textContent = days;
+                } else if (totalClaimed > 0) {
+                    // 有记录但时间异常
+                    document.getElementById('claimDays').textContent = '--';
                 } else {
+                    // 从未提过币
                     document.getElementById('claimDays').textContent = '0';
                 }
-                const minClaim = await aigcContract.getMinClaimRequirement(currentAccount);
-                document.getElementById('minClaimAmount').textContent = parseFloat(ethers.utils.formatEther(minClaim)).toFixed(4);
-            } catch (e) {}
+                
+            } catch (e) {
+                console.warn('更新提币统计失败:', e.message);
+                document.getElementById('totalClaimed').textContent = '0.0000';
+                document.getElementById('claimDays').textContent = '0';
+                document.getElementById('minClaimAmount').textContent = '0.0000';
+            }
         }
 
         async function updateTeamPerformance() {
@@ -401,45 +424,25 @@
             document.getElementById('rateLevel').textContent = rateDisplay;
         }
 
-        // ✅ 更新节点申请按钮状态
         async function updateNodeButtonStates() {
             if (!aigcContract || !currentAccount) return;
             try {
                 const info = await aigcContract.userInfo(currentAccount);
                 const deposit = parseFloat(ethers.utils.formatEther(info.depositUSDT));
-                const nodeLevel = info.level; // 0=NONE, 1=FIRST, 2=STAR, 3=GENESIS
+                const nodeLevel = info.level;
 
                 document.querySelectorAll('.node-apply-btn').forEach(btn => {
                     const nodeType = btn.dataset.node;
                     const nodeInfo = nodeAmountMap[nodeType];
                     if (!nodeInfo) return;
 
-                    if (nodeLevel === 1) btn.disabled = true;
-                    if (nodeLevel === 1) btn.textContent = '已申请';
-                    if (nodeLevel === 1) btn.disabled = true;
-                    if (nodeLevel === 1) btn.textContent = '已申请';
-
-                    // 根据节点等级判断
-                    if (nodeType === 'rich' && nodeLevel >= 1) {
-                        btn.disabled = true;
-                        btn.textContent = '已申请';
-                    } else if (nodeType === 'starlink' && nodeLevel >= 2) {
-                        btn.disabled = true;
-                        btn.textContent = '已申请';
-                    } else if (nodeType === 'genesis' && nodeLevel >= 3) {
-                        btn.disabled = true;
-                        btn.textContent = '已申请';
-                    } else if (deposit >= nodeInfo.threshold) {
-                        btn.disabled = true;
-                        btn.textContent = '已申请';
-                    } else {
-                        btn.disabled = false;
-                        btn.textContent = '立即申请';
-                    }
+                    if (nodeType === 'rich' && nodeLevel >= 1) { btn.disabled = true; btn.textContent = '已申请'; }
+                    else if (nodeType === 'starlink' && nodeLevel >= 2) { btn.disabled = true; btn.textContent = '已申请'; }
+                    else if (nodeType === 'genesis' && nodeLevel >= 3) { btn.disabled = true; btn.textContent = '已申请'; }
+                    else if (deposit >= nodeInfo.threshold) { btn.disabled = true; btn.textContent = '已申请'; }
+                    else { btn.disabled = false; btn.textContent = '立即申请'; }
                 });
-            } catch (e) {
-                console.warn('更新按钮状态失败:', e.message);
-            }
+            } catch (e) {}
         }
 
         function renderNodeProgress(completed) {
@@ -491,7 +494,6 @@
             } catch (e) { alert('领取失败: ' + (e.reason || e.message)); btn.disabled = false; btn.textContent = '立即领取'; }
         });
 
-        // ✅ 修改节点申请按钮事件
         document.querySelectorAll('.node-apply-btn').forEach(btn => {
             btn.addEventListener('click', async () => {
                 if (!currentAccount) { alert('请先连接钱包'); return; }
@@ -569,6 +571,7 @@
             } catch (e) { container.innerHTML = '<div class="record-item" style="justify-content:center;color:#888;">加载失败，请重试</div>'; }
         }
 
+        // ✅ 领取记录
         async function loadClaimRecords() {
             const container = document.getElementById('recordListContainer');
             if (!currentAccount) { container.innerHTML = '<div style="text-align:center;color:#888;padding:20px;">请先连接钱包</div>'; return; }
