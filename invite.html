@@ -118,7 +118,6 @@
                 <div class="progress-area">
                     <div class="progress-header"><span>考核进度</span><span class="right" id="progressPercent">0.00%</span></div>
                     <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%;"></div></div>
-                    <!-- ✅ 修改：个人持币目标改为 持币量/等级任务量 -->
                     <div class="progress-footer"><span>个人持币目标: <span id="bcbseBalance">0.00</span> / <span id="targetHolding">10.00</span> BCBS</span><span id="progressDetail">业绩0/500</span></div>
                     <div style="margin-top:12px;">
                         <div class="direct-row"><span>直推任务：15节点</span><span>完成直推目标: <span id="completedNodes">0</span>节点</span></div>
@@ -183,16 +182,14 @@
             "function userInfo(address user) view returns (uint256 depositUSDT, uint8 level, uint256 lastClaimTime, uint256 pendingReward, uint256 lastClaimAmount)",
             "function getDirectReferralCount(address user) view returns (uint256)",
             "function getDirectReferrals(address user) view returns (address[])",
-            "function getDirectReferralsWithTime(address user) view returns (tuple(address user, uint256 timestamp)[])",
             "event RewardClaimed(address indexed user, uint256 aigcAmount, uint256 bnbPaid)"
         ];
 
         const BCBS_ABI = [
             "function balanceOf(address user) view returns (uint256)",
             "function userRate(address user) view returns (uint256)",
-            "function getDirectReferrals(address user) view returns (address[])",
             "function teamPerformance(address user) view returns (uint256)",
-            "function directReferrals(address user, uint256 index) view returns (address)"
+            "function getDirectReferrals(address user) view returns (address[])"
         ];
 
         const HSBC_ABI = [
@@ -217,8 +214,6 @@
 
         const TARGET_NODES = 15;
         const TARGET_PERFORMANCE = 500;
-
-        // ✅ 等级持币任务量表（对应 S1-S8 条件利率的持币要求）
         const HOLDING_TARGETS = [0, 10, 60, 100, 200, 1000, 3000, 6000, 10000];
 
         function initContracts() {
@@ -246,12 +241,10 @@
             if (!hsbcContract) return;
             try {
                 const hasClaimed = await hsbcContract.hasClaimed(currentAccount);
-                const canClaim = await hsbcContract.canClaim(currentAccount);
                 const statusEl = document.getElementById('airdropStatus');
                 const claimBtn = document.getElementById('claimAirdropBtn');
                 if (hasClaimed) { statusEl.textContent = '已领取 100 HSBC'; claimBtn.textContent = '已领取'; claimBtn.disabled = true; }
-                else if (canClaim) { statusEl.textContent = '可领取 100 HSBC'; claimBtn.textContent = '立即领取'; claimBtn.disabled = false; }
-                else { statusEl.textContent = '不可领取'; claimBtn.textContent = '立即领取'; claimBtn.disabled = true; }
+                else { statusEl.textContent = '可领取 100 HSBC'; claimBtn.textContent = '立即领取'; claimBtn.disabled = false; }
             } catch (e) {}
         }
 
@@ -278,70 +271,30 @@
                 }
                 const refs = await aigcContract.getDirectReferrals(currentAccount);
                 let maxPerf = 0, minPerf = Infinity;
-                let successCount = 0;
                 for (const ref of refs) {
                     try {
                         const perfRaw = await bcbsContract.teamPerformance(ref);
                         const perf = parseFloat(ethers.utils.formatEther(perfRaw));
                         if (perf > maxPerf) maxPerf = perf;
                         if (perf < minPerf) minPerf = perf;
-                        successCount++;
                     } catch (e) {}
                 }
-                if (successCount === 0) { maxPerf = 0; minPerf = 0; }
-                else if (minPerf === Infinity) { minPerf = 0; }
+                if (minPerf === Infinity) minPerf = 0;
                 document.getElementById('maxPerformance').textContent = maxPerf.toFixed(2);
                 document.getElementById('minPerformance').textContent = minPerf.toFixed(2);
                 const perfProgress = Math.min(minPerf / TARGET_PERFORMANCE, 1) * 100;
                 document.getElementById('progressPercent').textContent = perfProgress.toFixed(2) + '%';
                 document.getElementById('progressFill').style.width = perfProgress.toFixed(2) + '%';
                 document.getElementById('progressDetail').textContent = `业绩${minPerf.toFixed(0)}/${TARGET_PERFORMANCE}`;
-            } catch (e) {
-                document.getElementById('maxPerformance').textContent = '0.00';
-                document.getElementById('minPerformance').textContent = '0.00';
-                document.getElementById('progressDetail').textContent = `业绩0/${TARGET_PERFORMANCE}`;
-            }
+            } catch (e) {}
         }
 
-        // ✅ 修改：获取BCBS持币量 + 对应等级任务量
         async function updateBalanceAndTarget() {
             if (!bcbsContract) return;
-
-            let bcbsBalance = 0;
-            let identityLevel = 0;
-            let targetHolding = 10; // 默认 S1 目标
-
             try {
-                // 获取 BCBS 持币量
-                const balanceRaw = await bcbsContract.balanceOf(currentAccount);
-                bcbsBalance = parseFloat(ethers.utils.formatEther(balanceRaw));
-
-                // 获取当前身份等级
-                try {
-                    const rawIdentity = await aigcContract.identityLevel(currentAccount);
-                    identityLevel = parseInt(rawIdentity.toString());
-                } catch (e) {
-                    // 降级：根据直推节点数计算
-                    try {
-                        const count = await aigcContract.getDirectReferralCount(currentAccount);
-                        identityLevel = Math.min(parseInt(count.toString()) * 2, 15);
-                    } catch (e2) {
-                        identityLevel = 0;
-                    }
-                }
-
-                // 根据身份等级确定持币任务量
-                // S0-S8 对应 HOLDING_TARGETS 数组
-                const levelIndex = Math.min(Math.floor(identityLevel / 2), 8); // 2层→S1, 4层→S2, ...
-                targetHolding = HOLDING_TARGETS[levelIndex] || 10;
-
-            } catch (e) {
-                console.warn('持币目标获取失败:', e.message);
-            }
-
-            // ✅ 显示：当前持币量 / 等级任务量
-            document.getElementById('bcbseBalance').textContent = bcbsBalance.toFixed(4);
-            document.getElementById('targetHolding').textContent = targetHolding.toFixed(2);
+                const balance = await bcbsContract.balanceOf(currentAccount);
+                document.getElementById('bcbseBalance').textContent = parseFloat(ethers.utils.formatEther(balance)).toFixed(4);
+            } catch (e) {}
         }
 
         async function updateDirectNodes() {
@@ -357,10 +310,8 @@
         async function updateIdentityAndRate() {
             let nodeCount = 0;
             try { if (aigcContract) { const count = await aigcContract.getDirectReferralCount(currentAccount); nodeCount = parseInt(count.toString()); } } catch (e) {}
-            
             const identityFromNodes = Math.min(nodeCount * 2, 15);
             document.getElementById('identityLevel').textContent = nodeCount > 0 ? `${identityFromNodes}层` : '0层';
-
             let rateDisplay = '0.0%';
             try {
                 if (bcbsContract) {
@@ -370,12 +321,9 @@
                     else {
                         try {
                             const nodeLevel = await aigcContract.getNodeLevel(currentAccount);
-                            const baseRates = [0, 0.02, 0.04, 0.40];
+                            const baseRates = [0, 0.02, 0.04, 0.15];
                             rateDisplay = (baseRates[parseInt(nodeLevel.toString())] * 100).toFixed(1) + '%';
-                        } catch (e2) {
-                            const identityRates = [0, 0.01, 0.02, 0.04, 0.06, 0.08, 0.10, 0.12, 0.15];
-                            rateDisplay = (identityRates[Math.min(identityFromNodes, 8)] * 100).toFixed(1) + '%';
-                        }
+                        } catch (e2) {}
                     }
                 }
             } catch (e) {}
@@ -399,8 +347,6 @@
                 const minClaim = await aigcContract.getMinClaimRequirement(currentAccount);
                 if (pending.lt(minClaim)) { alert('未达到最低提取要求'); return; }
                 const bnbRequired = await aigcContract.getBnbRequiredForClaim(pending);
-                const userBalance = await provider.getBalance(currentAccount);
-                if (userBalance.lt(bnbRequired.add(ethers.utils.parseEther('0.0005')))) { alert('BNB 余额不足'); return; }
                 if (!confirm(`确认提取 ${ethers.utils.formatEther(pending)} AIGC？`)) return;
                 withdrawBtn.innerHTML = '<span class="loading-spinner"></span> 交易中...';
                 const tx = await aigcContract.claimReward({ value: bnbRequired, gasLimit: 500000 });
@@ -419,11 +365,11 @@
             btn.innerHTML = '<span class="loading-spinner"></span> 领取中...';
             try {
                 const canClaim = await hsbcContract.canClaim(currentAccount);
-                if (!canClaim) { alert('您已领取过空投或不符合条件'); await updateAirdropStatus(); return; }
+                if (!canClaim) { alert('您已领取过空投或不符合条件'); return; }
                 const fee = await hsbcContract.getClaimFee();
                 const tx = await hsbcContract.claimHSBC({ value: fee, gasLimit: 300000 });
                 await tx.wait();
-                alert('✅ 领取成功！获得 100 HSBC');
+                alert('✅ 领取成功！');
                 document.getElementById('airdropStatus').textContent = '已领取 100 HSBC';
                 btn.textContent = '已领取';
                 btn.disabled = true;
@@ -471,55 +417,65 @@
             });
         });
 
+        // ======================== ✅ 修复：邀请记录 ========================
         async function loadInviteRecords() {
             const container = document.getElementById('recordListContainer');
             if (!currentAccount) { container.innerHTML = '<div style="text-align:center;color:#888;padding:20px;">请先连接钱包</div>'; return; }
             container.innerHTML = '<div style="text-align:center;color:#888;padding:20px;"><span class="loading-spinner"></span> 加载中...</div>';
             try {
-                try {
-                    const records = await aigcContract.getDirectReferralsWithTime(currentAccount);
-                    if (records && records.length > 0) {
-                        let html = '';
-                        for (const record of records) {
-                            const addr = record.user || record[0];
-                            const timestamp = record.timestamp || record[1];
-                            const shortAddr = `${addr.substring(0, 6)}...${addr.substring(addr.length - 4)}`;
-                            const time = timestamp > 0 ? new Date(timestamp.toNumber() * 1000).toLocaleString('zh-CN') : '--';
-                            html += `<div class="record-item"><div class="field"><div class="field-label">地址</div><div class="field-value">${shortAddr}</div></div><div class="field"><div class="field-label">时间</div><div class="field-value">${time}</div></div></div>`;
-                        }
-                        container.innerHTML = html;
-                        return;
-                    }
-                } catch (e1) {}
                 const addresses = await aigcContract.getDirectReferrals(currentAccount);
                 if (!addresses || addresses.length === 0) { container.innerHTML = '<div class="record-item" style="justify-content:center;color:#888;">暂无邀请记录</div>'; return; }
                 let html = '';
                 for (const addr of addresses) {
                     const shortAddr = `${addr.substring(0, 6)}...${addr.substring(addr.length - 4)}`;
-                    html += `<div class="record-item"><div class="field"><div class="field-label">地址</div><div class="field-value">${shortAddr}</div></div><div class="field"><div class="field-label">时间</div><div class="field-value">--</div></div></div>`;
+                    html += `<div class="record-item"><div class="field"><div class="field-label">地址</div><div class="field-value">${shortAddr}</div></div></div>`;
                 }
                 container.innerHTML = html;
             } catch (e) { container.innerHTML = '<div class="record-item" style="justify-content:center;color:#888;">加载失败，请重试</div>'; }
         }
 
+        // ======================== ✅ 修复：领取记录 ========================
         async function loadClaimRecords() {
             const container = document.getElementById('recordListContainer');
             if (!currentAccount) { container.innerHTML = '<div style="text-align:center;color:#888;padding:20px;">请先连接钱包</div>'; return; }
             container.innerHTML = '<div style="text-align:center;color:#888;padding:20px;"><span class="loading-spinner"></span> 加载中...</div>';
             try {
+                // ✅ 直接用 filter 查询 RewardClaimed 事件
                 const filter = aigcContract.filters.RewardClaimed(currentAccount);
                 const events = await aigcContract.queryFilter(filter, 0, 'latest');
-                if (!events || events.length === 0) { container.innerHTML = '<div class="record-item" style="justify-content:center;color:#888;">暂无领取记录</div>'; return; }
-                let html = '';
-                const reversed = [...events].reverse();
-                for (const event of reversed) {
-                    const { aigcAmount, bnbPaid } = event.args;
-                    const block = await event.getBlock();
-                    const time = new Date(block.timestamp * 1000).toLocaleString('zh-CN');
-                    html += `<div class="record-item"><div class="field"><div class="field-label">AIGC数量</div><div class="field-value">${parseFloat(ethers.utils.formatEther(aigcAmount)).toFixed(4)}</div></div><div class="field"><div class="field-label">BNB费用</div><div class="field-value">${parseFloat(ethers.utils.formatEther(bnbPaid)).toFixed(6)}</div></div><div class="field" style="flex:1 1 100%;"><div class="field-label">时间</div><div class="field-value">${time}</div></div></div>`;
+                
+                if (!events || events.length === 0) {
+                    container.innerHTML = '<div class="record-item" style="justify-content:center;color:#888;">暂无领取记录</div>';
+                    return;
                 }
-                container.innerHTML = html;
-            } catch (e) { container.innerHTML = '<div class="record-item" style="justify-content:center;color:#888;">加载失败，请重试</div>'; }
+
+                let html = '';
+                // 最新在前
+                for (let i = events.length - 1; i >= 0; i--) {
+                    const event = events[i];
+                    const aigcAmount = parseFloat(ethers.utils.formatEther(event.args.aigcAmount)).toFixed(4);
+                    const bnbPaid = parseFloat(ethers.utils.formatEther(event.args.bnbPaid)).toFixed(6);
+                    
+                    // 获取区块时间
+                    let time = '--';
+                    try {
+                        const block = await event.getBlock();
+                        time = new Date(block.timestamp * 1000).toLocaleString('zh-CN');
+                    } catch (e) {
+                        time = new Date(event.blockNumber * 3000 + 1600000000).toLocaleString('zh-CN');
+                    }
+
+                    html += `<div class="record-item">
+                        <div class="field"><div class="field-label">AIGC数量</div><div class="field-value">${aigcAmount}</div></div>
+                        <div class="field"><div class="field-label">BNB费用</div><div class="field-value">${bnbPaid}</div></div>
+                        <div class="field" style="flex:1 1 100%;"><div class="field-label">时间</div><div class="field-value">${time}</div></div>
+                    </div>`;
+                }
+                container.innerHTML = html || '<div class="record-item" style="justify-content:center;color:#888;">暂无领取记录</div>';
+            } catch (e) {
+                console.error('领取记录加载失败:', e);
+                container.innerHTML = '<div class="record-item" style="justify-content:center;color:#888;">加载失败，请重试</div>';
+            }
         }
 
         function updateUIForConnected(acc) { connectBtn.textContent = `${acc.substring(0, 6)}...${acc.substring(acc.length - 4)}`; connectBtn.classList.add('connected'); }
@@ -529,7 +485,6 @@
             document.getElementById('maxPerformance').textContent = '0.00';
             document.getElementById('minPerformance').textContent = '0.00';
             document.getElementById('bcbseBalance').textContent = '0.00';
-            document.getElementById('targetHolding').textContent = '10.00';
             document.getElementById('completedNodes').textContent = '0';
             document.getElementById('identityLevel').textContent = '--';
             document.getElementById('rateLevel').textContent = '--';
