@@ -162,24 +162,19 @@
         </div>
         <div class="bottom-nav">
             <a href="index.html" class="nav-item">
-                <img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/index.icon.png" alt="资产">
-                <span>资产</span>
+                <img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/index.icon.png" alt="资产"><span>资产</span>
             </a>
             <a href="stake.html" class="nav-item active">
-                <img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/stake.icon.png" alt="质押">
-                <span>质押</span>
+                <img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/stake.icon.png" alt="质押"><span>质押</span>
             </a>
             <a href="liquidity.html" class="nav-item">
-                <img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/liquidity.icon.png" alt="流动性">
-                <span>流动性</span>
+                <img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/liquidity.icon.png" alt="流动性"><span>流动性</span>
             </a>
             <a href="invite.html" class="nav-item">
-                <img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/invite.icon.png" alt="邀请">
-                <span>邀请</span>
+                <img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/invite.icon.png" alt="邀请"><span>邀请</span>
             </a>
             <a href="ecosystem.html" class="nav-item">
-                <img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/ecosystem.icon.png" alt="生态">
-                <span>生态</span>
+                <img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/ecosystem.icon.png" alt="生态"><span>生态</span>
             </a>
         </div>
     </div>
@@ -259,10 +254,7 @@
             return map[period]||{name:'未知',test:'--'};
         }
 
-        function getDailyRate(period) {
-            const map = {0:'0.8%',1:'1.3%',2:'1.8%',3:'2.1%',4:'2.3%',5:'2.6%'};
-            return map[period]||'--';
-        }
+        function getDailyRate(period) { const map = {0:'0.8%',1:'1.3%',2:'1.8%',3:'2.1%',4:'2.3%',5:'2.6%'}; return map[period]||'--'; }
 
         function getStatusLabel(redeemed, endTime) {
             if (redeemed) return { text:'已赎回 ✅', cls:'status-redeemed' };
@@ -358,7 +350,19 @@
 
         function renderGlobalErrorCard(error) { return `<div class="stake-card"><div class="stake-header"><span class="stake-id">⚠️ 系统错误</span></div><div class="info-row"><span class="label">错误</span><span class="value" style="color:#ff6b6b;">${(error.message||'未知').substring(0,150)}</span></div><div class="stake-actions"><button class="btn btn-retry" onclick="loadOrders()">🔄 重新加载</button></div></div>`; }
         function renderErrorCard(id, error) { return `<div class="stake-card"><div class="stake-header"><span class="stake-id"># ${id}</span><span class="stake-status status-error">加载失败</span></div><div class="info-row"><span class="label">错误</span><span class="value" style="color:#ff6b6b;">${(error.message||'未知').substring(0,100)}</span></div></div>`; }
-        function renderEmptyCard() { return `<div class="stake-card"><div class="stake-header"><span class="stake-id">📭 暂无质押</span></div><div style="text-align:center;padding:20px 0;color:#6a8aae;"><div style="font-size:32px;margin-bottom:8px;">🔓</div><div>还没有质押订单</div></div></div>`; }
+
+        // ✅ 恢复：没有订单时显示卡片
+        function renderEmptyCard() {
+            return `<div class="stake-card">
+                <div class="stake-header"><span class="stake-id">📭 暂无质押</span></div>
+                <div style="text-align:center; padding:20px 0; color:#6a8aae; font-size:14px;">
+                    <div style="font-size:32px; margin-bottom:8px;">🔓</div>
+                    <div>还没有质押订单</div>
+                    <div style="font-size:12px; margin-top:4px;">质押 AIGC 或 USDT 开始赚取利息</div>
+                </div>
+            </div>`;
+        }
+
         function renderSkeleton() { return `<div class="stake-card"><div class="stake-header"><div class="skeleton" style="width:40px;height:17px;"></div><div class="skeleton" style="width:70px;height:24px;border-radius:20px;"></div></div><div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value"></div></div><div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value"></div></div><div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value" style="width:140px;"></div></div><div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value" style="width:140px;"></div></div><div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value"></div></div><div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value" style="width:120px;"></div></div><div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value" style="width:50px;"></div></div><div class="skeleton-interest"><div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value"></div></div><div class="skeleton-row"><div class="skeleton skeleton-label"></div><div class="skeleton skeleton-value" style="width:80px;"></div></div></div><div class="stake-actions"><div class="skeleton skeleton-btn"></div><div class="skeleton skeleton-btn"></div></div></div>`; }
 
         function startCountdown() {
