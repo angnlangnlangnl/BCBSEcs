@@ -34,7 +34,8 @@
         .total-amount { font-size: 22px; font-weight: 700; color: #fff; }
         .total-amount small { font-size: 14px; font-weight: 400; color: #aaa; }
         .asset-card { background: rgba(30,30,40,0.5); border: 1px solid #333; border-radius: 10px; padding: 12px 15px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; }
-        .asset-icon { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #555, #333); display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        .asset-icon { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #555, #333); display: flex; align-items: center; justify-content: center; font-size: 20px; overflow: hidden; }
+        .asset-icon img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
         .asset-info { flex: 1; }
         .asset-name { font-size: 15px; color: #fff; font-weight: 600; }
         .asset-price { font-size: 12px; color: #aaa; }
@@ -46,7 +47,7 @@
         .bottom-nav { flex-shrink: 0; background: rgba(15,15,30,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,153,0,0.15); border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.9); display: flex; justify-content: space-around; padding: 12px 0; margin: 0 15px 15px 15px; position: relative; }
         .bottom-nav::before { content: ''; position: absolute; top: -1px; left: -1px; right: -1px; bottom: -1px; border-radius: 20px; padding: 1px; background: linear-gradient(135deg, #f90, transparent, #f90); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
         .nav-item { display: flex; flex-direction: column; align-items: center; color: #666; font-size: 11px; gap: 4px; cursor: pointer; padding: 5px 10px; transition: all 0.2s ease; text-decoration: none; }
-        .nav-item .icon { font-size: 20px; }
+        .nav-item .nav-icon { width: 20px; height: 20px; object-fit: contain; }
         .nav-item.active { color: #f90; position: relative; }
         .nav-item.active::after { content: ''; position: absolute; top: -6px; left: 50%; transform: translateX(-50%); width: 20px; height: 2px; background: #f90; border-radius: 5px; box-shadow: 0 0 10px #f90; }
     </style>
@@ -83,17 +84,32 @@
             <div id="assetListContainer">
                 <div class="asset-card"><div class="asset-icon">💛</div><div class="asset-info"><div class="asset-name">BNB</div><div class="asset-price" id="price-BNB">$580.25</div></div><div class="asset-right"><div class="asset-balance" id="bal-BNB">0.0000</div><div class="asset-usd-value" id="usd-BNB">≈ $0.00</div></div></div>
                 <div class="asset-card"><div class="asset-icon">💵</div><div class="asset-info"><div class="asset-name">USDT</div><div class="asset-price">$1.00</div></div><div class="asset-right"><div class="asset-balance" id="bal-USDT">0.0000</div><div class="asset-usd-value" id="usd-USDT">≈ $0.00</div></div></div>
-                <div class="asset-card"><div class="asset-icon">🟡</div><div class="asset-info"><div class="asset-name">AIGC</div><div class="asset-price">$1.00</div></div><div class="asset-right"><div class="asset-balance" id="bal-AIGC">0.0000</div><div class="asset-usd-value" id="usd-AIGC">≈ $0.00</div></div></div>
-                <div class="asset-card"><div class="asset-icon">🏦</div><div class="asset-info"><div class="asset-name">BCBS</div><div class="asset-price" id="price-BCBS">$0.00</div></div><div class="asset-right"><div class="asset-balance" id="bal-BCBS">0.0000</div><div class="asset-usd-value" id="usd-BCBS">≈ $0.00</div></div></div>
-                <div class="asset-card"><div class="asset-icon">🔷</div><div class="asset-info"><div class="asset-name">HSBC</div><div class="asset-price">$0.00</div></div><div class="asset-right"><div class="asset-balance" id="bal-HSBC">0.0000</div><div class="asset-usd-value" id="usd-HSBC">≈ $0.00</div></div></div>
+                <div class="asset-card"><div class="asset-icon"><img src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/aigc.png" alt="AIGC"></div><div class="asset-info"><div class="asset-name">AIGC</div><div class="asset-price">$1.00</div></div><div class="asset-right"><div class="asset-balance" id="bal-AIGC">0.0000</div><div class="asset-usd-value" id="usd-AIGC">≈ $0.00</div></div></div>
+                <div class="asset-card"><div class="asset-icon"><img src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/bcbs.png" alt="BCBS"></div><div class="asset-info"><div class="asset-name">BCBS</div><div class="asset-price" id="price-BCBS">$0.00</div></div><div class="asset-right"><div class="asset-balance" id="bal-BCBS">0.0000</div><div class="asset-usd-value" id="usd-BCBS">≈ $0.00</div></div></div>
+                <div class="asset-card"><div class="asset-icon"><img src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/HSBC.icon.png" alt="HSBC"></div><div class="asset-info"><div class="asset-name">HSBC</div><div class="asset-price">$0.00</div></div><div class="asset-right"><div class="asset-balance" id="bal-HSBC">0.0000</div><div class="asset-usd-value" id="usd-HSBC">≈ $0.00</div></div></div>
             </div>
         </div>
         <div class="bottom-nav">
-            <a href="index.html" class="nav-item active"><span class="icon">💼</span><span>资产</span></a>
-            <a href="stake.html" class="nav-item"><span class="icon">🔒</span><span>质押</span></a>
-            <a href="liquidity.html" class="nav-item"><span class="icon">💧</span><span>流动性</span></a>
-            <a href="invite.html" class="nav-item"><span class="icon">📨</span><span>邀请</span></a>
-            <a href="ecosystem.html" class="nav-item"><span class="icon">🌐</span><span>生态</span></a>
+            <a href="index.html" class="nav-item active">
+                <img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/index.icon.png" alt="资产">
+                <span>资产</span>
+            </a>
+            <a href="stake.html" class="nav-item">
+                <img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/stake.icon.png" alt="质押">
+                <span>质押</span>
+            </a>
+            <a href="liquidity.html" class="nav-item">
+                <img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/liquidity.icon.png" alt="流动性">
+                <span>流动性</span>
+            </a>
+            <a href="invite.html" class="nav-item">
+                <img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/invite.icon.png" alt="邀请">
+                <span>邀请</span>
+            </a>
+            <a href="ecosystem.html" class="nav-item">
+                <img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/ecosystem.icon.png" alt="生态">
+                <span>生态</span>
+            </a>
         </div>
     </div>
 
@@ -197,7 +213,6 @@
             try { const rate = await bcbsContract.userRate(currentAccount); userRate = parseFloat(ethers.utils.formatEther(rate)); } catch (e) {}
             if (userRate === 0) { const baseRates = [0, 0.02, 0.04, 0.15]; userRate = baseRates[nodeLevel] || 0; }
 
-            // ✅ 分红池：遍历8个池
             let dividendHtml = '';
             let hasDividend = false;
             for (let i = 0; i < 8; i++) {
@@ -241,7 +256,6 @@
             document.getElementById('totalAssetValue').innerHTML = '$' + total.toFixed(2) + ' <small>USD</small>';
         }
 
-        // ✅ 领取分红池
         window.claimPoolDividend = async function(poolId) {
             if (!currentAccount || !aigcContract) { alert('请先连接钱包'); return; }
             try {
