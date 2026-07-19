@@ -84,7 +84,11 @@
         .nav-item .icon { font-size: 20px; }
         .nav-item.active { color: #f90; position: relative; }
         .nav-item.active::after { content: ''; position: absolute; top: -6px; left: 50%; transform: translateX(-50%); width: 20px; height: 2px; background: #f90; border-radius: 5px; box-shadow: 0 0 10px #f90; }
-        .claim-stats-row { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding: 0 4px; }
+        .claim-stats-row { display: flex; justify-content: space-between; align-items: flex-start; margin-top: 12px; padding: 0 4px; }
+        .claim-stats-item { text-align: center; flex: 1; }
+        .claim-stats-label { font-size: 11px; color: #888; margin-bottom: 4px; }
+        .claim-stats-value { font-size: 14px; font-weight: 600; }
+        .claim-stats-unit { font-size: 11px; color: #888; }
     </style>
 </head>
 <body>
@@ -112,15 +116,15 @@
                     <div class="node-card"><div class="node-title">创世节点</div><div class="node-reward">收益10倍</div><div class="node-rights">S8权益 极差15%-40%</div><div class="node-dividend">全球分红2.4%</div><button class="node-apply-btn" data-node="genesis">立即申请</button></div>
                 </div>
                 <div class="claim-stats-row">
-                    <div style="text-align: left;">
-                        <span style="font-size: 12px; color: #888;">累计铸币 </span>
-                        <span style="font-size: 14px; color: #ffd700; font-weight: 600;" id="totalClaimed">0.0000</span>
-                        <span style="font-size: 12px; color: #888;"> AIGC</span>
+                    <div class="claim-stats-item">
+                        <div class="claim-stats-label">累计铸币</div>
+                        <div class="claim-stats-value" style="color: #ffd700;" id="totalClaimed">0.0000</div>
+                        <div class="claim-stats-unit">AIGC</div>
                     </div>
-                    <div style="text-align: right;">
-                        <span style="font-size: 12px; color: #888;">本次最低提取 </span>
-                        <span style="font-size: 14px; color: #ff6b6b; font-weight: 600;" id="minClaimAmount">0.0000</span>
-                        <span style="font-size: 12px; color: #888;"> AIGC</span>
+                    <div class="claim-stats-item">
+                        <div class="claim-stats-label">本次最低提取</div>
+                        <div class="claim-stats-value" style="color: #ff6b6b;" id="minClaimAmount">0.0000</div>
+                        <div class="claim-stats-unit">AIGC</div>
                     </div>
                 </div>
                 <button class="withdraw-reward-btn" id="withdrawRewardBtn">当前可提取 --</button>
@@ -180,7 +184,6 @@
         const RPC_URL = 'https://bsc-dataseed1.binance.org';
 
         const NodeLevel = { FIRST: 1, STAR: 2, GENESIS: 3 };
-        const LevelNames = { 1: '首富', 2: '星链', 3: '创世' };
 
         const USDT_ABI = [
             "function allowance(address owner, address spender) view returns (uint256)",
@@ -282,7 +285,6 @@
             } catch (e) { withdrawBtn.textContent = '当前可提取 --'; }
         }
 
-        // ✅ 累计铸币 = getTotalMinted
         async function updateClaimStats() {
             if (!currentAccount) return;
             try {
@@ -383,7 +385,7 @@
             document.getElementById('rateLevel').textContent = rateDisplay;
         }
 
-        // ✅ 根据 getLevelDetail 判断按钮状态
+        // ✅ 精度修复：4位小数
         async function updateNodeButtonStates() {
             if (!currentAccount) return;
             try {
@@ -405,10 +407,9 @@
                             const btn = document.querySelector(`.node-apply-btn[data-node="${item.node}"]`);
                             if (btn) {
                                 btn.disabled = true;
-                                btn.textContent = '已申请';
-                                const totalMinted = parseFloat(ethers.utils.formatEther(detail.totalMinted));
-                                const maxReward = parseFloat(ethers.utils.formatEther(detail.maxReward));
-                                btn.textContent = `已申请 ${totalMinted.toFixed(1)}/${maxReward.toFixed(1)}`;
+                                const totalMinted = parseFloat(ethers.utils.formatEther(detail.totalMinted)).toFixed(4);
+                                const maxReward = parseFloat(ethers.utils.formatEther(detail.maxReward)).toFixed(4);
+                                btn.textContent = `已申请 ${totalMinted}/${maxReward}`;
                             }
                         }
                     } catch (e) {}
