@@ -196,7 +196,8 @@
         .balance-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 0; padding: 12px; position: relative; background: rgba(0, 10, 30, 0.6); }
         .balance-item { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 6px 10px; position: relative; }
         .balance-item:first-child { border-right: 1px solid rgba(0, 136, 255, 0.2); }
-        .balance-icon { font-size: 22px; margin-bottom: 2px; }
+        /* ✅ 图标移除 */
+        .balance-icon { display: none; }
         .balance-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 2px; font-weight: 400; }
         .balance-value { font-size: 16px; font-weight: 600; color: var(--cyan-glow); text-align: center; word-break: break-all; }
 
@@ -354,12 +355,12 @@
 
             <div class="panel balance-panel">
                 <div class="balance-item">
-                    <div class="balance-icon">🪙</div>
+                    <!-- ✅ 移除了 🪙 图标 -->
                     <div class="balance-label">AIGC</div>
                     <div class="balance-value" id="aigcBalance">--</div>
                 </div>
                 <div class="balance-item">
-                    <div class="balance-icon">💵</div>
+                    <!-- ✅ 移除了 💵 图标 -->
                     <div class="balance-label">USDT</div>
                     <div class="balance-value" id="usdtBalance">--</div>
                 </div>
