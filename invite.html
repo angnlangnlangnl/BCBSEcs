@@ -78,7 +78,6 @@
         /* ================= Header ================= */
         .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; position: relative; }
         .logo-area { display: flex; align-items: center; font-size: 16px; font-weight: 600; color: var(--text-primary); letter-spacing: 0.5px; }
-        /* ✅ Logo图片为 bcbs.png */
         .logo-area img { width: 24px; height: 24px; margin-right: 5px; }
         .logo-area span { margin-left: 5px; }
         .header-controls { display: flex; gap: 10px; align-items: center; position: relative; }
@@ -362,7 +361,6 @@
         .process-panel { background: rgba(8, 20, 48, 0.4); border-radius: 16px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border-color); position: relative; }
         .process-flow { display: flex; align-items: center; justify-content: space-around; position: relative; }
         .process-step { display: flex; flex-direction: column; align-items: center; gap: 6px; color: var(--text-secondary); font-size: 12px; }
-        /* ✅ 统一所有图标的大小 (包括表情符号) */
         .process-step .step-icon { 
             width: 32px; 
             height: 32px; 
@@ -448,7 +446,6 @@
     <div class="app-container">
         <div class="scroll-area">
             <div class="header">
-                <!-- ✅ 全局Logo为 bcbs.png -->
                 <div class="logo-area"><img src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/bcbs.png" alt="BCBS"><span>BCBS</span></div>
                 <div class="header-controls">
                     <!-- 语言切换按钮 -->
@@ -473,10 +470,8 @@
 
             <div class="panel airdrop-card">
                 <div class="airdrop-header">
-                    <!-- ✅ 空投图标为 HSBC.icon.png -->
                     <div class="airdrop-icon"><img src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/HSBC.icon.png" alt="HSBC"></div>
                     <div>
-                        <!-- ✅ 标题为“限量红包领取计划” -->
                         <div class="airdrop-title">限量红包领取计划</div>
                         <div class="airdrop-desc">新用户专享，推荐好友可奖励50HSBC</div>
                     </div>
@@ -489,7 +484,8 @@
                 <div class="node-slider" id="nodeSlider">
                     <div class="node-card"><div class="node-title">首富节点</div><div class="node-reward">收益3倍</div><div class="node-rights">S2权益 极差2%-10%</div><div class="node-dividend">全球分红1%</div><button class="node-apply-btn" data-node="rich">立即申请</button></div>
                     <div class="node-card"><div class="node-title">星链节点</div><div class="node-reward">收益5倍</div><div class="node-rights">S3权益 极差4%-15%</div><div class="node-dividend">全球分红1.6%</div><button class="node-apply-btn" data-node="starlink">立即申请</button></div>
-                    <div class="node-card"><div class="node-title">创世节点</div><div class="node-reward">收益10倍</div><div class="node-rights">S8权益 极差15%-40%</div><div class="node-dividend">全球分红2.4%</div><button class="node-apply-btn" data-node="genesis">立即申请</button></div>
+                    <!-- ✅ 创世节点收益从10倍改为9倍 -->
+                    <div class="node-card"><div class="node-title">创世节点</div><div class="node-reward">收益9倍</div><div class="node-rights">S8权益 极差15%-40%</div><div class="node-dividend">全球分红2.4%</div><button class="node-apply-btn" data-node="genesis">立即申请</button></div>
                 </div>
                 <div class="claim-stats-row">
                     <div class="claim-stats-item">
@@ -522,7 +518,6 @@
             <div class="panel process-panel">
                 <div class="process-badge">邀请流程</div>
                 <div class="process-flow">
-                    <!-- ✅ 已统一图标大小 (32x32) -->
                     <div class="process-step"><div class="step-icon">👤</div><span>老用户</span></div>
                     <span class="process-arrow">→</span>
                     <div class="process-step"><div class="step-icon"><img src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/aigc.png" alt="AIGC"></div><span>转AIGC</span></div>
@@ -603,7 +598,7 @@
             });
         });
 
-        // ======================== 原有的合约/钱包逻辑 ========================
+        // ======================== 原有逻辑 ========================
         const AIGC_ADDRESS = '0xdB5A187FE04A249AC2F2E821b72b771d01b2C0e8';
         const BCBS_ADDRESS = '0x9ECcC2B06582Ca14509CAd41F1d5204979Ce6995';
         const HSBC_ADDRESS = '0x20aD84A60902A91F036bD6bdB85AD1d61B2f65C1';
@@ -772,7 +767,6 @@
             } catch (e) {}
         }
 
-        // ✅ 新增：直推人数和团队人数
         async function updateReferralCounts() {
             if (!currentAccount) return;
             try {
@@ -780,7 +774,6 @@
                 const directCount = refs ? refs.length : 0;
                 document.getElementById('directCount').textContent = directCount;
                 
-                // 团队人数 = 直推 + 直推的直推（递归统计）
                 let teamCount = directCount;
                 for (const ref of (refs || [])) {
                     try {
