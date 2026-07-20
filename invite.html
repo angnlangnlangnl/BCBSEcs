@@ -46,11 +46,34 @@
             overflow: hidden; 
         }
 
+        /* ===== 修复：新增流动性标准背景图 ===== */
+        .app-container::before { 
+            content: ''; 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0; 
+            background-image: url('https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/bg.png'); 
+            background-size: cover; 
+            background-position: center top; 
+            background-repeat: no-repeat; 
+            /* 底部渐变遮罩，让背景图自然向下过渡融合至深空蓝底 */
+            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%);
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%);
+            opacity: 0.8;
+            z-index: 0; 
+            pointer-events: none; 
+            border-radius: 20px; 
+        }
+
         .scroll-area { 
             flex: 1; 
             overflow-y: auto; 
             padding: 15px; 
             -webkit-overflow-scrolling: touch; 
+            position: relative; 
+            z-index: 1; 
         }
 
         /* ================= Header ================= */
