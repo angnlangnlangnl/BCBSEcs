@@ -277,7 +277,7 @@
             display: inline-block;   
         }
 
-        /* ===== 卡片描述文字缩小三分之一 (原12px -> 现8px) ===== */
+        /* ===== 修改：卡片描述文字缩小三分之一 (原12px -> 现8px) ===== */
         .card-description { 
             font-size: 12px; 
             line-height: 1.4; 
@@ -287,26 +287,6 @@
             transform-origin: left top;
             width: calc(100% / 0.666); /* 通过反向计算宽度弥补 scale 引起的宽度收缩 */
             padding-right: 10px;
-        }
-
-        /* ===== 汽车卡片专属：限制5行，超出可上下滑动 ===== */
-        .car-card-scroll {
-            max-height: 65px; /* 5行 * 13px (1.4倍行距) */
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: thin;
-            scrollbar-color: rgba(0, 221, 255, 0.3) transparent;
-        }
-        /* 汽车卡片滚动条样式 */
-        .car-card-scroll::-webkit-scrollbar {
-            width: 3px;
-        }
-        .car-card-scroll::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .car-card-scroll::-webkit-scrollbar-thumb {
-            background: var(--cyan-glow);
-            border-radius: 10px;
         }
 
         /* ================= 底部导航栏 ================= */
@@ -378,7 +358,6 @@
             </div>
             <div class="page-title"><img src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/ecosystem.icon.png" alt="生态"> 生态</div>
             
-            <!-- 房产卡片 (保持原样，不分页) -->
             <div class="sci-fi-card">
                 <div class="card-image-box"><img src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/reust.png" alt="REUST"></div>
                 <div class="card-content">
@@ -388,16 +367,12 @@
                 </div>
             </div>
             
-            <!-- 汽车卡片 (新增滚动控制) -->
             <div class="sci-fi-card">
                 <div class="card-image-box"><img src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/veust.png" alt="VEUST"></div>
                 <div class="card-content">
                     <div class="card-header"><h2>AI 算力铸造汽车</h2><span class="arrow">&gt;</span></div>
                     <div class="card-separator">--</div>
-                    <!-- 新增 car-card-scroll 类实现限高滚动 -->
-                    <div class="card-description car-card-scroll">
-                        VEUST是BCBS链上资管体系推出的新能源汽车数字化权益通证，锚定海外高端新能源豪华车辆，初始公允定价2USDT，对标ETH价值存储逻辑，以实体车辆为价值基石，实现豪车资产碎片化上链、质押流转、收益确权，构建实体汽车资产RWA标准化流通基建。
-                    </div>
+                    <div class="card-description">VEUST是BCBS链上资管体系推出的新能源汽车数字化权益通证，锚定海外高端新能源豪华车辆，初始公允定价2USDT，对标ETH价值存储逻辑，以实体车辆为价值基石，实现豪车资产碎片化上链、质押流转、收益确权，构建实体汽车资产RWA标准化流通基建。</div>
                 </div>
             </div>
             
