@@ -198,21 +198,11 @@
         }
         .identity-row { font-size: 11px; color: var(--text-secondary); line-height: 1.4; }
         .rate-row { font-size: 11px; color: var(--cyan-glow); line-height: 1.4; font-weight: 500; }
+        .dividend-row { font-size: 10px; color: #4caf50; line-height: 1.4; margin-top: 2px; }
         
-        /* ✅ 修改：分红池独立为一行，并包含所有 8 个分红数据 */
-        .dividend-row { 
-            font-size: 10px; 
-            color: #4caf50; 
-            line-height: 1.6; 
-            margin-top: 4px; 
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4px 8px;
-        }
         .dividend-item { 
             font-size: 10px; color: #4caf50; line-height: 1.6; cursor: pointer; 
-            padding: 1px 4px; border-radius: 4px; transition: all 0.2s; display: inline-block; 
-            white-space: nowrap;
+            padding: 1px 4px; border-radius: 4px; transition: all 0.2s; display: inline-block; margin-right: 8px; 
         }
         .dividend-item:hover { background: rgba(76,175,80,0.15); }
 
@@ -331,8 +321,9 @@
                         <div class="level-badge" id="userLevel">普通用户</div>
                         <div class="identity-row" id="identityRow">身份：S0</div>
                         <div class="rate-row" id="rateRow">利率：0.00%</div>
-                        <!-- ✅ 分红池独立一行，所有 8 个池都将在这里显示 -->
-                        <div class="dividend-row" id="dividendRow"></div>
+                        <div class="dividend-row" id="dividendRow">
+                            分红池：<span id="dividendList">暂无</span>
+                        </div>
                     </div>
                 </div>
                 <div class="total-value">
@@ -403,6 +394,9 @@
                 // 关闭弹窗
                 langDropdown.classList.remove('open');
                 langBtn.classList.remove('active');
+                
+                // (可选) 可以在这里将当前选中的语言显示在按钮上，例如:
+                // langBtn.innerHTML = `${langName} ⌄`;
             });
         });
 
@@ -506,22 +500,24 @@
             try { const rate = await bcbsContract.userRate(currentAccount); userRate = parseFloat(ethers.utils.formatEther(rate)); } catch (e) {}
             if (userRate === 0) { const baseRates = [0, 0.02, 0.04, 0.15]; userRate = baseRates[nodeLevel] || 0; }
 
-            // ✅ 所有8个分红池都会显示，无余额时显示 0.0000
             let dividendHtml = '';
+            let hasDividend = false;
             for (let i = 0; i < 8; i++) {
-                let val = 0;
                 try {
                     const pend = await aigcContract.getPendingDividend(currentAccount, i);
-                    val = parseFloat(ethers.utils.formatEther(pend));
+                    const val = parseFloat(ethers.utils.formatEther(pend));
+                    if (val > 0.000001) {
+                        hasDividend = true;
+                        dividendHtml += `<span class="dividend-item" onclick="claimPoolDividend(${i})" title="点击领取">${poolNames[i]} ${val.toFixed(4)}</span>`;
+                    }
                 } catch (e) {}
-                // 无论是否有余额，都显示该池名称和数值（保留 4 位小数）
-                dividendHtml += `<span class="dividend-item" onclick="claimPoolDividend(${i})" title="点击领取">${poolNames[i]} ${val.toFixed(4)}</span>`;
             }
+            if (!hasDividend) dividendHtml = '暂无';
 
             document.getElementById('userLevel').textContent = nodeNames[nodeLevel] || '普通用户';
             document.getElementById('identityRow').textContent = '身份：S' + identityLevel;
             document.getElementById('rateRow').textContent = '利率：' + (userRate * 100).toFixed(1) + '%';
-            document.getElementById('dividendRow').innerHTML = dividendHtml;
+            document.getElementById('dividendList').innerHTML = dividendHtml;
 
             let bnbBalance = 0, usdtBalance = 0, aigcBalance = 0, bcbsBalance = 0, hsbcBalance = 0;
             try { bnbBalance = parseFloat(ethers.utils.formatEther(await provider.getBalance(currentAccount))); } catch (e) {}
@@ -562,14 +558,7 @@
             document.getElementById('userLevel').textContent = '普通用户';
             document.getElementById('identityRow').textContent = '身份：S0';
             document.getElementById('rateRow').textContent = '利率：0.00%';
-            
-            // 重置分红池列表为 8 个 0.0000
-            let dividendHtml = '';
-            for (let i = 0; i < 8; i++) {
-                dividendHtml += `<span class="dividend-item" onclick="claimPoolDividend(${i})" title="点击领取">${poolNames[i]} 0.0000</span>`;
-            }
-            document.getElementById('dividendRow').innerHTML = dividendHtml;
-
+            document.getElementById('dividendList').innerHTML = '暂无';
             document.getElementById('price-BNB').textContent = '$580.25';
             document.getElementById('price-BCBS').textContent = '$0.00';
             ['BNB','USDT','AIGC','BCBS','HSBC'].forEach(s => {
