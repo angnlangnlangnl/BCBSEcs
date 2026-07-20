@@ -47,7 +47,7 @@
             overflow: hidden; 
         }
 
-        /* ===== 新增：统一流动性标准背景图 ===== */
+        /* ===== 统一流动性标准背景图 ===== */
         .app-container::before { 
             content: ''; 
             position: absolute; 
@@ -59,7 +59,6 @@
             background-size: cover; 
             background-position: center top; 
             background-repeat: no-repeat; 
-            /* 底部渐变遮罩，让背景图自然向下过渡融合至深空蓝底 */
             -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%);
             mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%);
             opacity: 0.8;
@@ -197,11 +196,51 @@
             position: relative; 
             margin-left: 10px; 
         }
+        
+        /* ===== 图标缩小 20% 以及新增旋转光圈 ===== */
         .card-image-box img { 
-            width: 80px; 
-            height: 80px; 
+            width: 64px; /* 原80px，缩小20% */
+            height: 64px; 
             object-fit: contain; 
             filter: drop-shadow(0 0 10px rgba(0, 221, 255, 0.2));
+            border-radius: 50%;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* 科技感顺时针旋转光圈 */
+        .card-image-box::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;  /* 比图片稍大，形成包裹感 */
+            height: 80px;
+            border-radius: 50%;
+            z-index: 1;
+            background: conic-gradient(
+                from 0deg,
+                transparent 0deg,
+                var(--cyan-glow) 30deg,
+                transparent 60deg,
+                var(--cyan-glow) 120deg,
+                transparent 180deg,
+                var(--cyan-glow) 240deg,
+                transparent 300deg,
+                transparent 360deg
+            );
+            /* 顺时针旋转动画，配合滤色效果发光 */
+            animation: spinRing 3s linear infinite;
+            -webkit-mask: radial-gradient(circle, transparent 58%, #000 60%);
+            mask: radial-gradient(circle, transparent 58%, #000 60%);
+            opacity: 0.8;
+        }
+
+        /* 旋转动画关键帧 */
+        @keyframes spinRing {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
         }
 
         .card-content { 
@@ -228,11 +267,15 @@
             font-weight: 300; 
             cursor: pointer; 
         }
+        /* ✅ 修改：副标题在 6px 基础上再缩小四分之一 */
         .card-separator { 
             color: var(--text-secondary); 
             margin-bottom: 4px; 
             letter-spacing: 1px; 
-            font-size: 9px; /* 保持缩小后的字体 */
+            font-size: 12px;       /* 浏览器最小可读设置 12px */
+            transform: scale(0.375); /* 0.375 * 12 = 4.5px (即6px缩小四分之一) */
+            transform-origin: left center;
+            display: inline-block;   /* 确保 transform 生效 */
         }
         .card-description { 
             font-size: 12px; 
