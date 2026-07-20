@@ -9,7 +9,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
         body { background-color: #050505; display: flex; justify-content: center; align-items: center; height: 100dvh; overflow: hidden; color: #ffffff; }
         .app-container { width: 100%; max-width: 420px; height: 100dvh; background: radial-gradient(circle at center, #111 0%, #030303 100%); border-radius: 20px; box-shadow: 0 0 30px rgba(0,0,0,0.8); display: flex; flex-direction: column; position: relative; overflow: hidden; }
-        .app-container::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: url('https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/bg.png'); background-size: cover; background-position: center; background-repeat: no-repeat; opacity: 0.08; z-index: 0; pointer-events: none; }
+        .app-container::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: url('https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/bg.png'); background-size: 100% auto; background-position: top center; background-repeat: no-repeat; opacity: 1; z-index: 0; pointer-events: none; border-radius: 20px; }
         .scroll-area { flex: 1; overflow-y: auto; padding: 15px; -webkit-overflow-scrolling: touch; position: relative; z-index: 1; }
         .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; }
         .logo-area { display: flex; align-items: center; font-size: 16px; font-weight: bold; background: linear-gradient(to right, #aaa, #fff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
