@@ -393,7 +393,7 @@
             window.ethereum.on('chainChanged', () => window.location.reload());
         }
 
-        window.loadOrders = loadOrders;
+        window.renderEmptyCard= loadOrders;
         window.retryLoadOrder = retryLoadOrder;
         window.addEventListener('load', autoConnect);
         window.addEventListener('beforeunload', () => { if (countdownTimer) clearInterval(countdownTimer); });
