@@ -267,21 +267,26 @@
             font-weight: 300; 
             cursor: pointer; 
         }
-        /* ✅ 修改：副标题在 6px 基础上再缩小四分之一 */
         .card-separator { 
             color: var(--text-secondary); 
             margin-bottom: 4px; 
             letter-spacing: 1px; 
-            font-size: 12px;       /* 浏览器最小可读设置 12px */
-            transform: scale(0.375); /* 0.375 * 12 = 4.5px (即6px缩小四分之一) */
+            font-size: 12px;       
+            transform: scale(0.375); /* 保持原先缩小到6px的比例 */
             transform-origin: left center;
-            display: inline-block;   /* 确保 transform 生效 */
+            display: inline-block;   
         }
+
+        /* ===== 修改：卡片描述文字缩小三分之一 (原12px -> 现8px) ===== */
         .card-description { 
             font-size: 12px; 
-            line-height: 1.5; 
+            line-height: 1.4; 
             color: var(--text-primary-soft); 
-            text-align: justify; 
+            text-align: justify;
+            transform: scale(0.666);
+            transform-origin: left top;
+            width: calc(100% / 0.666); /* 通过反向计算宽度弥补 scale 引起的宽度收缩 */
+            padding-right: 10px;
         }
 
         /* ================= 底部导航栏 ================= */
