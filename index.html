@@ -538,17 +538,21 @@
             document.getElementById('identityRow').textContent = '身份：S' + identityLevel;
             document.getElementById('rateRow').textContent = '利率：' + (userRate * 100).toFixed(1) + '%';
 
-            // ✅ 处理独立的分红池权益行
+            // ✅ 只显示用户有权益（激活）的分红池
             let dividendHtml = '';
             let hasDividend = false;
             for (let i = 0; i < 8; i++) {
                 try {
-                    const pend = await aigcContract.getPendingDividend(currentAccount, i);
-                    const val = parseFloat(ethers.utils.formatEther(pend));
-                    // 无论金额是否为0，只要有池子权限都显示（数值为0时显示0.0000）
-                    hasDividend = true;
-                    const valDisplay = val > 0 ? val.toFixed(4) : '0.0000';
-                    dividendHtml += `<span class="dividend-item" onclick="claimPoolDividend(${i})" title="点击领取">${poolNames[i]} ${valDisplay}</span>`;
+                    // 先检查该池子是否激活
+                    const detail = await aigcContract.getLevelDetail(currentAccount, i + 1);
+                    if (detail && detail.activated) {
+                        hasDividend = true;
+                        // 获取待领取额度
+                        const pend = await aigcContract.getPendingDividend(currentAccount, i);
+                        const val = parseFloat(ethers.utils.formatEther(pend));
+                        const valDisplay = val > 0 ? val.toFixed(4) : '0.0000';
+                        dividendHtml += `<span class="dividend-item" onclick="claimPoolDividend(${i})" title="点击领取">${poolNames[i]} ${valDisplay}</span>`;
+                    }
                 } catch (e) {
                     // 合约不存在的池子直接跳过
                 }
