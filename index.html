@@ -80,6 +80,7 @@
         /* ================= Header ================= */
         .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; }
         .logo-area { display: flex; align-items: center; font-size: 16px; font-weight: 600; color: var(--text-primary); letter-spacing: 0.5px; }
+        /* ✅ 修改：Logo图片路径替换为 bcbs.png */
         .logo-area img { width: 24px; height: 24px; margin-right: 5px; }
         .logo-area span { margin-left: 5px; }
         .header-controls { display: flex; gap: 10px; align-items: center; }
@@ -243,7 +244,8 @@
     <div class="app-container">
         <div class="scroll-area">
             <div class="header">
-                <div class="logo-area"><img src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/aigc.png" alt="AIGC"><span>BCBS</span></div>
+                <!-- ✅ 替换为 bcbs.png -->
+                <div class="logo-area"><img src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/bcbs.png" alt="BCBS"><span>BCBS</span></div>
                 <div class="header-controls">
                     <button class="lang-btn" id="langBtn">🇺🇸 EN</button>
                     <button id="connectWalletBtn" class="connect-btn">Connect wallet</button>
