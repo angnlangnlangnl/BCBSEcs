@@ -47,7 +47,7 @@
             overflow: hidden; 
         }
 
-        /* ===== 修复：新增流动性标准背景图 ===== */
+        /* ===== 统一流动性标准背景图 ===== */
         .app-container::before { 
             content: ''; 
             position: absolute; 
@@ -59,7 +59,6 @@
             background-size: cover; 
             background-position: center top; 
             background-repeat: no-repeat; 
-            /* 底部渐变遮罩，让背景图自然向下过渡融合至深空蓝底 */
             -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%);
             mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%);
             opacity: 0.8;
@@ -78,14 +77,64 @@
         }
 
         /* ================= Header ================= */
-        .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; }
+        .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; position: relative; }
         .logo-area { display: flex; align-items: center; font-size: 16px; font-weight: 600; color: var(--text-primary); letter-spacing: 0.5px; }
-        /* ✅ 修改：Logo图片路径替换为 bcbs.png */
         .logo-area img { width: 24px; height: 24px; margin-right: 5px; }
         .logo-area span { margin-left: 5px; }
-        .header-controls { display: flex; gap: 10px; align-items: center; }
+        .header-controls { display: flex; gap: 10px; align-items: center; position: relative; }
         
-        .lang-btn { background: transparent; border: 1px solid var(--border-color); color: var(--text-secondary); padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer; }
+        /* --- 语言切换按钮 --- */
+        .lang-btn { 
+            background: transparent; 
+            border: 1px solid var(--border-color); 
+            color: var(--text-secondary); 
+            padding: 4px 8px; 
+            border-radius: 4px; 
+            font-size: 12px; 
+            cursor: pointer; 
+            position: relative;
+        }
+        .lang-btn.active { background: rgba(0, 136, 255, 0.1); border-color: var(--cyan-dim); color: var(--cyan-glow); }
+
+        /* --- 新增语言弹窗样式 --- */
+        .lang-dropdown {
+            display: none;
+            position: absolute;
+            top: 35px;
+            right: 0;
+            background: rgba(8, 20, 48, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 12px;
+            width: 200px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+            z-index: 999;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .lang-dropdown.open { display: flex; }
+        .lang-option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            border-radius: 6px;
+            color: var(--text-primary-soft);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .lang-option:hover {
+            background: rgba(0, 204, 255, 0.1);
+            color: var(--text-primary);
+        }
+        .lang-option .code {
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 500;
+            margin-left: 8px;
+        }
         
         .connect-btn { 
             background: transparent; 
@@ -244,10 +293,23 @@
     <div class="app-container">
         <div class="scroll-area">
             <div class="header">
-                <!-- ✅ 替换为 bcbs.png -->
                 <div class="logo-area"><img src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/bcbs.png" alt="BCBS"><span>BCBS</span></div>
                 <div class="header-controls">
-                    <button class="lang-btn" id="langBtn">🇺🇸 EN</button>
+                    <!-- 语言切换按钮 -->
+                    <button class="lang-btn" id="langBtn">🇺🇸 EN ⌄</button>
+                    
+                    <!-- 语言弹窗容器 -->
+                    <div class="lang-dropdown" id="langDropdown">
+                        <div class="lang-option"><span>🇺🇸 English</span><span class="code">EN</span></div>
+                        <div class="lang-option"><span>🇭🇰 繁體中文</span><span class="code">ZH</span></div>
+                        <div class="lang-option"><span>🇪🇸 Español</span><span class="code">ES</span></div>
+                        <div class="lang-option"><span>🇫🇷 Français</span><span class="code">FR</span></div>
+                        <div class="lang-option"><span>🇰🇷 한국어</span><span class="code">KO</span></div>
+                        <div class="lang-option"><span>🇯🇵 日本語</span><span class="code">JA</span></div>
+                        <div class="lang-option"><span>🇸🇦 العربية</span><span class="code">AR</span></div>
+                        <div class="lang-option"><span>🇷🇺 Русский</span><span class="code">RU</span></div>
+                    </div>
+
                     <button id="connectWalletBtn" class="connect-btn">Connect wallet</button>
                 </div>
             </div>
@@ -303,6 +365,42 @@
     </div>
 
     <script>
+        // ======================== 语言切换弹窗逻辑 ========================
+        const langBtn = document.getElementById('langBtn');
+        const langDropdown = document.getElementById('langDropdown');
+
+        // 点击按钮切换弹窗显示/隐藏
+        langBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // 阻止冒泡
+            langDropdown.classList.toggle('open');
+            langBtn.classList.toggle('active');
+        });
+
+        // 点击页面其他任意位置关闭弹窗
+        document.addEventListener('click', (e) => {
+            if (!langDropdown.contains(e.target) && e.target !== langBtn) {
+                langDropdown.classList.remove('open');
+                langBtn.classList.remove('active');
+            }
+        });
+
+        // 点击语言选项（演示交互，打印选中语言，此处可接入实际翻译逻辑）
+        document.querySelectorAll('.lang-option').forEach(option => {
+            option.addEventListener('click', () => {
+                const langName = option.querySelector('span:first-child').innerText.trim();
+                const langCode = option.querySelector('.code').innerText.trim();
+                console.log(`用户选择了语言: ${langName} (${langCode})`);
+                
+                // 关闭弹窗
+                langDropdown.classList.remove('open');
+                langBtn.classList.remove('active');
+                
+                // (可选) 可以在这里将当前选中的语言显示在按钮上，例如:
+                // langBtn.innerHTML = `${langName} ⌄`;
+            });
+        });
+
+        // ======================== 配置 ========================
         const AIGC_ADDRESS = '0xdB5A187FE04A249AC2F2E821b72b771d01b2C0e8';
         const BCBS_ADDRESS = '0x9ECcC2B06582Ca14509CAd41F1d5204979Ce6995';
         const HSBC_ADDRESS = '0x20aD84A60902A91F036bD6bdB85AD1d61B2f65C1';
