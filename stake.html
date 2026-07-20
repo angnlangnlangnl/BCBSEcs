@@ -7,83 +7,284 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-        body { background-color: #050505; display: flex; justify-content: center; align-items: center; height: 100dvh; overflow: hidden; color: #ffffff; }
-        .app-container { width: 100%; max-width: 420px; height: 100dvh; background: radial-gradient(circle at center, #111 0%, #030303 100%); border-radius: 20px; box-shadow: 0 0 30px rgba(0,0,0,0.8); display: flex; flex-direction: column; position: relative; overflow: hidden; }
-        .scroll-area { flex: 1; overflow-y: auto; padding: 15px; -webkit-overflow-scrolling: touch; }
+        
+        /* ================= 纯科技蓝赛博风主题色 ================= */
+        :root {
+            --bg-color: #050B15;             /* 极深星空蓝背景 */
+            --card-bg: rgba(8, 20, 48, 0.4); /* 半透明深蓝卡片 */
+            --border-color: rgba(0, 136, 255, 0.15); /* 幽蓝边框 */
+            
+            --text-primary: #FFFFFF;         /* 纯白主文本 */
+            --text-primary-soft: #E2F0FB;    /* 极浅冰白 */
+            --text-secondary: #8AA9C9;       /* 低饱和灰蓝 */
+            --text-dim: rgba(255, 255, 255, 0.45); /* 半透明白 */
+            
+            --cyan-glow: #00DDFF;            /* 电光青/亮蓝（核心高亮） */
+            --cyan-dim: #0088FF;             /* 深蓝/暗光蓝 */
+            --cyan-deep: #0A2463;            /* 深钴蓝 */
+        }
+
+        body { 
+            background-color: var(--bg-color); 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100dvh; 
+            overflow: hidden; 
+            color: var(--text-primary); 
+        }
+
+        .app-container { 
+            width: 100%; 
+            max-width: 420px; 
+            height: 100dvh; 
+            background: radial-gradient(circle at 50% 10%, #102040 0%, #050B15 100%); 
+            border-radius: 20px; 
+            box-shadow: 0 0 40px rgba(0, 136, 255, 0.1); 
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+            overflow: hidden; 
+        }
+
+        /* ===== 统一背景图 ===== */
+        .app-container::before { 
+            content: ''; 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0; 
+            background-image: url('https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/bg.png'); 
+            background-size: cover; 
+            background-position: center top; 
+            background-repeat: no-repeat; 
+            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%);
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%);
+            opacity: 0.8;
+            z-index: 0; 
+            pointer-events: none; 
+            border-radius: 20px; 
+        }
+
+        .scroll-area { 
+            flex: 1; 
+            overflow-y: auto; 
+            padding: 15px; 
+            -webkit-overflow-scrolling: touch; 
+            position: relative; 
+            z-index: 1; 
+        }
+
+        /* ================= Header ================= */
         .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; }
-        .logo-area { display: flex; align-items: center; font-size: 16px; font-weight: bold; background: linear-gradient(to right, #aaa, #fff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .logo-area { display: flex; align-items: center; font-size: 16px; font-weight: 600; color: var(--text-primary); letter-spacing: 0.5px; }
         .logo-area span { margin-left: 5px; }
         .header-controls { display: flex; gap: 10px; align-items: center; }
-        .lang-btn { background: transparent; border: 1px solid #333; color: #aaa; padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer; }
-        .connect-btn { background: transparent; border: 1px solid #f90; color: #f90; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; box-shadow: 0 0 10px rgba(255,153,0,0.1); transition: all 0.2s; white-space: nowrap; }
-        .connect-btn.connected { background: rgba(255,153,0,0.2); border-color: #ffaa00; color: #ffd700; }
+        
+        .lang-btn { background: transparent; border: 1px solid var(--border-color); color: var(--text-secondary); padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer; }
+        
+        .connect-btn { 
+            background: transparent; 
+            border: 1px solid rgba(0, 221, 255, 0.3); 
+            color: var(--cyan-glow); 
+            padding: 6px 12px; 
+            border-radius: 20px; 
+            font-size: 12px; 
+            font-weight: 500; 
+            cursor: pointer; 
+            box-shadow: 0 0 15px rgba(0, 204, 255, 0.05); 
+            transition: all 0.3s; 
+            white-space: nowrap; 
+        }
+        .connect-btn:hover:not(:disabled) { box-shadow: 0 0 25px rgba(0, 204, 255, 0.2); background: rgba(0, 204, 255, 0.05); }
+        .connect-btn.connected { background: rgba(0, 204, 255, 0.1); border-color: var(--cyan-glow); color: var(--cyan-glow); }
         .connect-btn:disabled, .stake-btn:disabled, .btn:disabled { opacity: 0.35; cursor: not-allowed; }
-        .panel { background: rgba(20,20,30,0.6); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #333; position: relative; box-shadow: inset 0 0 20px rgba(255,170,0,0.02); }
-        .panel::before { content: ''; position: absolute; top: -1px; left: -1px; right: -1px; bottom: -1px; border-radius: 12px; padding: 1px; background: linear-gradient(135deg, #f90, transparent, #f90); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
-        .page-title { font-size: 24px; color: #f90; text-align: center; margin: 10px 0 20px; }
-        .balance-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 0; padding: 8px 12px; position: relative; }
+
+        /* ================= 面板基础样式 ================= */
+        .panel { 
+            background: var(--card-bg); 
+            border-radius: 16px; 
+            padding: 15px; 
+            margin-bottom: 15px; 
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(8px);
+            position: relative; 
+            box-shadow: inset 0 0 30px rgba(0, 136, 255, 0.02); 
+        }
+        
+        /* 统一科技蓝流光边框效果 */
+        .panel::before, .bottom-nav::before { 
+            content: ''; 
+            position: absolute; 
+            top: -1px; left: -1px; right: -1px; bottom: -1px; 
+            border-radius: 16px; 
+            padding: 1px; 
+            background: linear-gradient(135deg, var(--cyan-dim), transparent, var(--cyan-glow)); 
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); 
+            -webkit-mask-composite: xor; 
+            mask-composite: exclude; 
+            pointer-events: none; 
+            opacity: 0.5;
+        }
+
+        /* 标题：纯白 */
+        .page-title { 
+            font-size: 24px; 
+            color: var(--text-primary); 
+            text-align: center; 
+            margin: 10px 0 20px; 
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        /* ================= 余额面板 ================= */
+        .balance-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 0; padding: 12px; position: relative; background: rgba(0, 10, 30, 0.6); }
         .balance-item { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 6px 10px; position: relative; }
-        .balance-item:first-child { border-right: 1px solid rgba(255,255,255,0.08); }
+        .balance-item:first-child { border-right: 1px solid rgba(0, 136, 255, 0.2); }
         .balance-icon { font-size: 22px; margin-bottom: 2px; }
-        .balance-label { font-size: 12px; color: #6a8aae; margin-bottom: 2px; font-weight: 500; }
-        .balance-value { font-size: 14px; font-weight: 700; color: #f90; text-align: center; word-break: break-all; }
+        .balance-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 2px; font-weight: 400; }
+        .balance-value { font-size: 16px; font-weight: 600; color: var(--cyan-glow); text-align: center; word-break: break-all; }
+
+        /* ================= 质押交互区 ================= */
         .tab-container { display: flex; gap: 10px; margin-bottom: 15px; }
-        .tab-btn { flex: 1; padding: 10px; background: rgba(30,30,40,0.8); border: 1px solid #444; border-radius: 8px; color: #aaa; font-size: 14px; cursor: pointer; text-align: center; transition: all 0.2s; }
-        .tab-btn.active { background: linear-gradient(135deg, rgba(255,170,0,0.2), rgba(255,170,0,0.05)); border-color: #f90; color: #f90; box-shadow: 0 0 10px rgba(255,170,0,0.2); }
-        .amount-input-wrapper { background: rgba(0,0,0,0.3); border: 1px solid #444; border-radius: 8px; padding: 12px; display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
-        .amount-input-wrapper input { flex: 1; background: transparent; border: none; color: #fff; font-size: 18px; outline: none; }
-        .balance-info { display: flex; justify-content: space-between; color: #aaa; font-size: 12px; margin-bottom: 5px; }
-        .balance-info .max-btn { color: #f90; cursor: pointer; }
+        .tab-btn { flex: 1; padding: 10px; background: rgba(0, 20, 40, 0.5); border: 1px solid rgba(0, 136, 255, 0.2); border-radius: 8px; color: var(--text-secondary); font-size: 14px; cursor: pointer; text-align: center; transition: all 0.3s; }
+        .tab-btn.active { background: linear-gradient(135deg, rgba(0, 204, 255, 0.15), rgba(0, 136, 255, 0.05)); border-color: var(--cyan-glow); color: var(--cyan-glow); box-shadow: 0 0 15px rgba(0, 204, 255, 0.15); }
+
+        .amount-input-wrapper { background: rgba(0, 0, 0, 0.3); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; display: flex; align-items: center; gap: 10px; margin-bottom: 15px; transition: all 0.3s; }
+        .amount-input-wrapper:focus-within { border-color: var(--cyan-glow); box-shadow: 0 0 15px rgba(0, 204, 255, 0.1); }
+        .amount-input-wrapper input { flex: 1; background: transparent; border: none; color: var(--text-primary); font-size: 18px; outline: none; }
+        .balance-info { display: flex; justify-content: space-between; color: var(--text-secondary); font-size: 12px; margin-bottom: 5px; }
+        .balance-info .max-btn { color: var(--cyan-glow); cursor: pointer; font-weight: 500; }
+
+        /* ================= 周期与预览 ================= */
         .period-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px; }
-        .period-btn { padding: 10px 5px; background: rgba(30,30,40,0.8); border: 1px solid #444; border-radius: 8px; color: #aaa; font-size: 13px; cursor: pointer; text-align: center; transition: all 0.2s; }
-        .period-btn.active { background: linear-gradient(135deg, rgba(255,170,0,0.3), rgba(255,170,0,0.1)); border-color: #f90; color: #f90; box-shadow: 0 0 10px rgba(255,170,0,0.2); }
-        .period-btn .rate-label { display: block; font-size: 10px; color: #f90; margin-top: 3px; }
-        .reward-preview { background: rgba(255,170,0,0.05); border-radius: 8px; padding: 10px; margin: 15px 0; display: flex; justify-content: space-between; align-items: center; }
-        .reward-preview span { color: #ccc; font-size: 13px; }
-        .reward-preview strong { color: #f90; font-size: 16px; }
-        .stake-btn { width: 100%; background: linear-gradient(90deg, #f4a200, #ffd700); border: none; border-radius: 8px; padding: 14px; font-weight: bold; color: #111; cursor: pointer; box-shadow: 0 4px 15px rgba(255,170,0,0.3); font-size: 16px; }
-        .order-list-title { font-size: 16px; color: #f90; margin-bottom: 12px; }
-        .stake-card { background: rgba(16, 26, 46, 0.7); border: 1px solid rgba(0, 180, 255, 0.12); border-radius: 16px; padding: 16px; margin-bottom: 14px; backdrop-filter: blur(8px); }
-        .stake-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .stake-id { font-weight: 600; color: #c8d6e5; font-size: 17px; }
+        .period-btn { padding: 10px 5px; background: rgba(0, 20, 40, 0.5); border: 1px solid rgba(0, 136, 255, 0.2); border-radius: 8px; color: var(--text-secondary); font-size: 13px; cursor: pointer; text-align: center; transition: all 0.3s; }
+        .period-btn.active { background: rgba(0, 20, 60, 0.6); border-color: var(--cyan-glow); color: var(--text-primary); box-shadow: 0 0 15px rgba(0, 204, 255, 0.05); }
+        .period-btn .rate-label { display: block; font-size: 10px; color: var(--cyan-dim); margin-top: 3px; }
+
+        .reward-preview { background: linear-gradient(to right, rgba(0, 204, 255, 0.03), rgba(0, 136, 255, 0.03)); border: 1px solid rgba(0, 204, 255, 0.1); border-radius: 8px; padding: 10px; margin: 15px 0; display: flex; justify-content: space-between; align-items: center; }
+        .reward-preview span { color: var(--text-secondary); font-size: 13px; }
+        .reward-preview strong { color: var(--cyan-glow); font-size: 16px; font-weight: 600; }
+
+        /* 主按钮：科技蓝渐变 */
+        .stake-btn { 
+            width: 100%; 
+            background: linear-gradient(90deg, var(--cyan-dim), var(--cyan-glow)); 
+            border: none; 
+            border-radius: 8px; 
+            padding: 14px; 
+            font-weight: bold; 
+            color: #050B15; 
+            cursor: pointer; 
+            box-shadow: 0 4px 15px rgba(0, 136, 255, 0.4); 
+            font-size: 16px; 
+            transition: all 0.3s;
+        }
+        .stake-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(0, 204, 255, 0.6); }
+
+        /* ================= 订单列表 ================= */
+        .order-list-title { font-size: 16px; color: var(--text-primary); margin-bottom: 12px; font-weight: 500; }
+        
+        .stake-card { 
+            background: rgba(0, 16, 40, 0.6); 
+            border: 1px solid rgba(0, 136, 255, 0.15); 
+            border-radius: 16px; 
+            padding: 16px; 
+            margin-bottom: 14px; 
+            backdrop-filter: blur(8px); 
+            transition: all 0.3s;
+        }
+        .stake-card:hover { border-color: rgba(0, 204, 255, 0.3); box-shadow: 0 0 20px rgba(0, 136, 255, 0.03); }
+
+        .stake-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid rgba(0, 136, 255, 0.08); }
+        .stake-id { font-weight: 600; color: var(--text-primary); font-size: 17px; }
         .stake-status { padding: 4px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; }
-        .status-active { background: rgba(255, 215, 0, 0.15); color: #ffd93d; }
-        .status-ready { background: rgba(0, 230, 118, 0.15); color: #7bed9f; }
-        .status-redeemed { background: rgba(100, 100, 100, 0.2); color: #8a8a8a; }
-        .status-error { background: rgba(255, 71, 87, 0.12); color: #ff6b6b; }
-        .info-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
-        .info-row .label { color: #6a8aae; font-size: 13px; }
-        .info-row .value { color: #c8d6e5; font-size: 13px; font-weight: 500; }
-        .info-row .rate { color: #00d4ff; }
-        .stake-interest { background: rgba(0, 0, 0, 0.2); border-radius: 10px; padding: 10px 14px; margin: 10px 0; }
+        .status-active { background: rgba(0, 204, 255, 0.15); color: var(--cyan-glow); border: 1px solid rgba(0, 204, 255, 0.2); }
+        .status-ready { background: rgba(0, 230, 118, 0.1); color: #7bed9f; border: 1px solid rgba(0, 230, 118, 0.15); }
+        .status-redeemed { background: rgba(100, 100, 100, 0.15); color: #8a8a8a; border: 1px solid rgba(100, 100, 100, 0.2); }
+        .status-error { background: rgba(255, 71, 87, 0.1); color: #ff6b6b; border: 1px solid rgba(255, 71, 87, 0.15); }
+        
+        .info-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(0, 136, 255, 0.03); }
+        .info-row .label { color: var(--text-secondary); font-size: 13px; }
+        .info-row .value { color: var(--text-primary-soft); font-size: 13px; font-weight: 500; }
+        .info-row .rate { color: var(--cyan-glow); }
+        
+        .stake-interest { background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(0, 204, 255, 0.1); border-radius: 10px; padding: 10px 14px; margin: 10px 0; }
         .stake-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
         .stake-actions .btn { flex: 1; padding: 9px 10px; border: none; border-radius: 10px; font-weight: 500; cursor: pointer; min-width: 90px; font-size: 12px; transition: all 0.2s; }
-        .btn-primary { background: rgba(0, 180, 255, 0.15); color: #00d4ff; }
-        .btn-primary:hover:not(:disabled) { background: rgba(0, 180, 255, 0.25); }
-        .btn-success { background: rgba(0, 230, 118, 0.12); color: #7bed9f; }
+        
+        .btn-primary { background: rgba(0, 221, 255, 0.1); color: var(--cyan-glow); border: 1px solid rgba(0, 221, 255, 0.2); }
+        .btn-primary:hover:not(:disabled) { background: rgba(0, 221, 255, 0.2); box-shadow: 0 0 15px rgba(0, 221, 255, 0.1); }
+        .btn-success { background: rgba(0, 230, 118, 0.1); color: #7bed9f; border: 1px solid rgba(0, 230, 118, 0.15); }
         .btn-success:hover:not(:disabled) { background: rgba(0, 230, 118, 0.2); }
-        .btn-danger { background: rgba(255, 71, 87, 0.12); color: #ff6b6b; }
+        .btn-danger { background: rgba(255, 71, 87, 0.1); color: #ff6b6b; border: 1px solid rgba(255, 71, 87, 0.15); }
         .btn-danger:hover:not(:disabled) { background: rgba(255, 71, 87, 0.2); }
-        .btn-retry { background: rgba(255, 170, 0, 0.12); color: #f90; }
-        .btn-retry:hover { background: rgba(255, 170, 0, 0.25); }
-        .countdown { color: #ffd93d; font-weight: 600; }
-        .pending-interest { color: #ffd93d; font-weight: 600; }
-        .skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.03) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 6px; }
+        .btn-retry { background: rgba(0, 204, 255, 0.1); color: var(--cyan-glow); border: 1px solid rgba(0, 204, 255, 0.2); }
+        .btn-retry:hover { background: rgba(0, 204, 255, 0.2); }
+        
+        .countdown { color: var(--cyan-glow); font-weight: 600; }
+        .pending-interest { color: var(--cyan-glow); font-weight: 600; }
+
+        /* ================= 骨架屏 ================= */
+        .skeleton { background: linear-gradient(90deg, rgba(0, 136, 255, 0.05) 25%, rgba(0, 204, 255, 0.1) 50%, rgba(0, 136, 255, 0.05) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 6px; }
         @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
         .skeleton-row { display: flex; justify-content: space-between; padding: 8px 0; align-items: center; }
         .skeleton-label { width: 55px; height: 14px; }
         .skeleton-value { width: 90px; height: 14px; }
         .skeleton-interest { background: rgba(0,0,0,0.2); border-radius: 10px; padding: 10px 14px; margin: 10px 0; }
         .skeleton-btn { width: 100%; height: 36px; border-radius: 10px; }
-        .loading-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(2px); }
-        .loading-spinner { width: 40px; height: 40px; border: 3px solid rgba(255,170,0,0.2); border-top: 3px solid #f90; border-radius: 50%; animation: spin 0.8s linear infinite; }
+
+        /* ================= Loading ================= */
+        .loading-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(5, 11, 21, 0.8); display: flex; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(4px); }
+        .loading-spinner { width: 40px; height: 40px; border: 3px solid rgba(0, 204, 255, 0.15); border-top: 3px solid var(--cyan-glow); border-radius: 50%; animation: spin 0.8s linear infinite; box-shadow: 0 0 20px rgba(0, 204, 255, 0.2); }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .bottom-nav { flex-shrink: 0; background: rgba(15,15,30,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255,153,0,0.15); border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.9); display: flex; justify-content: space-around; padding: 12px 0; margin: 0 15px 15px 15px; position: relative; }
-        .bottom-nav::before { content: ''; position: absolute; top: -1px; left: -1px; right: -1px; bottom: -1px; border-radius: 20px; padding: 1px; background: linear-gradient(135deg, #f90, transparent, #f90); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: #666; font-size: 11px; gap: 4px; cursor: pointer; padding: 5px 10px; transition: all 0.2s ease; text-decoration: none; }
-        .nav-item .icon { font-size: 20px; }
-        .nav-item.active { color: #f90; position: relative; }
-        .nav-item.active::after { content: ''; position: absolute; top: -6px; left: 50%; transform: translateX(-50%); width: 20px; height: 2px; background: #f90; border-radius: 5px; box-shadow: 0 0 10px #f90; }
+
+        /* ================= 底部导航栏 (颜色与图标统一修复) ================= */
+        .bottom-nav { 
+            flex-shrink: 0; 
+            background: rgba(5, 11, 21, 0.85); 
+            backdrop-filter: blur(12px); 
+            border: 1px solid rgba(0, 136, 255, 0.15); 
+            border-radius: 20px; 
+            box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.8); 
+            display: flex; 
+            justify-content: space-around; 
+            padding: 12px 0; 
+            margin: 0 15px 15px 15px; 
+            position: relative; 
+            z-index: 10;
+        }
+        .nav-item { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            color: var(--text-secondary); 
+            font-size: 11px; 
+            gap: 4px; 
+            cursor: pointer; 
+            padding: 5px 10px; 
+            transition: all 0.3s ease; 
+            text-decoration: none; 
+        }
+        .nav-item .nav-icon { width: 20px; height: 20px; object-fit: contain; }
+        .nav-item.active { 
+            color: var(--text-primary); 
+            position: relative; 
+        }
+        .nav-item.active::after { 
+            content: ''; 
+            position: absolute; 
+            top: -6px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            width: 20px; 
+            height: 2px; 
+            background: linear-gradient(to right, var(--cyan-dim), var(--cyan-glow)); 
+            border-radius: 5px; 
+            box-shadow: 0 0 15px var(--cyan-glow); 
+        }
+        .nav-item:not(.active):hover { color: var(--cyan-glow); }
     </style>
 </head>
 <body>
@@ -122,9 +323,9 @@
                 </div>
                 <div class="amount-input-wrapper">
                     <input type="number" id="stakeAmount" placeholder="0.00000" value="0">
-                    <span id="currencyDisplay" style="color:#f90;font-size:14px;font-weight:600;">AIGC</span>
+                    <span id="currencyDisplay" style="color:var(--cyan-glow);font-size:14px;font-weight:600;">AIGC</span>
                 </div>
-                <div style="color:#ccc;font-size:13px;margin-bottom:8px;">选择质押周期</div>
+                <div style="color:var(--text-secondary);font-size:13px;margin-bottom:8px;">选择质押周期</div>
                 <div class="period-grid">
                     <div class="period-btn active" data-period="0">7天<span class="rate-label">日利率0.8%</span></div>
                     <div class="period-btn" data-period="1">35天<span class="rate-label">日利率1.3%</span></div>
@@ -158,12 +359,29 @@
                 </div>
             </div>
         </div>
+        
+        <!-- ================= 底部导航 (统一图片图标修复) ================= -->
         <div class="bottom-nav">
-            <a href="index.html" class="nav-item"><span class="icon">💼</span><span>资产</span></a>
-            <a href="stake.html" class="nav-item active"><span class="icon">🔒</span><span>质押</span></a>
-            <a href="liquidity.html" class="nav-item"><span class="icon">💧</span><span>流动性</span></a>
-            <a href="invite.html" class="nav-item"><span class="icon">📨</span><span>邀请</span></a>
-            <a href="ecosystem.html" class="nav-item"><span class="icon">🌐</span><span>生态</span></a>
+            <a href="index.html" class="nav-item">
+                <img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/index.icon.png" alt="资产">
+                <span>资产</span>
+            </a>
+            <a href="stake.html" class="nav-item active">
+                <img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/stake.icon.png" alt="质押">
+                <span>质押</span>
+            </a>
+            <a href="liquidity.html" class="nav-item">
+                <img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/liquidity.icon.png" alt="流动性">
+                <span>流动性</span>
+            </a>
+            <a href="invite.html" class="nav-item">
+                <img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/invite.icon.png" alt="邀请">
+                <span>邀请</span>
+            </a>
+            <a href="ecosystem.html" class="nav-item">
+                <img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/ecosystem.icon.png" alt="生态">
+                <span>生态</span>
+            </a>
         </div>
     </div>
 
@@ -337,7 +555,7 @@
                 }
 
                 if (failedCount > 0) {
-                    html += `<div style="color:#f90;text-align:center;padding:10px;font-size:12px;background:rgba(255,170,0,0.05);border-radius:8px;margin-top:8px;">✅ ${successCount} 个订单正常 &nbsp;|&nbsp; ❌ ${failedCount} 个订单加载失败</div>`;
+                    html += `<div style="color:var(--cyan-glow);text-align:center;padding:10px;font-size:12px;background:rgba(0,204,255,0.05);border-radius:8px;margin-top:8px;">✅ ${successCount} 个订单正常 &nbsp;|&nbsp; ❌ ${failedCount} 个订单加载失败</div>`;
                 }
                 container.innerHTML = html;
                 startCountdown();
@@ -410,7 +628,7 @@
 
         async function retryLoadOrder(id) {
             const card = document.querySelector(`.stake-card[data-stake-id="${id}"]`);
-            if (card) { card.innerHTML = '<div style="text-align:center;padding:20px;color:#f90;">⏳ 加载中...</div>'; }
+            if (card) { card.innerHTML = '<div style="text-align:center;padding:20px;color:var(--cyan-glow);">⏳ 加载中...</div>'; }
             try {
                 const orderHtml = await loadSingleOrder(id);
                 if (card) { card.outerHTML = orderHtml; bindOrderActions(); }
@@ -420,7 +638,7 @@
         }
 
         function renderEmptyCard() {
-            return `<div class="stake-card"><div class="stake-header"><span class="stake-id">📭 暂无质押</span></div><div style="text-align:center;padding:20px 0;color:#6a8aae;"><div style="font-size:32px;margin-bottom:8px;">🔓</div><div>还没有质押订单</div></div></div>`;
+            return `<div class="stake-card"><div class="stake-header"><span class="stake-id">📭 暂无质押</span></div><div style="text-align:center;padding:20px 0;color:var(--text-secondary);"><div style="font-size:32px;margin-bottom:8px;">🔓</div><div>还没有质押订单</div></div></div>`;
         }
 
         function renderSkeleton() {
