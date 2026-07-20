@@ -21,6 +21,7 @@
             
             --cyan-glow: #00DDFF;            /* 电光青/亮蓝（核心高亮） */
             --cyan-dim: #0088FF;             /* 深蓝/暗光蓝 */
+            --cyan-deep: #0A2463;            /* 深钴蓝 */
         }
 
         body { 
@@ -46,11 +47,34 @@
             overflow: hidden; 
         }
 
+        /* ===== 修复：新增流动性标准背景图 ===== */
+        .app-container::before { 
+            content: ''; 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0; 
+            background-image: url('https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/bg.png'); 
+            background-size: cover; 
+            background-position: center top; 
+            background-repeat: no-repeat; 
+            /* 底部渐变遮罩，让背景图自然向下过渡融合至深空蓝底 */
+            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%);
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 100%);
+            opacity: 0.8;
+            z-index: 0; 
+            pointer-events: none; 
+            border-radius: 20px; 
+        }
+
         .scroll-area { 
             flex: 1; 
             overflow-y: auto; 
             padding: 15px; 
             -webkit-overflow-scrolling: touch; 
+            position: relative; 
+            z-index: 1; 
         }
 
         /* ================= Header ================= */
@@ -199,7 +223,11 @@
             pointer-events: none; 
             opacity: 0.5;
         }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-secondary); font-size: 11px; gap: 4px; cursor: pointer; padding: 5px 10px; transition: all 0.3s ease; text-decoration: none; }
+        .nav-item { 
+            display: flex; flex-direction: column; align-items: center; 
+            color: var(--text-secondary); font-size: 11px; gap: 4px; cursor: pointer; padding: 5px 10px; 
+            transition: all 0.3s ease; text-decoration: none; 
+        }
         .nav-item .nav-icon { width: 20px; height: 20px; object-fit: contain; }
         .nav-item.active { color: var(--text-primary); position: relative; }
         .nav-item.active::after { 
