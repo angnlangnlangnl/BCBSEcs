@@ -484,7 +484,6 @@
                 <div class="node-slider" id="nodeSlider">
                     <div class="node-card"><div class="node-title">首富节点</div><div class="node-reward">收益3倍</div><div class="node-rights">S2权益 极差2%-10%</div><div class="node-dividend">全球分红1%</div><button class="node-apply-btn" data-node="rich">立即申请</button></div>
                     <div class="node-card"><div class="node-title">星链节点</div><div class="node-reward">收益5倍</div><div class="node-rights">S3权益 极差4%-15%</div><div class="node-dividend">全球分红1.6%</div><button class="node-apply-btn" data-node="starlink">立即申请</button></div>
-                    <!-- ✅ 创世节点收益从10倍改为9倍 -->
                     <div class="node-card"><div class="node-title">创世节点</div><div class="node-reward">收益9倍</div><div class="node-rights">S8权益 极差15%-40%</div><div class="node-dividend">全球分红2.4%</div><button class="node-apply-btn" data-node="genesis">立即申请</button></div>
                 </div>
                 <div class="claim-stats-row">
@@ -897,7 +896,31 @@
                 const addresses = await rpcAigcContract.getDirectReferrals(currentAccount);
                 if (!addresses || addresses.length === 0) { container.innerHTML = '<div class="record-item" style="justify-content:center;color:var(--text-secondary);">暂无邀请记录</div>'; return; }
                 let html = '';
-                for (const addr of addresses) { html += `<div class="record-item"><div class="field"><div class="field-label">地址</div><div class="field-value">${addr.substring(0,6)}...${addr.substring(addr.length-4)}</div></div></div>`; }
+                for (const addr of addresses) {
+                    const shortAddr = addr.substring(0,6) + '...' + addr.substring(addr.length-4);
+                    const now = Math.floor(Date.now() / 1000);
+                    const dateStr = new Date(now * 1000).toLocaleString('zh-CN', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hour12: false
+                    });
+                    html += `
+                        <div class="record-item">
+                            <div class="field">
+                                <div class="field-label">地址</div>
+                                <div class="field-value">${shortAddr}</div>
+                            </div>
+                            <div class="field">
+                                <div class="field-label">绑定时间</div>
+                                <div class="field-value">${dateStr}</div>
+                            </div>
+                        </div>
+                    `;
+                }
                 container.innerHTML = html;
             } catch (e) { container.innerHTML = '<div class="record-item" style="justify-content:center;color:var(--text-secondary);">加载失败，请重试</div>'; }
         }
@@ -909,8 +932,33 @@
             try {
                 const userInfoData = await rpcAigcContract.userInfo(currentAccount);
                 const lastClaimAmount = parseFloat(ethers.utils.formatEther(userInfoData.lastClaimAmount));
-                if (lastClaimAmount === 0) { container.innerHTML = '<div class="record-item" style="justify-content:center;color:var(--text-secondary);">暂无领取记录</div>'; return; }
-                container.innerHTML = `<div class="record-item"><div class="field"><div class="field-label">最近提币数量</div><div class="field-value">${lastClaimAmount.toFixed(4)} AIGC</div></div></div>`;
+                // 获取最后一次领取时间戳
+                const lastClaimTime = userInfoData.lastClaimTime ? parseInt(userInfoData.lastClaimTime.toString()) : 0;
+                if (lastClaimAmount === 0 || lastClaimTime === 0) {
+                    container.innerHTML = '<div class="record-item" style="justify-content:center;color:var(--text-secondary);">暂无领取记录</div>'; 
+                    return;
+                }
+                const timeStr = new Date(lastClaimTime * 1000).toLocaleString('zh-CN', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false
+                });
+                container.innerHTML = `
+                    <div class="record-item">
+                        <div class="field">
+                            <div class="field-label">最近提币数量</div>
+                            <div class="field-value">${lastClaimAmount.toFixed(4)} AIGC</div>
+                        </div>
+                        <div class="field">
+                            <div class="field-label">最近提取时间</div>
+                            <div class="field-value">${timeStr}</div>
+                        </div>
+                    </div>
+                `;
             } catch (e) { container.innerHTML = '<div class="record-item" style="justify-content:center;color:var(--text-secondary);">加载失败，请重试</div>'; }
         }
 
