@@ -196,6 +196,7 @@
             justify-content: center;
             gap: 8px;
         }
+        /* ✅ 替换为 rp.png 图片图标 */
         .page-title img { width: 28px; height: 28px; object-fit: contain; }
 
         /* ================= 空投卡片 ================= */
@@ -471,6 +472,7 @@
                     <button id="connectWalletBtn" class="connect-btn">Connect wallet</button>
                 </div>
             </div>
+            <!-- ✅ 将 📨 图标替换为 images/rp.png -->
             <div class="page-title"><img src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/rp.png" alt="邀请"> 邀请好友</div>
 
             <div class="panel airdrop-card">
@@ -602,7 +604,7 @@
             });
         });
 
-        // ======================== 原有逻辑 ========================
+        // ======================== 合约与配置 ========================
         const AIGC_ADDRESS = '0xdB5A187FE04A249AC2F2E821b72b771d01b2C0e8';
         const BCBS_ADDRESS = '0x9ECcC2B06582Ca14509CAd41F1d5204979Ce6995';
         const HSBC_ADDRESS = '0x20aD84A60902A91F036bD6bdB85AD1d61B2f65C1';
@@ -626,8 +628,9 @@
             "function identityLevel(address user) view returns (uint256)",
             "function getNodeLevel(address user) view returns (uint8)",
             "function userInfo(address user) view returns (uint256 totalDeposit, uint8 currentLevel, uint256 lastClaimAmount)",
+            // ✅ 修复：方法名与合约完全一致
+            "function getDirectReferralsWithTime(address user) view returns (address[], uint256[])",
             "function getDirectReferralCount(address user) view returns (uint256)",
-            "function getDirectReferrals(address user) view returns (address[])",
             "function getReferralLevelStats(address user) view returns (uint256 total, uint256 first, uint256 star, uint256 gen)",
             "function getUpgradedReferralCount(address user) view returns (uint256 count)",
             "function getTotalMinted(address user) view returns (uint256)",
@@ -725,6 +728,7 @@
         async function updateTeamPerformance() {
             if (!currentAccount) return;
             try {
+                // ✅ 业绩统计：从 BCBS 合约获取地址列表并计算大/小区业绩
                 const refs = await rpcBcbsContract.getDirectReferrals(currentAccount);
                 if (!refs || refs.length === 0) {
                     document.getElementById('maxPerformance').textContent = '0.00';
@@ -771,17 +775,19 @@
             } catch (e) {}
         }
 
+        // ✅ 团队人数：直接从 AIGC 获取直推数，递归用 BCBS 拉下级
         async function updateReferralCounts() {
             if (!currentAccount) return;
             try {
-                const refs = await rpcAigcContract.getDirectReferrals(currentAccount);
-                const directCount = refs ? refs.length : 0;
-                document.getElementById('directCount').textContent = directCount;
+                const directCount = await rpcAigcContract.getDirectReferralCount(currentAccount);
+                document.getElementById('directCount').textContent = parseInt(directCount.toString());
                 
-                let teamCount = directCount;
+                // ✅ 用 BCBS 获取地址数组来递归统计团队人数
+                let teamCount = parseInt(directCount.toString());
+                const refs = await rpcBcbsContract.getDirectReferrals(currentAccount);
                 for (const ref of (refs || [])) {
                     try {
-                        const subRefs = await rpcAigcContract.getDirectReferrals(ref);
+                        const subRefs = await rpcBcbsContract.getDirectReferrals(ref);
                         teamCount += subRefs ? subRefs.length : 0;
                     } catch (e) {}
                 }
@@ -862,37 +868,26 @@
             } catch (e) { alert('领取失败: ' + (e.reason || e.message)); btn.disabled = false; btn.textContent = '立即领取'; }
         });
 
-        // ✅ 精简为 2 步：点击按钮 → 自动授权 + 支付（用户只需在钱包确认两笔交易）
         document.querySelectorAll('.node-apply-btn').forEach(btn => {
             btn.addEventListener('click', async () => {
                 if (!currentAccount) { alert('请先连接钱包'); return; }
-                const nodeType = btn.dataset.node; 
-                const info = nodeAmountMap[nodeType];
-                
+                const nodeType = btn.dataset.node; const info = nodeAmountMap[nodeType];
+                if (!confirm(`确认申请【${info.name}】？\n将充值 ${info.amount} USDT`)) return;
                 const amountWei = ethers.utils.parseUnits(info.amount, 18);
-                btn.disabled = true; 
-                btn.textContent = '处理中...';
+                btn.disabled = true; btn.textContent = '处理中...';
                 try {
-                    // ✅ 第一步：检查并授权（自动，无弹窗）
                     const allowance = await usdtContract.allowance(currentAccount, AIGC_ADDRESS);
                     if (allowance.lt(amountWei)) {
                         btn.textContent = '请授权 USDT...';
-                        const approveTx = await usdtContract.approve(AIGC_ADDRESS, amountWei); 
-                        await approveTx.wait();
-                        btn.textContent = '支付中...';
+                        const approveTx = await usdtContract.approve(AIGC_ADDRESS, amountWei); await approveTx.wait();
+                        alert('✅ 授权成功！请再次点击申请按钮。');
+                        btn.disabled = false; btn.textContent = '立即申请'; return;
                     }
-                    
-                    // ✅ 第二步：自动执行充值交易（无额外确认弹窗）
                     btn.textContent = '充值中...';
-                    const tx = await aigcContract.depositUSDT(amountWei, { gasLimit: 500000 }); 
-                    await tx.wait();
+                    const tx = await aigcContract.depositUSDT(amountWei, { gasLimit: 500000 }); await tx.wait();
                     alert(`🎉 ${info.name}申请成功！`);
                     await refreshAllData();
-                } catch (e) { 
-                    alert('操作失败: ' + (e.reason || e.message)); 
-                    btn.disabled = false; 
-                    btn.textContent = '立即申请'; 
-                }
+                } catch (e) { alert('操作失败: ' + (e.reason || e.message)); btn.disabled = false; btn.textContent = '立即申请'; }
             });
         });
 
@@ -904,19 +899,40 @@
             });
         });
 
+        // ======================== ✅ 邀请记录卡片 ========================
         async function loadInviteRecords() {
             const container = document.getElementById('recordListContainer');
             if (!currentAccount) { container.innerHTML = '<div style="text-align:center;color:var(--text-secondary);padding:20px;">请先连接钱包</div>'; return; }
             container.innerHTML = '<div style="text-align:center;color:var(--text-secondary);padding:20px;"><span class="loading-spinner"></span> 加载中...</div>';
             try {
-                const addresses = await rpcAigcContract.getDirectReferrals(currentAccount);
+                const [addresses, timestamps] = await rpcAigcContract.getDirectReferralsWithTime(currentAccount);
                 if (!addresses || addresses.length === 0) { container.innerHTML = '<div class="record-item" style="justify-content:center;color:var(--text-secondary);">暂无邀请记录</div>'; return; }
                 let html = '';
-                for (const addr of addresses) { html += `<div class="record-item"><div class="field"><div class="field-label">地址</div><div class="field-value">${addr.substring(0,6)}...${addr.substring(addr.length-4)}</div></div></div>`; }
+                for (let i = 0; i < addresses.length; i++) {
+                    const addr = addresses[i];
+                    const timestamp = timestamps[i].toNumber();
+                    const dateStr = new Date(timestamp * 1000).toLocaleString('zh-CN', { hour12: false });
+                    html += `
+                        <div class="record-item">
+                            <div class="field">
+                                <div class="field-label">地址</div>
+                                <div class="field-value">${addr.substring(0,6)}...${addr.substring(addr.length-4)}</div>
+                            </div>
+                            <div class="field">
+                                <div class="field-label">绑定时间</div>
+                                <div class="field-value">${dateStr}</div>
+                            </div>
+                        </div>
+                    `;
+                }
                 container.innerHTML = html;
-            } catch (e) { container.innerHTML = '<div class="record-item" style="justify-content:center;color:var(--text-secondary);">加载失败，请重试</div>'; }
+            } catch (e) { 
+                console.error('邀请记录加载失败:', e);
+                container.innerHTML = '<div class="record-item" style="justify-content:center;color:var(--text-secondary);">加载失败，请重试</div>'; 
+            }
         }
 
+        // ======================== ✅ 领取记录卡片 ========================
         async function loadClaimRecords() {
             const container = document.getElementById('recordListContainer');
             if (!currentAccount) { container.innerHTML = '<div style="text-align:center;color:var(--text-secondary);padding:20px;">请先连接钱包</div>'; return; }
@@ -924,8 +940,39 @@
             try {
                 const userInfoData = await rpcAigcContract.userInfo(currentAccount);
                 const lastClaimAmount = parseFloat(ethers.utils.formatEther(userInfoData.lastClaimAmount));
-                if (lastClaimAmount === 0) { container.innerHTML = '<div class="record-item" style="justify-content:center;color:var(--text-secondary);">暂无领取记录</div>'; return; }
-                container.innerHTML = `<div class="record-item"><div class="field"><div class="field-label">最近提币数量</div><div class="field-value">${lastClaimAmount.toFixed(4)} AIGC</div></div></div>`;
+
+                let lastClaimTime = 0;
+                try {
+                    const nodeLevel = await rpcAigcContract.getNodeLevel(currentAccount);
+                    if (nodeLevel > 0) {
+                        const detail = await rpcAigcContract.getLevelDetail(currentAccount, nodeLevel);
+                        lastClaimTime = detail.lastClaimTime.toNumber();
+                    } else {
+                        const detail = await rpcAigcContract.getLevelDetail(currentAccount, 1);
+                        lastClaimTime = detail.lastClaimTime.toNumber();
+                    }
+                } catch (e) {}
+
+                if (lastClaimAmount === 0) { 
+                    container.innerHTML = '<div class="record-item" style="justify-content:center;color:var(--text-secondary);">暂无领取记录</div>'; return; 
+                }
+                
+                const dateStr = lastClaimTime > 0 
+                    ? new Date(lastClaimTime * 1000).toLocaleString('zh-CN', { hour12: false })
+                    : '--';
+
+                container.innerHTML = `
+                    <div class="record-item">
+                        <div class="field">
+                            <div class="field-label">最近提币数量</div>
+                            <div class="field-value">${lastClaimAmount.toFixed(4)} AIGC</div>
+                        </div>
+                        <div class="field">
+                            <div class="field-label">提币时间</div>
+                            <div class="field-value">${dateStr}</div>
+                        </div>
+                    </div>
+                `;
             } catch (e) { container.innerHTML = '<div class="record-item" style="justify-content:center;color:var(--text-secondary);">加载失败，请重试</div>'; }
         }
 
