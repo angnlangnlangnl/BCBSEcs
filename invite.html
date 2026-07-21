@@ -621,7 +621,7 @@
             "function identityLevel(address user) view returns (uint256)",
             "function getNodeLevel(address user) view returns (uint8)",
             "function userInfo(address user) view returns (uint256 totalDeposit, uint8 currentLevel, uint256 lastClaimAmount)",
-            // 更新：使用直接返回地址+时间的函数
+            // ✅ 修复：方法名与合约完全一致
             "function getDirectReferralsWithTime(address user) view returns (address[], uint256[])",
             "function getDirectReferralCount(address user) view returns (uint256)",
             "function getReferralLevelStats(address user) view returns (uint256 total, uint256 first, uint256 star, uint256 gen)",
@@ -768,20 +768,20 @@
             } catch (e) {}
         }
 
-        // ✅ 团队人数：直接从 AIGC 合约获取总数
+        // ✅ 团队人数：直接从 AIGC 获取直推数，递归用 BCBS 拉下级
         async function updateReferralCounts() {
             if (!currentAccount) return;
             try {
                 const directCount = await rpcAigcContract.getDirectReferralCount(currentAccount);
                 document.getElementById('directCount').textContent = parseInt(directCount.toString());
                 
-                // 递归统计团队人数
+                // ✅ 用 BCBS 获取地址数组来递归统计团队人数
                 let teamCount = parseInt(directCount.toString());
-                const refs = await rpcAigcContract.getDirectReferralsWithTime(currentAccount);
-                for (const ref of (refs[0] || [])) {
+                const refs = await rpcBcbsContract.getDirectReferrals(currentAccount);
+                for (const ref of (refs || [])) {
                     try {
-                        const subRefs = await rpcAigcContract.getDirectReferralsWithTime(ref);
-                        teamCount += subRefs[0] ? subRefs[0].length : 0;
+                        const subRefs = await rpcBcbsContract.getDirectReferrals(ref);
+                        teamCount += subRefs ? subRefs.length : 0;
                     } catch (e) {}
                 }
                 document.getElementById('teamCount').textContent = teamCount;
@@ -892,13 +892,13 @@
             });
         });
 
-        // ======================== ✅ 新增：邀请记录卡片（正确调用） ========================
+        // ======================== ✅ 邀请记录卡片（修正 ABI 后正常工作） ========================
         async function loadInviteRecords() {
             const container = document.getElementById('recordListContainer');
             if (!currentAccount) { container.innerHTML = '<div style="text-align:center;color:var(--text-secondary);padding:20px;">请先连接钱包</div>'; return; }
             container.innerHTML = '<div style="text-align:center;color:var(--text-secondary);padding:20px;"><span class="loading-spinner"></span> 加载中...</div>';
             try {
-                // ✅ 从 AIGC 合约获取地址 + 时间两个独立数组
+                // ✅ 调用正确的 ABI 方法名 getDirectReferralsWithTime
                 const [addresses, timestamps] = await rpcAigcContract.getDirectReferralsWithTime(currentAccount);
                 if (!addresses || addresses.length === 0) { container.innerHTML = '<div class="record-item" style="justify-content:center;color:var(--text-secondary);">暂无邀请记录</div>'; return; }
                 let html = '';
@@ -920,20 +920,21 @@
                     `;
                 }
                 container.innerHTML = html;
-            } catch (e) { container.innerHTML = '<div class="record-item" style="justify-content:center;color:var(--text-secondary);">加载失败，请重试</div>'; }
+            } catch (e) { 
+                console.error('邀请记录加载失败:', e);
+                container.innerHTML = '<div class="record-item" style="justify-content:center;color:var(--text-secondary);">加载失败，请重试</div>'; 
+            }
         }
 
-        // ======================== ✅ 新增：领取记录卡片（保留原有逻辑） ========================
+        // ======================== ✅ 领取记录卡片（保持不变） ========================
         async function loadClaimRecords() {
             const container = document.getElementById('recordListContainer');
             if (!currentAccount) { container.innerHTML = '<div style="text-align:center;color:var(--text-secondary);padding:20px;">请先连接钱包</div>'; return; }
             container.innerHTML = '<div style="text-align:center;color:var(--text-secondary);padding:20px;"><span class="loading-spinner"></span> 加载中...</div>';
             try {
-                // 获取用户 info 获取最近提币数量
                 const userInfoData = await rpcAigcContract.userInfo(currentAccount);
                 const lastClaimAmount = parseFloat(ethers.utils.formatEther(userInfoData.lastClaimAmount));
 
-                // 尝试从 level detail 获取最后一次领取的时间
                 let lastClaimTime = 0;
                 try {
                     const nodeLevel = await rpcAigcContract.getNodeLevel(currentAccount);
