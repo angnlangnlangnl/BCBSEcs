@@ -209,7 +209,6 @@
             document.getElementById('price-BNB').textContent = '$' + bnbPrice.toFixed(2);
             document.getElementById('price-BCBS').textContent = '$' + bcbsPrice.toFixed(4);
 
-            // ✅ 节点等级：先查 getNodeLevel，再查 isInPool
             let nodeLevel = 0, identityLevel = 0, userRate = 0;
             try { const lvl = await aigcContract.getNodeLevel(currentAccount); nodeLevel = parseInt(lvl.toString()); } catch (e) {}
             if (nodeLevel === 0) {
@@ -229,7 +228,6 @@
             document.getElementById('identityRow').textContent = '身份：S' + identityLevel;
             document.getElementById('rateRow').textContent = '利率：' + (userRate * 100).toFixed(1) + '%';
 
-            // ✅ 分红池：用 isInPool 判断
             let dividendHtml = '', hasDividend = false;
             for (let i = 0; i < 8; i++) {
                 try {
