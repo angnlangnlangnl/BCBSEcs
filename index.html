@@ -256,9 +256,25 @@
             document.getElementById('totalAssetValue').innerHTML = '$' + total.toFixed(2) + ' <small>USD</small>';
         }
 
+        // ✅ 修复：避免在没有余额时领取导致乱码提示
         window.claimPoolDividend = async function(poolId) {
             if (!currentAccount || !aigcContract) { alert('请先连接钱包'); return; }
-            try { const tx = await aigcContract.claimDividend(poolId); await tx.wait(); alert('✅ 领取成功！'); await loadAllData(); } catch (e) { alert('领取失败: ' + (e.reason || e.message)); }
+            try {
+                // ✅ 提前检查是否有可领取金额，避免浪费 Gas
+                const pend = await aigcContract.getPendingDividend(currentAccount, poolId);
+                if (!pend || pend.isZero()) {
+                    alert('当前分红池没有可领取的金额');
+                    return;
+                }
+                const tx = await aigcContract.claimDividend(poolId);
+                await tx.wait();
+                alert('✅ 领取成功！');
+                await loadAllData();
+            } catch (e) {
+                // ✅ 优先显示 e.reason，如果为空则显示用户友好的提示
+                const errMsg = e.reason || (e.message && e.message.includes('reverted') ? '交易被拒绝或合约校验失败' : e.message);
+                alert('领取失败: ' + errMsg);
+            }
         };
 
         function resetUI() {
