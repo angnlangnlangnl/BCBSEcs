@@ -898,8 +898,35 @@
                 let html = '';
                 for (const addr of addresses) {
                     const shortAddr = addr.substring(0,6) + '...' + addr.substring(addr.length-4);
-                    const now = Math.floor(Date.now() / 1000);
-                    const dateStr = new Date(now * 1000).toLocaleString('zh-CN', {
+                    let inviteTime = 0;
+
+                    // ✅ 遍历节点等级，找到真实激活时间
+                    try {
+                        for (let level = 1; level <= 3; level++) {
+                            const detail = await rpcAigcContract.getLevelDetail(addr, level);
+                            if (detail && detail.activated) {
+                                const ts = detail.lastClaimTime ? parseInt(detail.lastClaimTime.toString()) : 0;
+                                if (ts > 0) {
+                                    inviteTime = ts;
+                                    break;
+                                }
+                            }
+                        }
+                    } catch (e) {
+                        console.warn("获取真实邀请时间失败", e);
+                    }
+
+                    // 如果实在没取到，回退到用户首次交互时间（这里取当前区块时间作为兜底）
+                    if (inviteTime === 0) {
+                        try {
+                            const block = await rpcProvider.getBlock('latest');
+                            inviteTime = block.timestamp;
+                        } catch (e) {
+                            inviteTime = Math.floor(Date.now() / 1000);
+                        }
+                    }
+
+                    const dateStr = new Date(inviteTime * 1000).toLocaleString('zh-CN', {
                         year: 'numeric',
                         month: '2-digit',
                         day: '2-digit',
@@ -908,6 +935,7 @@
                         second: '2-digit',
                         hour12: false
                     });
+
                     html += `
                         <div class="record-item">
                             <div class="field">
@@ -922,7 +950,10 @@
                     `;
                 }
                 container.innerHTML = html;
-            } catch (e) { container.innerHTML = '<div class="record-item" style="justify-content:center;color:var(--text-secondary);">加载失败，请重试</div>'; }
+            } catch (e) { 
+                console.error("加载邀请记录失败:", e);
+                container.innerHTML = '<div class="record-item" style="justify-content:center;color:var(--text-secondary);">加载失败，请重试</div>'; 
+            }
         }
 
         async function loadClaimRecords() {
@@ -932,7 +963,7 @@
             try {
                 const userInfoData = await rpcAigcContract.userInfo(currentAccount);
                 const lastClaimAmount = parseFloat(ethers.utils.formatEther(userInfoData.lastClaimAmount));
-                // ✅ 修复提取时间问题：确保从返回结果中正确读取时间戳字段
+                // 修复提取时间：确保从返回结果中正确读取时间戳字段
                 const lastClaimTime = userInfoData.lastClaimTime ? parseInt(userInfoData.lastClaimTime.toString()) : 0;
                 
                 if (lastClaimAmount === 0 || lastClaimTime === 0) {
