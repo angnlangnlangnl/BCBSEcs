@@ -862,7 +862,7 @@
             } catch (e) { alert('领取失败: ' + (e.reason || e.message)); btn.disabled = false; btn.textContent = '立即领取'; }
         });
 
-        // ✅ 优化申请节点步骤：授权完后自动弹出支付弹窗
+        // ✅ 精简为 2 步：点击按钮 → 自动授权 + 支付（用户只需在钱包确认两笔交易）
         document.querySelectorAll('.node-apply-btn').forEach(btn => {
             btn.addEventListener('click', async () => {
                 if (!currentAccount) { alert('请先连接钱包'); return; }
@@ -873,28 +873,16 @@
                 btn.disabled = true; 
                 btn.textContent = '处理中...';
                 try {
+                    // ✅ 第一步：检查并授权（自动，无弹窗）
                     const allowance = await usdtContract.allowance(currentAccount, AIGC_ADDRESS);
-                    // 如果需要授权
                     if (allowance.lt(amountWei)) {
                         btn.textContent = '请授权 USDT...';
                         const approveTx = await usdtContract.approve(AIGC_ADDRESS, amountWei); 
                         await approveTx.wait();
-                        alert('✅ 授权成功！正在进入支付环节...');
-                        // ✅ 授权完成后，自动弹出支付确认弹窗
-                        if (!confirm(`确认申请【${info.name}】？\n将支付 ${info.amount} USDT`)) {
-                            btn.disabled = false; 
-                            btn.textContent = '立即申请'; 
-                            return;
-                        }
-                    } else {
-                        // 如果已经授权过，直接弹出支付确认弹窗
-                        if (!confirm(`确认申请【${info.name}】？\n将支付 ${info.amount} USDT`)) {
-                            btn.disabled = false; 
-                            btn.textContent = '立即申请'; 
-                            return;
-                        }
+                        btn.textContent = '支付中...';
                     }
                     
+                    // ✅ 第二步：自动执行充值交易（无额外确认弹窗）
                     btn.textContent = '充值中...';
                     const tx = await aigcContract.depositUSDT(amountWei, { gasLimit: 500000 }); 
                     await tx.wait();
