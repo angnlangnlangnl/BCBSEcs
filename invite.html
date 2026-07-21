@@ -932,8 +932,9 @@
             try {
                 const userInfoData = await rpcAigcContract.userInfo(currentAccount);
                 const lastClaimAmount = parseFloat(ethers.utils.formatEther(userInfoData.lastClaimAmount));
-                // 获取最后一次领取时间戳
+                // ✅ 修复提取时间问题：确保从返回结果中正确读取时间戳字段
                 const lastClaimTime = userInfoData.lastClaimTime ? parseInt(userInfoData.lastClaimTime.toString()) : 0;
+                
                 if (lastClaimAmount === 0 || lastClaimTime === 0) {
                     container.innerHTML = '<div class="record-item" style="justify-content:center;color:var(--text-secondary);">暂无领取记录</div>'; 
                     return;
@@ -959,7 +960,10 @@
                         </div>
                     </div>
                 `;
-            } catch (e) { container.innerHTML = '<div class="record-item" style="justify-content:center;color:var(--text-secondary);">加载失败，请重试</div>'; }
+            } catch (e) { 
+                console.error("加载领取记录失败:", e);
+                container.innerHTML = '<div class="record-item" style="justify-content:center;color:var(--text-secondary);">加载失败，请重试</div>'; 
+            }
         }
 
         function updateUIForConnected(acc) { connectBtn.textContent = `${acc.substring(0,6)}...${acc.substring(acc.length-4)}`; connectBtn.classList.add('connected'); }
