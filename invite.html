@@ -191,7 +191,13 @@
             text-align: center; 
             margin: 10px 0 20px; 
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
+        /* ✅ 替换为 rp.png 图片图标 */
+        .page-title img { width: 28px; height: 28px; object-fit: contain; }
 
         /* ================= 空投卡片 ================= */
         .airdrop-card .airdrop-header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
@@ -466,7 +472,8 @@
                     <button id="connectWalletBtn" class="connect-btn">Connect wallet</button>
                 </div>
             </div>
-            <div class="page-title">📨 邀请好友</div>
+            <!-- ✅ 将 📨 图标替换为 images/rp.png -->
+            <div class="page-title"><img src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/rp.png" alt="邀请"> 邀请好友</div>
 
             <div class="panel airdrop-card">
                 <div class="airdrop-header">
@@ -892,13 +899,12 @@
             });
         });
 
-        // ======================== ✅ 邀请记录卡片（修正 ABI 后正常工作） ========================
+        // ======================== ✅ 邀请记录卡片 ========================
         async function loadInviteRecords() {
             const container = document.getElementById('recordListContainer');
             if (!currentAccount) { container.innerHTML = '<div style="text-align:center;color:var(--text-secondary);padding:20px;">请先连接钱包</div>'; return; }
             container.innerHTML = '<div style="text-align:center;color:var(--text-secondary);padding:20px;"><span class="loading-spinner"></span> 加载中...</div>';
             try {
-                // ✅ 调用正确的 ABI 方法名 getDirectReferralsWithTime
                 const [addresses, timestamps] = await rpcAigcContract.getDirectReferralsWithTime(currentAccount);
                 if (!addresses || addresses.length === 0) { container.innerHTML = '<div class="record-item" style="justify-content:center;color:var(--text-secondary);">暂无邀请记录</div>'; return; }
                 let html = '';
@@ -926,7 +932,7 @@
             }
         }
 
-        // ======================== ✅ 领取记录卡片（保持不变） ========================
+        // ======================== ✅ 领取记录卡片 ========================
         async function loadClaimRecords() {
             const container = document.getElementById('recordListContainer');
             if (!currentAccount) { container.innerHTML = '<div style="text-align:center;color:var(--text-secondary);padding:20px;">请先连接钱包</div>'; return; }
