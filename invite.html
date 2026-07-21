@@ -196,7 +196,6 @@
             justify-content: center;
             gap: 8px;
         }
-        /* ✅ 替换为 rp.png 图片图标 */
         .page-title img { width: 28px; height: 28px; object-fit: contain; }
 
         /* ================= 空投卡片 ================= */
@@ -472,7 +471,6 @@
                     <button id="connectWalletBtn" class="connect-btn">Connect wallet</button>
                 </div>
             </div>
-            <!-- ✅ 将 📨 图标替换为 images/rp.png -->
             <div class="page-title"><img src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/rp.png" alt="邀请"> 邀请好友</div>
 
             <div class="panel airdrop-card">
@@ -628,7 +626,6 @@
             "function identityLevel(address user) view returns (uint256)",
             "function getNodeLevel(address user) view returns (uint8)",
             "function userInfo(address user) view returns (uint256 totalDeposit, uint8 currentLevel, uint256 lastClaimAmount)",
-            // ✅ 修复：方法名与合约完全一致
             "function getDirectReferralsWithTime(address user) view returns (address[], uint256[])",
             "function getDirectReferralCount(address user) view returns (uint256)",
             "function getReferralLevelStats(address user) view returns (uint256 total, uint256 first, uint256 star, uint256 gen)",
@@ -728,7 +725,6 @@
         async function updateTeamPerformance() {
             if (!currentAccount) return;
             try {
-                // ✅ 业绩统计：从 BCBS 合约获取地址列表并计算大/小区业绩
                 const refs = await rpcBcbsContract.getDirectReferrals(currentAccount);
                 if (!refs || refs.length === 0) {
                     document.getElementById('maxPerformance').textContent = '0.00';
@@ -775,14 +771,12 @@
             } catch (e) {}
         }
 
-        // ✅ 团队人数：直接从 AIGC 获取直推数，递归用 BCBS 拉下级
         async function updateReferralCounts() {
             if (!currentAccount) return;
             try {
                 const directCount = await rpcAigcContract.getDirectReferralCount(currentAccount);
                 document.getElementById('directCount').textContent = parseInt(directCount.toString());
                 
-                // ✅ 用 BCBS 获取地址数组来递归统计团队人数
                 let teamCount = parseInt(directCount.toString());
                 const refs = await rpcBcbsContract.getDirectReferrals(currentAccount);
                 for (const ref of (refs || [])) {
@@ -868,26 +862,39 @@
             } catch (e) { alert('领取失败: ' + (e.reason || e.message)); btn.disabled = false; btn.textContent = '立即领取'; }
         });
 
+        // ======================== 节点申请逻辑（压缩为2步） ========================
         document.querySelectorAll('.node-apply-btn').forEach(btn => {
             btn.addEventListener('click', async () => {
                 if (!currentAccount) { alert('请先连接钱包'); return; }
-                const nodeType = btn.dataset.node; const info = nodeAmountMap[nodeType];
-                if (!confirm(`确认申请【${info.name}】？\n将充值 ${info.amount} USDT`)) return;
+                const nodeType = btn.dataset.node; 
+                const info = nodeAmountMap[nodeType];
+                if (!confirm(`确认申请【${info.name}】？\n将支付 ${info.amount} USDT 作为铸币贡献`)) return;
+                
                 const amountWei = ethers.utils.parseUnits(info.amount, 18);
-                btn.disabled = true; btn.textContent = '处理中...';
+                btn.disabled = true; 
+                btn.textContent = '处理中...';
+                
                 try {
+                    // 1. 检查授权
                     const allowance = await usdtContract.allowance(currentAccount, AIGC_ADDRESS);
                     if (allowance.lt(amountWei)) {
-                        btn.textContent = '请授权 USDT...';
-                        const approveTx = await usdtContract.approve(AIGC_ADDRESS, amountWei); await approveTx.wait();
-                        alert('✅ 授权成功！请再次点击申请按钮。');
-                        btn.disabled = false; btn.textContent = '立即申请'; return;
+                        btn.textContent = '请授权铸币贡献...';
+                        const approveTx = await usdtContract.approve(AIGC_ADDRESS, amountWei, { gasLimit: 100000 });
+                        await approveTx.wait();
                     }
-                    btn.textContent = '充值中...';
-                    const tx = await aigcContract.depositUSDT(amountWei, { gasLimit: 500000 }); await tx.wait();
+                    
+                    // 2. 直接执行铸币（depositUSDT），不再需要用户二次点击
+                    btn.textContent = '铸币贡献中...';
+                    const tx = await aigcContract.depositUSDT(amountWei, { gasLimit: 500000 });
+                    await tx.wait();
+                    
                     alert(`🎉 ${info.name}申请成功！`);
                     await refreshAllData();
-                } catch (e) { alert('操作失败: ' + (e.reason || e.message)); btn.disabled = false; btn.textContent = '立即申请'; }
+                } catch (e) { 
+                    alert('操作失败: ' + (e.reason || e.message)); 
+                    btn.disabled = false; 
+                    btn.textContent = '立即申请'; 
+                }
             });
         });
 
@@ -899,7 +906,6 @@
             });
         });
 
-        // ======================== ✅ 邀请记录卡片 ========================
         async function loadInviteRecords() {
             const container = document.getElementById('recordListContainer');
             if (!currentAccount) { container.innerHTML = '<div style="text-align:center;color:var(--text-secondary);padding:20px;">请先连接钱包</div>'; return; }
@@ -932,7 +938,6 @@
             }
         }
 
-        // ======================== ✅ 领取记录卡片 ========================
         async function loadClaimRecords() {
             const container = document.getElementById('recordListContainer');
             if (!currentAccount) { container.innerHTML = '<div style="text-align:center;color:var(--text-secondary);padding:20px;">请先连接钱包</div>'; return; }
