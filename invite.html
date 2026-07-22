@@ -293,7 +293,10 @@
                 withdrawSuccess: '✅ 提取成功！',
                 withdrawFailed: '提币失败: ',
                 claimAlready: '已领取或不符合条件',
-                claimSuccess: '✅ 领取成功！'
+                claimSuccess: '✅ 领取成功！',
+                // ✅ 新增邀请记录卡片标签
+                labelAddress: '地址',
+                labelBindTime: '绑定时间'
             },
             en: {
                 langBtn: '🇺🇸 EN',
@@ -365,7 +368,10 @@
                 withdrawSuccess: '✅ Withdraw successful!',
                 withdrawFailed: 'Withdraw failed: ',
                 claimAlready: 'Already claimed or not eligible',
-                claimSuccess: '✅ Claim successful!'
+                claimSuccess: '✅ Claim successful!',
+                // ✅ 新增邀请记录卡片标签
+                labelAddress: 'Address',
+                labelBindTime: 'Binding Time'
             },
             zh: {
                 langBtn: '🇭🇰 繁中',
@@ -437,7 +443,10 @@
                 withdrawSuccess: '✅ 提取成功！',
                 withdrawFailed: '提幣失敗: ',
                 claimAlready: '已領取或不符合條件',
-                claimSuccess: '✅ 領取成功！'
+                claimSuccess: '✅ 領取成功！',
+                // ✅ 新增邀请记录卡片标签
+                labelAddress: '地址',
+                labelBindTime: '綁定時間'
             },
             es: {
                 langBtn: '🇪🇸 ES',
@@ -509,7 +518,10 @@
                 withdrawSuccess: '✅ ¡Retiro exitoso!',
                 withdrawFailed: 'Fallo en el retiro: ',
                 claimAlready: 'Ya reclamado o no elegible',
-                claimSuccess: '✅ ¡Reclamación exitosa!'
+                claimSuccess: '✅ ¡Reclamación exitosa!',
+                // ✅ 新增邀请记录卡片标签
+                labelAddress: 'Dirección',
+                labelBindTime: 'Tiempo de Vinculación'
             },
             fr: {
                 langBtn: '🇫🇷 FR',
@@ -581,7 +593,10 @@
                 withdrawSuccess: '✅ Retrait réussi!',
                 withdrawFailed: 'Échec du retrait: ',
                 claimAlready: 'Déjà réclamé ou non éligible',
-                claimSuccess: '✅ Réclamation réussie!'
+                claimSuccess: '✅ Réclamation réussie!',
+                // ✅ 新增邀请记录卡片标签
+                labelAddress: 'Adresse',
+                labelBindTime: 'Heure de Liaison'
             },
             ko: {
                 langBtn: '🇰🇷 KO',
@@ -653,7 +668,10 @@
                 withdrawSuccess: '✅ 인출 성공!',
                 withdrawFailed: '인출 실패: ',
                 claimAlready: '이미 수령했거나 자격이 없습니다',
-                claimSuccess: '✅ 수령 성공!'
+                claimSuccess: '✅ 수령 성공!',
+                // ✅ 新增邀请记录卡片标签
+                labelAddress: '주소',
+                labelBindTime: '바인딩 시간'
             },
             ja: {
                 langBtn: '🇯🇵 JA',
@@ -725,7 +743,10 @@
                 withdrawSuccess: '✅ 引き出し成功！',
                 withdrawFailed: '引き出し失敗: ',
                 claimAlready: '受領済みまたは資格なし',
-                claimSuccess: '✅ 受領成功！'
+                claimSuccess: '✅ 受領成功！',
+                // ✅ 新增邀请记录卡片标签
+                labelAddress: 'アドレス',
+                labelBindTime: 'バインディング時間'
             },
             ar: {
                 langBtn: '🇸🇦 AR',
@@ -797,7 +818,10 @@
                 withdrawSuccess: '✅ تم السحب بنجاح!',
                 withdrawFailed: 'فشل السحب: ',
                 claimAlready: 'تمت المطالبة مسبقًا أو غير مؤهل',
-                claimSuccess: '✅ تمت المطالبة بنجاح!'
+                claimSuccess: '✅ تمت المطالبة بنجاح!',
+                // ✅ 新增邀请记录卡片标签
+                labelAddress: 'العنوان',
+                labelBindTime: 'وقت الربط'
             },
             ru: {
                 langBtn: '🇷🇺 RU',
@@ -869,7 +893,10 @@
                 withdrawSuccess: '✅ Вывод успешен!',
                 withdrawFailed: 'Ошибка вывода: ',
                 claimAlready: 'Уже получено или не подходит',
-                claimSuccess: '✅ Получение успешно!'
+                claimSuccess: '✅ Получение успешно!',
+                // ✅ 新增邀请记录卡片标签
+                labelAddress: 'Адрес',
+                labelBindTime: 'Время привязки'
             }
         };
 
@@ -1146,6 +1173,7 @@
             btn.addEventListener('click', function() { document.querySelectorAll('.record-tab-btn').forEach(b => b.classList.remove('active')); this.classList.add('active'); currentTab = this.dataset.tab; if (currentTab === 'invite') loadInviteRecords(); else loadClaimRecords(); });
         });
 
+        // ✅ 修复邀请记录卡片：使用多语言标签
         async function loadInviteRecords() {
             const c = document.getElementById('recordListContainer'); const ld = translations[currentLang]||translations.cn;
             if (!currentAccount) { c.innerHTML = `<div style="text-align:center;color:var(--text-secondary);padding:20px;">${ld.connectWallet}</div>`; return; }
@@ -1156,7 +1184,16 @@
                 let h = '';
                 for (const r of records) {
                     const addr = r.user || r[0]; const ts = (r.timestamp || r[1]).toNumber();
-                    h += `<div class="record-item"><div class="field"><div class="field-label">地址</div><div class="field-value">${addr.substring(0,6)}...${addr.substring(addr.length-4)}</div></div><div class="field"><div class="field-label">绑定时间</div><div class="field-value">${new Date(ts*1000).toLocaleString('zh-CN',{hour12:false})}</div></div></div>`;
+                    h += `<div class="record-item">
+                        <div class="field">
+                            <div class="field-label">${ld.labelAddress}</div>
+                            <div class="field-value">${addr.substring(0,6)}...${addr.substring(addr.length-4)}</div>
+                        </div>
+                        <div class="field">
+                            <div class="field-label">${ld.labelBindTime}</div>
+                            <div class="field-value">${new Date(ts*1000).toLocaleString('zh-CN',{hour12:false})}</div>
+                        </div>
+                    </div>`;
                 }
                 c.innerHTML = h;
             } catch (e) { c.innerHTML = `<div class="record-item" style="justify-content:center;color:var(--text-secondary);">${ld.loadFailed}</div>`; }
