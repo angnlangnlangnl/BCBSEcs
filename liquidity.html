@@ -255,10 +255,11 @@
                 <div class="logo-area"><img src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/bcbs.png" alt="BCBS"><span>BCBS</span></div>
                 <div class="header-controls">
                     <!-- 语言切换按钮 -->
-                    <button class="lang-btn" id="langBtn">🇺🇸 EN ⌄</button>
+                    <button class="lang-btn" id="langBtn">🇨🇳 CN ⌄</button>
                     
                     <!-- 语言弹窗容器 -->
                     <div class="lang-dropdown" id="langDropdown">
+                        <div class="lang-option"><span>🇨🇳 简体中文</span><span class="code">CN</span></div>
                         <div class="lang-option"><span>🇺🇸 English</span><span class="code">EN</span></div>
                         <div class="lang-option"><span>🇭🇰 繁體中文</span><span class="code">ZH</span></div>
                         <div class="lang-option"><span>🇪🇸 Español</span><span class="code">ES</span></div>
@@ -282,78 +283,131 @@
         </div>
         
         <div class="bottom-nav">
-            <a href="index.html" class="nav-item"><img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/index.icon.png" alt="资产"><span>资产</span></a>
-            <a href="stake.html" class="nav-item"><img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/stake.icon.png" alt="质押"><span>质押</span></a>
-            <a href="liquidity.html" class="nav-item active"><img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/liquidity.icon.png" alt="流动性"><span>流动性</span></a>
-            <a href="invite.html" class="nav-item"><img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/invite.icon.png" alt="邀请"><span>邀请</span></a>
-            <a href="ecosystem.html" class="nav-item"><img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/ecosystem.icon.png" alt="生态"><span>生态</span></a>
+            <a href="index.html" class="nav-item"><img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/index.icon.png" alt="资产"><span id="navAssets">资产</span></a>
+            <a href="stake.html" class="nav-item"><img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/stake.icon.png" alt="质押"><span id="navStake">质押</span></a>
+            <a href="liquidity.html" class="nav-item active"><img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/liquidity.icon.png" alt="流动性"><span id="navLiquidity">流动性</span></a>
+            <a href="invite.html" class="nav-item"><img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/invite.icon.png" alt="邀请"><span id="navInvite">邀请</span></a>
+            <a href="ecosystem.html" class="nav-item"><img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/ecosystem.icon.png" alt="生态"><span id="navEcosystem">生态</span></a>
         </div>
     </div>
     
     <script>
         // ======================== 多语言翻译数据 ========================
         const translations = {
+            cn: {
+                langBtn: '🇨🇳 CN',
+                pageTitle: '💧 流动性',
+                panelTitle: '添加流动性',
+                panelDesc: '为交易对提供流动性，赚取手续费奖励',
+                panelBtn: '添加流动性',
+                navAssets: '资产',
+                navStake: '质押',
+                navLiquidity: '流动性',
+                navInvite: '邀请',
+                navEcosystem: '生态'
+            },
             en: {
+                langBtn: '🇺🇸 EN',
                 pageTitle: '💧 Liquidity',
                 panelTitle: 'Add Liquidity',
                 panelDesc: 'Provide liquidity for trading pairs and earn fee rewards',
                 panelBtn: 'Add Liquidity',
-                langBtn: '🇺🇸 EN'
+                navAssets: 'Assets',
+                navStake: 'Stake',
+                navLiquidity: 'Liquidity',
+                navInvite: 'Invite',
+                navEcosystem: 'Ecosystem'
             },
             zh: {
+                langBtn: '🇭🇰 繁中',
                 pageTitle: '💧 流動性',
                 panelTitle: '添加流動性',
                 panelDesc: '為交易對提供流動性，賺取手續費獎勵',
                 panelBtn: '添加流動性',
-                langBtn: '🇭🇰 繁中'
+                navAssets: '資產',
+                navStake: '質押',
+                navLiquidity: '流動性',
+                navInvite: '邀請',
+                navEcosystem: '生態'
             },
             es: {
+                langBtn: '🇪🇸 ES',
                 pageTitle: '💧 Liquidez',
                 panelTitle: 'Agregar Liquidez',
                 panelDesc: 'Proporcione liquidez para pares comerciales y gane recompensas por tarifas',
                 panelBtn: 'Agregar Liquidez',
-                langBtn: '🇪🇸 ES'
+                navAssets: 'Activos',
+                navStake: 'Stake',
+                navLiquidity: 'Liquidez',
+                navInvite: 'Invitar',
+                navEcosystem: 'Ecosistema'
             },
             fr: {
+                langBtn: '🇫🇷 FR',
                 pageTitle: '💧 Liquidité',
                 panelTitle: 'Ajouter de la Liquidité',
                 panelDesc: 'Fournissez de la liquidité pour les paires de trading et gagnez des récompenses de frais',
                 panelBtn: 'Ajouter de la Liquidité',
-                langBtn: '🇫🇷 FR'
+                navAssets: 'Actifs',
+                navStake: 'Staking',
+                navLiquidity: 'Liquidité',
+                navInvite: 'Inviter',
+                navEcosystem: 'Écosystème'
             },
             ko: {
+                langBtn: '🇰🇷 KO',
                 pageTitle: '💧 유동성',
                 panelTitle: '유동성 추가',
                 panelDesc: '거래 쌍에 유동성을 제공하고 수수료 보상을 받으세요',
                 panelBtn: '유동성 추가',
-                langBtn: '🇰🇷 KO'
+                navAssets: '자산',
+                navStake: '스테이킹',
+                navLiquidity: '유동성',
+                navInvite: '초대',
+                navEcosystem: '생태계'
             },
             ja: {
+                langBtn: '🇯🇵 JA',
                 pageTitle: '💧 流動性',
                 panelTitle: '流動性を追加',
                 panelDesc: '取引ペアに流動性を提供し、手数料報酬を獲得',
                 panelBtn: '流動性を追加',
-                langBtn: '🇯🇵 JA'
+                navAssets: '資産',
+                navStake: 'ステーキング',
+                navLiquidity: '流動性',
+                navInvite: '招待',
+                navEcosystem: 'エコシステム'
             },
             ar: {
+                langBtn: '🇸🇦 AR',
                 pageTitle: '💧 السيولة',
                 panelTitle: 'إضافة سيولة',
                 panelDesc: 'تقديم السيولة لأزواج التداول وكسب مكافآت الرسوم',
                 panelBtn: 'إضافة سيولة',
-                langBtn: '🇸🇦 AR'
+                navAssets: 'الأصول',
+                navStake: 'تخزين',
+                navLiquidity: 'سيولة',
+                navInvite: 'دعوة',
+                navEcosystem: 'النظام البيئي'
             },
             ru: {
+                langBtn: '🇷🇺 RU',
                 pageTitle: '💧 Ликвидность',
                 panelTitle: 'Добавить ликвидность',
                 panelDesc: 'Предоставьте ликвидность для торговых пар и получайте вознаграждение за комиссии',
                 panelBtn: 'Добавить ликвидность',
-                langBtn: '🇷🇺 RU'
+                navAssets: 'Активы',
+                navStake: 'Стейкинг',
+                navLiquidity: 'Ликвидность',
+                navInvite: 'Пригласить',
+                navEcosystem: 'Экосистема'
             }
         };
 
         // ======================== 语言切换弹窗逻辑 ========================
         const langBtn = document.getElementById('langBtn');
         const langDropdown = document.getElementById('langDropdown');
+        let currentLang = 'cn'; // ✅ 默认简体中文
 
         // 点击按钮切换弹窗显示/隐藏
         langBtn.addEventListener('click', (e) => {
@@ -377,11 +431,8 @@
                 const langData = translations[langCode];
                 
                 if (langData) {
-                    document.getElementById('pageTitle').textContent = langData.pageTitle;
-                    document.getElementById('panelTitle').textContent = langData.panelTitle;
-                    document.getElementById('panelDesc').textContent = langData.panelDesc;
-                    document.getElementById('panelBtn').textContent = langData.panelBtn;
-                    langBtn.textContent = langData.langBtn + ' ⌄';
+                    currentLang = langCode;
+                    applyTranslations(langData);
                 }
                 
                 // 关闭弹窗
@@ -389,6 +440,27 @@
                 langBtn.classList.remove('active');
             });
         });
+
+        // ✅ 应用翻译到界面
+        function applyTranslations(langData) {
+            // 按钮文字
+            langBtn.textContent = langData.langBtn + ' ⌄';
+            
+            // 页面标题
+            document.getElementById('pageTitle').textContent = langData.pageTitle;
+            
+            // 面板文字
+            document.getElementById('panelTitle').textContent = langData.panelTitle;
+            document.getElementById('panelDesc').textContent = langData.panelDesc;
+            document.getElementById('panelBtn').textContent = langData.panelBtn;
+            
+            // 底部导航
+            document.getElementById('navAssets').textContent = langData.navAssets;
+            document.getElementById('navStake').textContent = langData.navStake;
+            document.getElementById('navLiquidity').textContent = langData.navLiquidity;
+            document.getElementById('navInvite').textContent = langData.navInvite;
+            document.getElementById('navEcosystem').textContent = langData.navEcosystem;
+        }
 
         // ======================== 原有钱包连接逻辑 ========================
         const AIGC_ADDRESS = '0xdB5A187FE04A249AC2F2E821b72b771d01b2C0e8';
