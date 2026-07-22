@@ -1,49 +1,3 @@
-## 问题分析
-
----
-
-## 当前代码中的问题
-
-### 1. 累计铸币显示错误
-
-```javascript
-// ❌ 当前：读取 lastClaimAmount（最近一次提币量）
-const userInfo = await rpcAigcContract.userInfo(currentAccount);
-const totalClaimed = parseFloat(ethers.utils.formatEther(userInfo.lastClaimAmount));
-```
-
-**`lastClaimAmount` 只是最近一次提币量，不是累计！** 比如第一次提0.024，第二次提0.036，`lastClaimAmount` 只显示0.036。
-
----
-
-### 2. ABI 函数签名错误
-
-```javascript
-// ❌ 当前ABI
-"function getDirectReferralsWithTime(address user) view returns (address[], uint256[])"
-```
-
-**合约实际返回的是 `ReferralInfo[]`（结构体数组），不是两个分离的数组！**
-
----
-
-### 3. 领取记录时间获取逻辑错误
-
-```javascript
-// ❌ 当前：先从 getNodeLevel 判断，再查 getLevelDetail
-const nodeLevel = await rpcAigcContract.getNodeLevel(currentAccount);
-if (nodeLevel > 0) {
-    const detail = await rpcAigcContract.getLevelDetail(currentAccount, nodeLevel);
-}
-```
-
-**多等级用户可能有多个 level，`getNodeLevel` 只返回最高等级。**
-
----
-
-## ✅ 100% 准确修复方案
-
-```html
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -546,16 +500,3 @@ if (nodeLevel > 0) {
     </script>
 </body>
 </html>
-```
-
----
-
-## 📊 修复对比
-
-| 问题 | 修复前 | 修复后 |
-|------|--------|--------|
-| **累计铸币** | `userInfo.lastClaimAmount`（仅最后一次） | `getTotalMinted`（累计总量）✅ |
-| **ABI签名** | `returns (address[], uint256[])`（两个数组） | `returns (tuple(address,uint256)[])`（结构体数组）✅ |
-| **邀请记录解析** | `addresses[i]` + `timestamps[i]` | `r.user` + `r.timestamp`（结构体字段）✅ |
-| **领取记录时间** | 查 `getNodeLevel` + `getLevelDetail` | 遍历三个等级取最大 `lastClaimTime` ✅ |
-| **直接调用** | `aigcContract`（钱包Provider） | `rpcAigcContract`（公共RPC）✅ |
