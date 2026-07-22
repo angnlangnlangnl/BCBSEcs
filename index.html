@@ -86,8 +86,9 @@
             <div class="header">
                 <div class="logo-area"><img src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/bcbs.png" alt="BCBS"><span>BCBS</span></div>
                 <div class="header-controls">
-                    <button class="lang-btn" id="langBtn">🇺🇸 EN ⌄</button>
+                    <button class="lang-btn" id="langBtn">🇨🇳 CN ⌄</button>
                     <div class="lang-dropdown" id="langDropdown">
+                        <div class="lang-option"><span>🇨🇳 简体中文</span><span class="code">CN</span></div>
                         <div class="lang-option"><span>🇺🇸 English</span><span class="code">EN</span></div>
                         <div class="lang-option"><span>🇭🇰 繁體中文</span><span class="code">ZH</span></div>
                         <div class="lang-option"><span>🇪🇸 Español</span><span class="code">ES</span></div>
@@ -115,7 +116,7 @@
                     <div class="total-amount" id="totalAssetValue">0.00 <small>USD</small></div>
                 </div>
                 <div class="dividend-container">
-                    <span class="dividend-title">💰 分红池权益</span>
+                    <span class="dividend-title" id="dividendTitle">💰 分红池权益</span>
                     <div class="dividend-list" id="dividendList">暂无</div>
                 </div>
             </div>
@@ -140,6 +141,21 @@
     <script>
         // ======================== 多语言翻译数据 ========================
         const translations = {
+            cn: {
+                langBtn: '🇨🇳 CN',
+                totalLabel: '总资产价值',
+                navAssets: '资产',
+                navStake: '质押',
+                navLiquidity: '流动性',
+                navInvite: '邀请',
+                navEcosystem: '生态',
+                identityLabel: '身份',
+                rateLabel: '利率',
+                userLevels: ['普通用户', '首富节点', '星链节点', '创世节点'],
+                dividendTitle: '💰 分红池权益',
+                dividendEmpty: '暂无',
+                poolNames: ['首富池', '星链池', '创世池', 'S4池', 'S5池', 'S6池', 'S7池', 'S8池']
+            },
             en: {
                 langBtn: '🇺🇸 EN',
                 totalLabel: 'Total Asset Value',
@@ -152,7 +168,8 @@
                 rateLabel: 'Rate',
                 userLevels: ['Ordinary User', 'Rich Node', 'Starlink Node', 'Genesis Node'],
                 dividendTitle: '💰 Dividend Pool Rights',
-                dividendEmpty: 'None'
+                dividendEmpty: 'None',
+                poolNames: ['Rich Pool', 'Starlink Pool', 'Genesis Pool', 'S4 Pool', 'S5 Pool', 'S6 Pool', 'S7 Pool', 'S8 Pool']
             },
             zh: {
                 langBtn: '🇭🇰 繁中',
@@ -166,7 +183,8 @@
                 rateLabel: '利率',
                 userLevels: ['普通用戶', '首富節點', '星鏈節點', '創世節點'],
                 dividendTitle: '💰 分紅池權益',
-                dividendEmpty: '暫無'
+                dividendEmpty: '暫無',
+                poolNames: ['首富池', '星鏈池', '創世池', 'S4池', 'S5池', 'S6池', 'S7池', 'S8池']
             },
             es: {
                 langBtn: '🇪🇸 ES',
@@ -180,7 +198,8 @@
                 rateLabel: 'Tasa',
                 userLevels: ['Usuario Normal', 'Nodo Rico', 'Nodo Starlink', 'Nodo Génesis'],
                 dividendTitle: '💰 Derechos de Fondo de Dividendos',
-                dividendEmpty: 'Ninguno'
+                dividendEmpty: 'Ninguno',
+                poolNames: ['Fondo Rico', 'Fondo Starlink', 'Fondo Génesis', 'Fondo S4', 'Fondo S5', 'Fondo S6', 'Fondo S7', 'Fondo S8']
             },
             fr: {
                 langBtn: '🇫🇷 FR',
@@ -194,7 +213,8 @@
                 rateLabel: 'Taux',
                 userLevels: ['Utilisateur Ordinaire', 'Nœud Riche', 'Nœud Starlink', 'Nœud Genèse'],
                 dividendTitle: '💰 Droits du Fonds de Dividendes',
-                dividendEmpty: 'Aucun'
+                dividendEmpty: 'Aucun',
+                poolNames: ['Fonds Riche', 'Fonds Starlink', 'Fonds Genèse', 'Fonds S4', 'Fonds S5', 'Fonds S6', 'Fonds S7', 'Fonds S8']
             },
             ko: {
                 langBtn: '🇰🇷 KO',
@@ -208,7 +228,8 @@
                 rateLabel: '이자율',
                 userLevels: ['일반 사용자', '부자 노드', '스타링크 노드', '창세 노드'],
                 dividendTitle: '💰 배당 풀 권리',
-                dividendEmpty: '없음'
+                dividendEmpty: '없음',
+                poolNames: ['부자 풀', '스타링크 풀', '창세 풀', 'S4 풀', 'S5 풀', 'S6 풀', 'S7 풀', 'S8 풀']
             },
             ja: {
                 langBtn: '🇯🇵 JA',
@@ -222,7 +243,8 @@
                 rateLabel: '利率',
                 userLevels: ['一般ユーザー', 'リッチノード', 'スターリンクノード', 'ジェネシスノード'],
                 dividendTitle: '💰 配当プール権益',
-                dividendEmpty: 'なし'
+                dividendEmpty: 'なし',
+                poolNames: ['リッチプール', 'スターリンクプール', 'ジェネシスプール', 'S4プール', 'S5プール', 'S6プール', 'S7プール', 'S8プール']
             },
             ar: {
                 langBtn: '🇸🇦 AR',
@@ -236,7 +258,8 @@
                 rateLabel: 'سعر الفائدة',
                 userLevels: ['مستخدم عادي', 'عقدة غنية', 'عقدة ستارلينك', 'عقدة التكوين'],
                 dividendTitle: '💰 حقوق صندوق توزيع الأرباح',
-                dividendEmpty: 'لا يوجد'
+                dividendEmpty: 'لا يوجد',
+                poolNames: ['صندوق الأغنياء', 'صندوق ستارلينك', 'صندوق التكوين', 'صندوق S4', 'صندوق S5', 'صندوق S6', 'صندوق S7', 'صندوق S8']
             },
             ru: {
                 langBtn: '🇷🇺 RU',
@@ -250,14 +273,15 @@
                 rateLabel: 'Ставка',
                 userLevels: ['Обычный пользователь', 'Богатый узел', 'Узел Starlink', 'Узел Genesis'],
                 dividendTitle: '💰 Права на дивидендный пул',
-                dividendEmpty: 'Нет'
+                dividendEmpty: 'Нет',
+                poolNames: ['Богатый пул', 'Пул Starlink', 'Пул Genesis', 'Пул S4', 'Пул S5', 'Пул S6', 'Пул S7', 'Пул S8']
             }
         };
 
         // ======================== 语言切换逻辑 ========================
         const langBtn = document.getElementById('langBtn');
         const langDropdown = document.getElementById('langDropdown');
-        let currentLang = 'en';
+        let currentLang = 'cn'; // ✅ 默认简体中文
 
         // 点击按钮切换弹窗显示/隐藏
         langBtn.addEventListener('click', (e) => {
@@ -297,10 +321,15 @@
                     document.getElementById('navEcosystem').textContent = langData.navEcosystem;
                     
                     // 切换分红池标题和暂无
-                    document.querySelector('.dividend-title').textContent = langData.dividendTitle;
+                    document.getElementById('dividendTitle').textContent = langData.dividendTitle;
                     
-                    // 重新刷新用户等级、身份、利率显示
+                    // 重新刷新用户等级、身份、利率、分红池显示
                     refreshDisplayText(langData);
+                    
+                    // 重新加载数据以刷新分红池列表
+                    if (currentAccount) {
+                        loadAllData();
+                    }
                 }
                 
                 // 关闭弹窗
@@ -309,17 +338,16 @@
             });
         });
 
-        // 刷新界面静态文字（在 loadAllData 后调用）
+        // 刷新界面静态文字
         function refreshDisplayText(langData) {
             if (!langData) {
-                langData = translations[currentLang] || translations.en;
+                langData = translations[currentLang] || translations.cn;
             }
             
             // 更新身份和利率的标签前缀
             const identityRow = document.getElementById('identityRow');
             const rateRow = document.getElementById('rateRow');
             
-            // 获取当前显示的级别和利率数值
             const identityMatch = identityRow.textContent.match(/[：:]\s*(.*)/);
             const rateMatch = rateRow.textContent.match(/[：:]\s*(.*)/);
             
@@ -330,25 +358,15 @@
                 rateRow.textContent = langData.rateLabel + '：' + rateMatch[1];
             }
             
-            // 更新用户等级（从 userLevel 原始数据转换）
+            // 更新用户等级
             const levelEl = document.getElementById('userLevel');
             const levelText = levelEl.textContent;
-            // 映射等级名称（通过 nodeNames 索引）
             const nodeNames = ['普通用户', '首富节点', '星链节点', '创世节点'];
             const index = nodeNames.indexOf(levelText);
             if (index !== -1 && langData.userLevels[index]) {
                 levelEl.textContent = langData.userLevels[index];
             }
-            
-            // 更新分红池暂无文字
-            const dividendList = document.getElementById('dividendList');
-            if (dividendList.textContent === '暂无' || dividendList.textContent === 'None' || dividendList.textContent === 'Ninguno' || dividendList.textContent === 'Aucun' || dividendList.textContent === '없음' || dividendList.textContent === 'なし' || dividendList.textContent === 'لا يوجد' || dividendList.textContent === 'Нет') {
-                dividendList.textContent = langData.dividendEmpty;
-            }
         }
-
-        // 保存原始刷新逻辑以便后续调用
-        const originalLoadAllData = window.loadAllData;
 
         // ======================== 配置 ========================
         const AIGC_ADDRESS = '0xdB5A187FE04A249AC2F2E821b72b771d01b2C0e8';
@@ -374,7 +392,6 @@
         let isLoading = false, refreshTimer = null;
         const connectBtn = document.getElementById('connectWalletBtn');
         const nodeNames = ['普通用户', '首富节点', '星链节点', '创世节点'];
-        const poolNames = ['首富池', '星链池', '创世池', 'S4池', 'S5池', 'S6池', 'S7池', 'S8池'];
 
         function initContracts() {
             if (provider && signer) {
@@ -416,7 +433,7 @@
             document.getElementById('price-BNB').textContent = '$' + bnbPrice.toFixed(2);
             document.getElementById('price-BCBS').textContent = '$' + bcbsPrice.toFixed(4);
 
-            // ✅ 节点等级：先查 getNodeLevel，再查 isInPool
+            // ✅ 节点等级
             let nodeLevel = 0, identityLevel = 0, userRate = 0;
             try { const lvl = await aigcContract.getNodeLevel(currentAccount); nodeLevel = parseInt(lvl.toString()); } catch (e) {}
             if (nodeLevel === 0) {
@@ -433,7 +450,7 @@
             if (userRate === 0) { const baseRates = [0, 0.02, 0.04, 0.15]; userRate = baseRates[nodeLevel] || 0; }
 
             // 获取当前语言数据
-            const langData = translations[currentLang] || translations.en;
+            const langData = translations[currentLang] || translations.cn;
             
             // 显示用户等级（多语言）
             const levelName = langData.userLevels[nodeLevel] || '普通用户';
@@ -441,8 +458,9 @@
             document.getElementById('identityRow').textContent = langData.identityLabel + '：S' + identityLevel;
             document.getElementById('rateRow').textContent = langData.rateLabel + '：' + (userRate * 100).toFixed(1) + '%';
 
-            // ✅ 分红池：用 isInPool 判断
+            // ✅ 分红池：用 isInPool 判断，并显示多语言池名称
             let dividendHtml = '', hasDividend = false;
+            const poolNames = langData.poolNames;
             for (let i = 0; i < 8; i++) {
                 try {
                     const inPool = await aigcContract.isInPool(i, currentAccount);
@@ -477,7 +495,7 @@
 
         function resetUI() {
             document.getElementById('totalAssetValue').innerHTML = '0.00 <small>USD</small>';
-            const langData = translations[currentLang] || translations.en;
+            const langData = translations[currentLang] || translations.cn;
             document.getElementById('userLevel').textContent = langData.userLevels[0] || '普通用户';
             document.getElementById('identityRow').textContent = langData.identityLabel + '：S0';
             document.getElementById('rateRow').textContent = langData.rateLabel + '：0.00%';
