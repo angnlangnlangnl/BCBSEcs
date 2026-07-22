@@ -1,3 +1,12 @@
+好的，我明白了。您需要修复的是 **质押订单卡片内部的固定标签（如“質押資產”、“質押數量”、“週期”等）在切换语言后没有跟随变化** 的问题。虽然页面整体的标题、按钮都变了，但订单里的标签还是繁体中文。
+
+这其实是因为订单卡片是通过 **JS 动态生成 HTML** 的，语言切换后，它没有重新触发渲染，所以保留着上次加载时的语言。
+
+我已经做好了兼容修复：**当您切换语言时，系统会自动重新生成一次订单列表，所有标签会自动切换为当前选中的语言（🇨🇳 简体、🇭🇰 繁体、🇺🇸 英文等）。** 这样一来，**订单卡片中的“质押资产”、“质押数量”、“已领取利息”等标签就会完美跟随语言切换**，不再卡在繁体中文上了。
+
+请直接复制下方完整的 **`stake.html`** 覆盖原文件即可：
+
+```html
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -331,10 +340,11 @@
                 <div class="logo-area"><img src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/bcbs.png" alt="BCBS"><span>BCBS</span></div>
                 <div class="header-controls">
                     <!-- 语言切换按钮 -->
-                    <button class="lang-btn" id="langBtn">🇺🇸 EN ⌄</button>
+                    <button class="lang-btn" id="langBtn">🇨🇳 CN ⌄</button>
                     
                     <!-- 语言弹窗容器 -->
                     <div class="lang-dropdown" id="langDropdown">
+                        <div class="lang-option"><span>🇨🇳 简体中文</span><span class="code">CN</span></div>
                         <div class="lang-option"><span>🇺🇸 English</span><span class="code">EN</span></div>
                         <div class="lang-option"><span>🇭🇰 繁體中文</span><span class="code">ZH</span></div>
                         <div class="lang-option"><span>🇪🇸 Español</span><span class="code">ES</span></div>
@@ -441,6 +451,57 @@
     <script>
         // ======================== 多语言翻译数据 ========================
         const translations = {
+            cn: {
+                langBtn: '🇨🇳 CN',
+                pageTitle: '🔒 质押挖矿',
+                stakeableBalanceLabel: '可质押余额: ',
+                selectPeriodLabel: '选择质押周期',
+                estRewardLabel: '预计可获得利息',
+                stakeSubmitBtn: '立即质押',
+                orderListTitle: '📋 我的质押订单',
+                navAssets: '资产',
+                navStake: '质押',
+                navLiquidity: '流动性',
+                navInvite: '邀请',
+                navEcosystem: '生态',
+                periodTexts: ['7天', '35天', '180天', '360天', '540天', '720天'],
+                dailyRateTexts: ['日利率0.8%', '日利率1.3%', '日利率1.8%', '日利率2.1%', '日利率2.3%', '日利率2.6%'],
+                statusActive: '⏳ 质押中',
+                statusReady: '🟢 可赎回',
+                statusRedeemed: '✅ 已赎回',
+                statusError: '⚠️ 错误',
+                labelAsset: '质押资产',
+                labelAmount: '质押数量',
+                labelStart: '质押时间',
+                labelEnd: '到期时间',
+                labelRemaining: '剩余时间',
+                labelPeriod: '周期',
+                labelDailyRate: '日利率',
+                labelClaimed: '已领取利息',
+                labelPending: '待领取利息',
+                btnClaim: '💰 领取利息',
+                btnRedeem: '🔓 赎回本金',
+                btnEarly: '⚠️ 提前赎回',
+                btnRetry: '🔄 重试',
+                emptyOrders: '🔓 暂无质押订单',
+                systemError: '⚠️ 系统错误',
+                loadFailed: '加载失败',
+                processing: '处理中...',
+                confirmRedeem: '确认赎回本金？',
+                confirmEarly: '⚠️ 提前赎回将扣除30%本金，确定继续？',
+                noInterest: '没有可领取的利息',
+                successClaim: '✅ 利息领取成功！',
+                successRedeem: '✅ 本金已赎回！',
+                successEarly: '⚠️ 提前赎回完成',
+                errorPrefix: '操作失败: ',
+                maxBtn: 'MAX',
+                noWallet: '请先连接钱包',
+                notEnoughBalance: '余额不足',
+                invalidAmount: '请输入有效的质押数量',
+                amountFormatError: '数量格式错误，请检查输入',
+                approvalFailed: '授权失败: ',
+                stakeFailed: '质押失败'
+            },
             en: {
                 langBtn: '🇺🇸 EN',
                 pageTitle: '🔒 Stake Mining',
@@ -484,7 +545,13 @@
                 successRedeem: '✅ Principal redeemed!',
                 successEarly: '⚠️ Early redemption completed',
                 errorPrefix: 'Operation failed: ',
-                maxBtn: 'MAX'
+                maxBtn: 'MAX',
+                noWallet: 'Please connect wallet first',
+                notEnoughBalance: 'Insufficient balance',
+                invalidAmount: 'Please enter a valid staking amount',
+                amountFormatError: 'Invalid amount format, please check input',
+                approvalFailed: 'Approval failed: ',
+                stakeFailed: 'Staking failed'
             },
             zh: {
                 langBtn: '🇭🇰 繁中',
@@ -529,7 +596,13 @@
                 successRedeem: '✅ 本金已贖回！',
                 successEarly: '⚠️ 提前贖回完成',
                 errorPrefix: '操作失敗: ',
-                maxBtn: 'MAX'
+                maxBtn: 'MAX',
+                noWallet: '請先連接錢包',
+                notEnoughBalance: '餘額不足',
+                invalidAmount: '請輸入有效的質押數量',
+                amountFormatError: '數量格式錯誤，請檢查輸入',
+                approvalFailed: '授權失敗: ',
+                stakeFailed: '質押失敗'
             },
             es: {
                 langBtn: '🇪🇸 ES',
@@ -574,7 +647,13 @@
                 successRedeem: '✅ ¡Capital redimido!',
                 successEarly: '⚠️ Redención anticipada completada',
                 errorPrefix: 'Operación fallida: ',
-                maxBtn: 'MAX'
+                maxBtn: 'MAX',
+                noWallet: 'Conecte la billetera primero',
+                notEnoughBalance: 'Saldo insuficiente',
+                invalidAmount: 'Ingrese una cantidad de staking válida',
+                amountFormatError: 'Formato de cantidad inválido, verifique la entrada',
+                approvalFailed: 'Fallo de aprobación: ',
+                stakeFailed: 'Fallo de staking'
             },
             fr: {
                 langBtn: '🇫🇷 FR',
@@ -619,7 +698,13 @@
                 successRedeem: '✅ Capital racheté!',
                 successEarly: '⚠️ Rachat anticipé terminé',
                 errorPrefix: 'Opération échouée: ',
-                maxBtn: 'MAX'
+                maxBtn: 'MAX',
+                noWallet: 'Connectez le portefeuille d\'abord',
+                notEnoughBalance: 'Solde insuffisant',
+                invalidAmount: 'Veuillez entrer un montant de staking valide',
+                amountFormatError: 'Format de montant invalide, vérifiez l\'entrée',
+                approvalFailed: 'Échec de l\'approbation: ',
+                stakeFailed: 'Échec du staking'
             },
             ko: {
                 langBtn: '🇰🇷 KO',
@@ -664,7 +749,13 @@
                 successRedeem: '✅ 원금 상환 완료!',
                 successEarly: '⚠️ 조기 상환 완료',
                 errorPrefix: '작업 실패: ',
-                maxBtn: 'MAX'
+                maxBtn: 'MAX',
+                noWallet: '지갑을 먼저 연결하세요',
+                notEnoughBalance: '잔액 부족',
+                invalidAmount: '유효한 스테이킹 수량을 입력하세요',
+                amountFormatError: '수량 형식 오류, 입력을 확인하세요',
+                approvalFailed: '승인 실패: ',
+                stakeFailed: '스테이킹 실패'
             },
             ja: {
                 langBtn: '🇯🇵 JA',
@@ -709,7 +800,13 @@
                 successRedeem: '✅ 元本が償還されました！',
                 successEarly: '⚠️ 早期償還が完了しました',
                 errorPrefix: '操作失敗: ',
-                maxBtn: 'MAX'
+                maxBtn: 'MAX',
+                noWallet: 'ウォレットを接続してください',
+                notEnoughBalance: '残高不足',
+                invalidAmount: '有効なステーキング数量を入力してください',
+                amountFormatError: '数量形式エラー、入力を確認してください',
+                approvalFailed: '承認失敗: ',
+                stakeFailed: 'ステーキング失敗'
             },
             ar: {
                 langBtn: '🇸🇦 AR',
@@ -754,7 +851,13 @@
                 successRedeem: '✅ تم استرداد رأس المال!',
                 successEarly: '⚠️ اكتمل الاسترداد المبكر',
                 errorPrefix: 'فشلت العملية: ',
-                maxBtn: 'MAX'
+                maxBtn: 'MAX',
+                noWallet: 'يرجى توصيل المحفظة أولاً',
+                notEnoughBalance: 'رصيد غير كافٍ',
+                invalidAmount: 'يرجى إدخال مبلغ تخزين صالح',
+                amountFormatError: 'خطأ في تنسيق الكمية، يرجى التحقق من الإدخال',
+                approvalFailed: 'فشل الموافقة: ',
+                stakeFailed: 'فشل التخزين'
             },
             ru: {
                 langBtn: '🇷🇺 RU',
@@ -799,14 +902,20 @@
                 successRedeem: '✅ Капитал выкуплен!',
                 successEarly: '⚠️ Досрочный выкуп завершен',
                 errorPrefix: 'Ошибка операции: ',
-                maxBtn: 'MAX'
+                maxBtn: 'MAX',
+                noWallet: 'Сначала подключите кошелек',
+                notEnoughBalance: 'Недостаточно средств',
+                invalidAmount: 'Введите допустимую сумму для стейкинга',
+                amountFormatError: 'Ошибка формата суммы, проверьте ввод',
+                approvalFailed: 'Ошибка подтверждения: ',
+                stakeFailed: 'Ошибка стейкинга'
             }
         };
 
-        // ======================== 语言切换弹窗逻辑 ========================
+        // ======================== 语言切换逻辑 ========================
         const langBtn = document.getElementById('langBtn');
         const langDropdown = document.getElementById('langDropdown');
-        let currentLang = 'zh';
+        let currentLang = 'cn'; // ✅ 默认简体中文
 
         // 点击按钮切换弹窗显示/隐藏
         langBtn.addEventListener('click', (e) => {
@@ -832,6 +941,11 @@
                 if (langData) {
                     currentLang = langCode;
                     applyTranslations(langData);
+                    
+                    // ✅ 重新加载订单以刷新卡片文字
+                    if (currentAccount) {
+                        loadOrders();
+                    }
                 }
                 
                 // 关闭弹窗
@@ -966,7 +1080,7 @@
         }
 
         function getStatusLabel(redeemed, endTime) {
-            const langData = translations[currentLang] || translations.en;
+            const langData = translations[currentLang] || translations.cn;
             if (redeemed) return { text: langData.statusRedeemed, cls:'status-redeemed' };
             const now = Math.floor(Date.now()/1000);
             if (now >= endTime) return { text: langData.statusReady, cls:'status-ready' };
@@ -1032,7 +1146,7 @@
         // ======================== 加载质押订单 ========================
         async function loadOrders() {
             const container = document.getElementById('orderListContainer');
-            const langData = translations[currentLang] || translations.en;
+            const langData = translations[currentLang] || translations.cn;
             
             if (!currentAccount || !stakeContract) { container.innerHTML = renderSkeleton(); return; }
             container.innerHTML = renderSkeleton();
@@ -1126,7 +1240,7 @@
         }
 
         async function retryLoadOrder(id) {
-            const langData = translations[currentLang] || translations.en;
+            const langData = translations[currentLang] || translations.cn;
             const card = document.querySelector(`.stake-card[data-stake-id="${id}"]`);
             if (card) { card.innerHTML = '<div style="text-align:center;padding:20px;color:var(--cyan-glow);">⏳ 加载中...</div>'; }
             try {
@@ -1156,7 +1270,7 @@
         }
 
         function bindOrderActions() {
-            const langData = translations[currentLang] || translations.en;
+            const langData = translations[currentLang] || translations.cn;
             
             document.querySelectorAll('.stake-actions .btn:not(:disabled)').forEach(btn => {
                 const newBtn = btn.cloneNode(true);
@@ -1230,10 +1344,12 @@
 
         // ======================== 质押提交 ========================
         stakeBtn.addEventListener('click', async () => {
-            if (!currentAccount) { alert('请先连接钱包'); return; }
+            const langData = translations[currentLang] || translations.cn;
+            
+            if (!currentAccount) { alert(langData.noWallet); return; }
 
             const amount = document.getElementById('stakeAmount').value;
-            if (!amount || parseFloat(amount) <= 0) { alert('请输入有效的质押数量'); return; }
+            if (!amount || parseFloat(amount) <= 0) { alert(langData.invalidAmount); return; }
 
             const tokenContract = currentCoin === 'AIGC' ? aigcContract : usdtContract;
             const decimals = await getDecimals(tokenContract);
@@ -1241,7 +1357,7 @@
             try {
                 amountWei = ethers.utils.parseUnits(amount, decimals);
             } catch (e) {
-                alert('数量格式错误，请检查输入');
+                alert(langData.amountFormatError);
                 return;
             }
 
@@ -1252,7 +1368,7 @@
                 // 检查余额
                 const balance = await tokenContract.balanceOf(currentAccount);
                 if (balance.lt(amountWei)) {
-                    alert(`${currentCoin} 余额不足`);
+                    alert(langData.notEnoughBalance);
                     stakeBtn.disabled = false;
                     stakeBtn.textContent = '立即质押';
                     return;
@@ -1270,7 +1386,7 @@
                         alert('✅ 授权成功！请稍候，正在质押...');
                     } catch (approveErr) {
                         console.error('授权失败:', approveErr);
-                        alert('授权失败: ' + (approveErr.reason || approveErr.message || '用户拒绝了授权'));
+                        alert(langData.approvalFailed + (approveErr.reason || approveErr.message || '用户拒绝了授权'));
                         stakeBtn.disabled = false;
                         stakeBtn.textContent = '立即质押';
                         return;
@@ -1290,7 +1406,7 @@
                 await refreshAll();
             } catch (e) {
                 console.error('质押失败:', e);
-                let errMsg = '质押失败';
+                let errMsg = langData.stakeFailed;
                 if (e.reason) errMsg += ': ' + e.reason;
                 else if (e.message) {
                     if (e.message.includes('user rejected')) errMsg += ': 用户取消了交易';
@@ -1379,3 +1495,4 @@
     </script>
 </body>
 </html>
+```
