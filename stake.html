@@ -78,11 +78,9 @@
 
         /* ================= Header ================= */
         .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; position: relative; }
-        /* ✅ Logo替换为 bcbs.png 图片 */
         .logo-area { display: flex; align-items: center; font-size: 16px; font-weight: 600; color: var(--text-primary); letter-spacing: 0.5px; }
         .logo-area img { width: 24px; height: 24px; margin-right: 5px; }
         .logo-area span { margin-left: 5px; }
-        
         .header-controls { display: flex; gap: 10px; align-items: center; position: relative; }
         
         /* --- 语言切换按钮 --- */
@@ -182,7 +180,7 @@
             opacity: 0.5;
         }
 
-        /* 标题：纯白 */
+        /* ================= 标题 ================= */
         .page-title { 
             font-size: 24px; 
             color: var(--text-primary); 
@@ -196,7 +194,6 @@
         .balance-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 0; padding: 12px; position: relative; background: rgba(0, 10, 30, 0.6); }
         .balance-item { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 6px 10px; position: relative; }
         .balance-item:first-child { border-right: 1px solid rgba(0, 136, 255, 0.2); }
-        /* ✅ 图标移除 */
         .balance-icon { display: none; }
         .balance-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 2px; font-weight: 400; }
         .balance-value { font-size: 16px; font-weight: 600; color: var(--cyan-glow); text-align: center; word-break: break-all; }
@@ -330,7 +327,7 @@
     <div class="app-container">
         <div class="scroll-area">
             <div class="header">
-                <!-- ✅ 替换为 bcbs.png 图标 -->
+                <!-- Logo 替换为 bcbs.png 图片 -->
                 <div class="logo-area"><img src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/bcbs.png" alt="BCBS"><span>BCBS</span></div>
                 <div class="header-controls">
                     <!-- 语言切换按钮 -->
@@ -351,16 +348,14 @@
                     <button id="connectWalletBtn" class="connect-btn">Connect wallet</button>
                 </div>
             </div>
-            <div class="page-title">🔒 质押挖矿</div>
+            <div class="page-title" id="pageTitle">🔒 质押挖矿</div>
 
             <div class="panel balance-panel">
                 <div class="balance-item">
-                    <!-- ✅ 移除了 🪙 图标 -->
                     <div class="balance-label">AIGC</div>
                     <div class="balance-value" id="aigcBalance">--</div>
                 </div>
                 <div class="balance-item">
-                    <!-- ✅ 移除了 💵 图标 -->
                     <div class="balance-label">USDT</div>
                     <div class="balance-value" id="usdtBalance">--</div>
                 </div>
@@ -372,31 +367,31 @@
                     <div class="tab-btn" data-coin="USDT">USDT</div>
                 </div>
                 <div class="balance-info">
-                    <span>可质押余额: <span id="availableBalance">0.00000</span> <span id="coinLabel">AIGC</span></span>
+                    <span id="stakeableBalanceLabel">可质押余额: </span><span id="availableBalance">0.00000</span> <span id="coinLabel">AIGC</span>
                     <span class="max-btn" id="maxBtn">MAX</span>
                 </div>
                 <div class="amount-input-wrapper">
                     <input type="number" id="stakeAmount" placeholder="0.00000" value="0">
                     <span id="currencyDisplay" style="color:var(--cyan-glow);font-size:14px;font-weight:600;">AIGC</span>
                 </div>
-                <div style="color:var(--text-secondary);font-size:13px;margin-bottom:8px;">选择质押周期</div>
+                <div style="color:var(--text-secondary);font-size:13px;margin-bottom:8px;" id="selectPeriodLabel">选择质押周期</div>
                 <div class="period-grid">
-                    <div class="period-btn active" data-period="0">7天<span class="rate-label">日利率0.8%</span></div>
-                    <div class="period-btn" data-period="1">35天<span class="rate-label">日利率1.3%</span></div>
-                    <div class="period-btn" data-period="2">180天<span class="rate-label">日利率1.8%</span></div>
-                    <div class="period-btn" data-period="3">360天<span class="rate-label">日利率2.1%</span></div>
-                    <div class="period-btn" data-period="4">540天<span class="rate-label">日利率2.3%</span></div>
-                    <div class="period-btn" data-period="5">720天<span class="rate-label">日利率2.6%</span></div>
+                    <div class="period-btn active" data-period="0"><span class="period-text">7天</span><span class="rate-label">日利率0.8%</span></div>
+                    <div class="period-btn" data-period="1"><span class="period-text">35天</span><span class="rate-label">日利率1.3%</span></div>
+                    <div class="period-btn" data-period="2"><span class="period-text">180天</span><span class="rate-label">日利率1.8%</span></div>
+                    <div class="period-btn" data-period="3"><span class="period-text">360天</span><span class="rate-label">日利率2.1%</span></div>
+                    <div class="period-btn" data-period="4"><span class="period-text">540天</span><span class="rate-label">日利率2.3%</span></div>
+                    <div class="period-btn" data-period="5"><span class="period-text">720天</span><span class="rate-label">日利率2.6%</span></div>
                 </div>
                 <div class="reward-preview">
-                    <span>预计可获得利息</span>
+                    <span id="estRewardLabel">预计可获得利息</span>
                     <strong id="estimatedReward">0.00000 BCBS</strong>
                 </div>
                 <button class="stake-btn" id="stakeSubmitBtn">立即质押</button>
             </div>
 
             <div class="panel">
-                <div class="order-list-title">📋 我的质押订单</div>
+                <div class="order-list-title" id="orderListTitle">📋 我的质押订单</div>
                 <div id="orderListContainer">
                     <div class="stake-card">
                         <div class="stake-header"><div class="skeleton" style="width:40px;height:17px;"></div><div class="skeleton" style="width:70px;height:24px;border-radius:20px;"></div></div>
@@ -418,23 +413,23 @@
         <div class="bottom-nav">
             <a href="index.html" class="nav-item">
                 <img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/index.icon.png" alt="资产">
-                <span>资产</span>
+                <span id="navAssets">资产</span>
             </a>
             <a href="stake.html" class="nav-item active">
                 <img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/stake.icon.png" alt="质押">
-                <span>质押</span>
+                <span id="navStake">质押</span>
             </a>
             <a href="liquidity.html" class="nav-item">
                 <img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/liquidity.icon.png" alt="流动性">
-                <span>流动性</span>
+                <span id="navLiquidity">流动性</span>
             </a>
             <a href="invite.html" class="nav-item">
                 <img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/invite.icon.png" alt="邀请">
-                <span>邀请</span>
+                <span id="navInvite">邀请</span>
             </a>
             <a href="ecosystem.html" class="nav-item">
                 <img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/ecosystem.icon.png" alt="生态">
-                <span>生态</span>
+                <span id="navEcosystem">生态</span>
             </a>
         </div>
     </div>
@@ -444,9 +439,374 @@
     </div>
 
     <script>
+        // ======================== 多语言翻译数据 ========================
+        const translations = {
+            en: {
+                langBtn: '🇺🇸 EN',
+                pageTitle: '🔒 Stake Mining',
+                stakeableBalanceLabel: 'Stakeable Balance: ',
+                selectPeriodLabel: 'Select Staking Period',
+                estRewardLabel: 'Estimated Interest',
+                stakeSubmitBtn: 'Stake Now',
+                orderListTitle: '📋 My Staking Orders',
+                navAssets: 'Assets',
+                navStake: 'Stake',
+                navLiquidity: 'Liquidity',
+                navInvite: 'Invite',
+                navEcosystem: 'Ecosystem',
+                periodTexts: ['7 Days', '35 Days', '180 Days', '360 Days', '540 Days', '720 Days'],
+                dailyRateTexts: ['Daily 0.8%', 'Daily 1.3%', 'Daily 1.8%', 'Daily 2.1%', 'Daily 2.3%', 'Daily 2.6%'],
+                statusActive: '⏳ Staking',
+                statusReady: '🟢 Ready to Redeem',
+                statusRedeemed: '✅ Redeemed',
+                statusError: '⚠️ Error',
+                labelAsset: 'Staked Asset',
+                labelAmount: 'Staked Amount',
+                labelStart: 'Start Time',
+                labelEnd: 'End Time',
+                labelRemaining: 'Remaining Time',
+                labelPeriod: 'Period',
+                labelDailyRate: 'Daily Rate',
+                labelClaimed: 'Claimed Interest',
+                labelPending: 'Pending Interest',
+                btnClaim: '💰 Claim Interest',
+                btnRedeem: '🔓 Redeem Principal',
+                btnEarly: '⚠️ Early Redeem',
+                btnRetry: '🔄 Retry',
+                emptyOrders: '🔓 No staking orders yet',
+                systemError: '⚠️ System Error',
+                loadFailed: 'Load Failed',
+                processing: 'Processing...',
+                confirmRedeem: 'Confirm redeem principal?',
+                confirmEarly: '⚠️ Early redemption will deduct 30% of principal, continue?',
+                noInterest: 'No claimable interest',
+                successClaim: '✅ Interest claimed successfully!',
+                successRedeem: '✅ Principal redeemed!',
+                successEarly: '⚠️ Early redemption completed',
+                errorPrefix: 'Operation failed: ',
+                maxBtn: 'MAX'
+            },
+            zh: {
+                langBtn: '🇭🇰 繁中',
+                pageTitle: '🔒 質押挖礦',
+                stakeableBalanceLabel: '可質押餘額: ',
+                selectPeriodLabel: '選擇質押週期',
+                estRewardLabel: '預計可獲得利息',
+                stakeSubmitBtn: '立即質押',
+                orderListTitle: '📋 我的質押訂單',
+                navAssets: '資產',
+                navStake: '質押',
+                navLiquidity: '流動性',
+                navInvite: '邀請',
+                navEcosystem: '生態',
+                periodTexts: ['7天', '35天', '180天', '360天', '540天', '720天'],
+                dailyRateTexts: ['日利率0.8%', '日利率1.3%', '日利率1.8%', '日利率2.1%', '日利率2.3%', '日利率2.6%'],
+                statusActive: '⏳ 質押中',
+                statusReady: '🟢 可贖回',
+                statusRedeemed: '✅ 已贖回',
+                statusError: '⚠️ 錯誤',
+                labelAsset: '質押資產',
+                labelAmount: '質押數量',
+                labelStart: '質押時間',
+                labelEnd: '到期時間',
+                labelRemaining: '剩餘時間',
+                labelPeriod: '週期',
+                labelDailyRate: '日利率',
+                labelClaimed: '已領取利息',
+                labelPending: '待領取利息',
+                btnClaim: '💰 領取利息',
+                btnRedeem: '🔓 贖回本金',
+                btnEarly: '⚠️ 提前贖回',
+                btnRetry: '🔄 重試',
+                emptyOrders: '🔓 暫無質押訂單',
+                systemError: '⚠️ 系統錯誤',
+                loadFailed: '載入失敗',
+                processing: '處理中...',
+                confirmRedeem: '確認贖回本金？',
+                confirmEarly: '⚠️ 提前贖回將扣除30%本金，確定繼續？',
+                noInterest: '沒有可領取的利息',
+                successClaim: '✅ 利息領取成功！',
+                successRedeem: '✅ 本金已贖回！',
+                successEarly: '⚠️ 提前贖回完成',
+                errorPrefix: '操作失敗: ',
+                maxBtn: 'MAX'
+            },
+            es: {
+                langBtn: '🇪🇸 ES',
+                pageTitle: '🔒 Minería de Staking',
+                stakeableBalanceLabel: 'Saldo Apostable: ',
+                selectPeriodLabel: 'Seleccionar Período de Staking',
+                estRewardLabel: 'Interés Estimado',
+                stakeSubmitBtn: 'Hacer Staking Ahora',
+                orderListTitle: '📋 Mis Órdenes de Staking',
+                navAssets: 'Activos',
+                navStake: 'Staking',
+                navLiquidity: 'Liquidez',
+                navInvite: 'Invitar',
+                navEcosystem: 'Ecosistema',
+                periodTexts: ['7 Días', '35 Días', '180 Días', '360 Días', '540 Días', '720 Días'],
+                dailyRateTexts: ['Diario 0.8%', 'Diario 1.3%', 'Diario 1.8%', 'Diario 2.1%', 'Diario 2.3%', 'Diario 2.6%'],
+                statusActive: '⏳ Staking',
+                statusReady: '🟢 Listo para Redimir',
+                statusRedeemed: '✅ Redimido',
+                statusError: '⚠️ Error',
+                labelAsset: 'Activo Apostado',
+                labelAmount: 'Cantidad Apostada',
+                labelStart: 'Tiempo de Inicio',
+                labelEnd: 'Tiempo de Finalización',
+                labelRemaining: 'Tiempo Restante',
+                labelPeriod: 'Período',
+                labelDailyRate: 'Tasa Diaria',
+                labelClaimed: 'Interés Reclamado',
+                labelPending: 'Interés Pendiente',
+                btnClaim: '💰 Reclamar Interés',
+                btnRedeem: '🔓 Redimir Capital',
+                btnEarly: '⚠️ Redención Anticipada',
+                btnRetry: '🔄 Reintentar',
+                emptyOrders: '🔓 Sin órdenes de staking',
+                systemError: '⚠️ Error del Sistema',
+                loadFailed: 'Carga Fallida',
+                processing: 'Procesando...',
+                confirmRedeem: '¿Confirmar redimir capital?',
+                confirmEarly: '⚠️ La redención anticipada deducirá el 30% del capital, ¿continuar?',
+                noInterest: 'Sin interés reclamable',
+                successClaim: '✅ ¡Interés reclamado con éxito!',
+                successRedeem: '✅ ¡Capital redimido!',
+                successEarly: '⚠️ Redención anticipada completada',
+                errorPrefix: 'Operación fallida: ',
+                maxBtn: 'MAX'
+            },
+            fr: {
+                langBtn: '🇫🇷 FR',
+                pageTitle: '🔒 Minage de Staking',
+                stakeableBalanceLabel: 'Solde à Staker: ',
+                selectPeriodLabel: 'Choisir la Période de Staking',
+                estRewardLabel: 'Intérêts Estimés',
+                stakeSubmitBtn: 'Staker Maintenant',
+                orderListTitle: '📋 Mes Ordres de Staking',
+                navAssets: 'Actifs',
+                navStake: 'Staking',
+                navLiquidity: 'Liquidité',
+                navInvite: 'Inviter',
+                navEcosystem: 'Écosystème',
+                periodTexts: ['7 Jours', '35 Jours', '180 Jours', '360 Jours', '540 Jours', '720 Jours'],
+                dailyRateTexts: ['Quotidien 0.8%', 'Quotidien 1.3%', 'Quotidien 1.8%', 'Quotidien 2.1%', 'Quotidien 2.3%', 'Quotidien 2.6%'],
+                statusActive: '⏳ Staking',
+                statusReady: '🟢 Prêt à Racheter',
+                statusRedeemed: '✅ Racheté',
+                statusError: '⚠️ Erreur',
+                labelAsset: 'Actif Staké',
+                labelAmount: 'Montant Staké',
+                labelStart: 'Temps de Début',
+                labelEnd: 'Temps de Fin',
+                labelRemaining: 'Temps Restant',
+                labelPeriod: 'Période',
+                labelDailyRate: 'Taux Quotidien',
+                labelClaimed: 'Intérêts Réclamés',
+                labelPending: 'Intérêts en Attente',
+                btnClaim: '💰 Réclamer les Intérêts',
+                btnRedeem: '🔓 Racheter le Capital',
+                btnEarly: '⚠️ Rachet Anticipé',
+                btnRetry: '🔄 Réessayer',
+                emptyOrders: '🔓 Aucun ordre de staking',
+                systemError: '⚠️ Erreur Système',
+                loadFailed: 'Échec du Chargement',
+                processing: 'Traitement...',
+                confirmRedeem: 'Confirmer le rachat du capital?',
+                confirmEarly: '⚠️ Le rachat anticipé déduira 30% du capital, continuer?',
+                noInterest: 'Aucun intérêt à réclamer',
+                successClaim: '✅ Intérêts réclamés avec succès!',
+                successRedeem: '✅ Capital racheté!',
+                successEarly: '⚠️ Rachat anticipé terminé',
+                errorPrefix: 'Opération échouée: ',
+                maxBtn: 'MAX'
+            },
+            ko: {
+                langBtn: '🇰🇷 KO',
+                pageTitle: '🔒 스테이킹 채굴',
+                stakeableBalanceLabel: '스테이킹 가능 잔액: ',
+                selectPeriodLabel: '스테이킹 기간 선택',
+                estRewardLabel: '예상 이자',
+                stakeSubmitBtn: '지금 스테이킹',
+                orderListTitle: '📋 내 스테이킹 주문',
+                navAssets: '자산',
+                navStake: '스테이킹',
+                navLiquidity: '유동성',
+                navInvite: '초대',
+                navEcosystem: '생태계',
+                periodTexts: ['7일', '35일', '180일', '360일', '540일', '720일'],
+                dailyRateTexts: ['일일 0.8%', '일일 1.3%', '일일 1.8%', '일일 2.1%', '일일 2.3%', '일일 2.6%'],
+                statusActive: '⏳ 스테이킹 중',
+                statusReady: '🟢 상환 가능',
+                statusRedeemed: '✅ 상환 완료',
+                statusError: '⚠️ 오류',
+                labelAsset: '스테이킹 자산',
+                labelAmount: '스테이킹 수량',
+                labelStart: '시작 시간',
+                labelEnd: '만료 시간',
+                labelRemaining: '남은 시간',
+                labelPeriod: '기간',
+                labelDailyRate: '일일 이자율',
+                labelClaimed: '수령한 이자',
+                labelPending: '대기 중인 이자',
+                btnClaim: '💰 이자 받기',
+                btnRedeem: '🔓 원금 상환',
+                btnEarly: '⚠️ 조기 상환',
+                btnRetry: '🔄 재시도',
+                emptyOrders: '🔓 스테이킹 주문 없음',
+                systemError: '⚠️ 시스템 오류',
+                loadFailed: '로드 실패',
+                processing: '처리 중...',
+                confirmRedeem: '원금 상환을 확인하시겠습니까?',
+                confirmEarly: '⚠️ 조기 상환 시 원금의 30%가 차감됩니다. 계속하시겠습니까?',
+                noInterest: '받을 수 있는 이자가 없습니다',
+                successClaim: '✅ 이자 수령 성공!',
+                successRedeem: '✅ 원금 상환 완료!',
+                successEarly: '⚠️ 조기 상환 완료',
+                errorPrefix: '작업 실패: ',
+                maxBtn: 'MAX'
+            },
+            ja: {
+                langBtn: '🇯🇵 JA',
+                pageTitle: '🔒 ステーキングマイニング',
+                stakeableBalanceLabel: 'ステーキング可能残高: ',
+                selectPeriodLabel: 'ステーキング期間を選択',
+                estRewardLabel: '予想利息',
+                stakeSubmitBtn: '今すぐステーキング',
+                orderListTitle: '📋 マイステーキング注文',
+                navAssets: '資産',
+                navStake: 'ステーキング',
+                navLiquidity: '流動性',
+                navInvite: '招待',
+                navEcosystem: 'エコシステム',
+                periodTexts: ['7日', '35日', '180日', '360日', '540日', '720日'],
+                dailyRateTexts: ['日利0.8%', '日利1.3%', '日利1.8%', '日利2.1%', '日利2.3%', '日利2.6%'],
+                statusActive: '⏳ ステーキング中',
+                statusReady: '🟢 償還可能',
+                statusRedeemed: '✅ 償還済み',
+                statusError: '⚠️ エラー',
+                labelAsset: 'ステーキング資産',
+                labelAmount: 'ステーキング数量',
+                labelStart: '開始時間',
+                labelEnd: '満了時間',
+                labelRemaining: '残り時間',
+                labelPeriod: '期間',
+                labelDailyRate: '日利',
+                labelClaimed: '受取利息',
+                labelPending: '未受取利息',
+                btnClaim: '💰 利息を受け取る',
+                btnRedeem: '🔓 元本を償還',
+                btnEarly: '⚠️ 早期償還',
+                btnRetry: '🔄 再試行',
+                emptyOrders: '🔓 ステーキング注文なし',
+                systemError: '⚠️ システムエラー',
+                loadFailed: 'ロード失敗',
+                processing: '処理中...',
+                confirmRedeem: '元本償還を確認しますか？',
+                confirmEarly: '⚠️ 早期償還では元本の30%が差し引かれます。続行しますか？',
+                noInterest: '受取可能な利息はありません',
+                successClaim: '✅ 利息の受取に成功しました！',
+                successRedeem: '✅ 元本が償還されました！',
+                successEarly: '⚠️ 早期償還が完了しました',
+                errorPrefix: '操作失敗: ',
+                maxBtn: 'MAX'
+            },
+            ar: {
+                langBtn: '🇸🇦 AR',
+                pageTitle: '🔒 تعدين التخزين',
+                stakeableBalanceLabel: 'رصيد قابل للتخزين: ',
+                selectPeriodLabel: 'اختر فترة التخزين',
+                estRewardLabel: 'الفائدة المقدرة',
+                stakeSubmitBtn: 'تخزين الآن',
+                orderListTitle: '📋 طلبات التخزين الخاصة بي',
+                navAssets: 'الأصول',
+                navStake: 'تخزين',
+                navLiquidity: 'سيولة',
+                navInvite: 'دعوة',
+                navEcosystem: 'النظام البيئي',
+                periodTexts: ['7 أيام', '35 يومًا', '180 يومًا', '360 يومًا', '540 يومًا', '720 يومًا'],
+                dailyRateTexts: ['يومي 0.8%', 'يومي 1.3%', 'يومي 1.8%', 'يومي 2.1%', 'يومي 2.3%', 'يومي 2.6%'],
+                statusActive: '⏳ جاري التخزين',
+                statusReady: '🟢 جاهز للاسترداد',
+                statusRedeemed: '✅ تم الاسترداد',
+                statusError: '⚠️ خطأ',
+                labelAsset: 'الأصل المخزّن',
+                labelAmount: 'الكمية المخزّنة',
+                labelStart: 'وقت البدء',
+                labelEnd: 'وقت الانتهاء',
+                labelRemaining: 'الوقت المتبقي',
+                labelPeriod: 'الفترة',
+                labelDailyRate: 'المعدل اليومي',
+                labelClaimed: 'الفائدة المستلمة',
+                labelPending: 'الفائدة المعلقة',
+                btnClaim: '💰 استلام الفائدة',
+                btnRedeem: '🔓 استرداد رأس المال',
+                btnEarly: '⚠️ استرداد مبكر',
+                btnRetry: '🔄 إعادة المحاولة',
+                emptyOrders: '🔓 لا توجد طلبات تخزين',
+                systemError: '⚠️ خطأ في النظام',
+                loadFailed: 'فشل التحميل',
+                processing: 'جاري المعالجة...',
+                confirmRedeem: 'تأكيد استرداد رأس المال؟',
+                confirmEarly: '⚠️ الاسترداد المبكر سيخصم 30% من رأس المال، هل تريد الاستمرار؟',
+                noInterest: 'لا توجد فائدة قابلة للاستلام',
+                successClaim: '✅ تم استلام الفائدة بنجاح!',
+                successRedeem: '✅ تم استرداد رأس المال!',
+                successEarly: '⚠️ اكتمل الاسترداد المبكر',
+                errorPrefix: 'فشلت العملية: ',
+                maxBtn: 'MAX'
+            },
+            ru: {
+                langBtn: '🇷🇺 RU',
+                pageTitle: '🔒 Майнинг стейкинга',
+                stakeableBalanceLabel: 'Баланс для стейкинга: ',
+                selectPeriodLabel: 'Выберите период стейкинга',
+                estRewardLabel: 'Ожидаемые проценты',
+                stakeSubmitBtn: 'Стейкинг сейчас',
+                orderListTitle: '📋 Мои заказы стейкинга',
+                navAssets: 'Активы',
+                navStake: 'Стейкинг',
+                navLiquidity: 'Ликвидность',
+                navInvite: 'Пригласить',
+                navEcosystem: 'Экосистема',
+                periodTexts: ['7 дней', '35 дней', '180 дней', '360 дней', '540 дней', '720 дней'],
+                dailyRateTexts: ['Ежедневно 0.8%', 'Ежедневно 1.3%', 'Ежедневно 1.8%', 'Ежедневно 2.1%', 'Ежедневно 2.3%', 'Ежедневно 2.6%'],
+                statusActive: '⏳ Стейкинг',
+                statusReady: '🟢 Готов к выкупу',
+                statusRedeemed: '✅ Выкуплен',
+                statusError: '⚠️ Ошибка',
+                labelAsset: 'Актив для стейкинга',
+                labelAmount: 'Количество для стейкинга',
+                labelStart: 'Время начала',
+                labelEnd: 'Время окончания',
+                labelRemaining: 'Оставшееся время',
+                labelPeriod: 'Период',
+                labelDailyRate: 'Дневная ставка',
+                labelClaimed: 'Полученные проценты',
+                labelPending: 'Ожидающие проценты',
+                btnClaim: '💰 Получить проценты',
+                btnRedeem: '🔓 Выкупить капитал',
+                btnEarly: '⚠️ Досрочный выкуп',
+                btnRetry: '🔄 Повторить',
+                emptyOrders: '🔓 Нет заказов стейкинга',
+                systemError: '⚠️ Системная ошибка',
+                loadFailed: 'Ошибка загрузки',
+                processing: 'Обработка...',
+                confirmRedeem: 'Подтвердить выкуп капитала?',
+                confirmEarly: '⚠️ Досрочный выкуп вычтет 30% капитала, продолжить?',
+                noInterest: 'Нет доступных для получения процентов',
+                successClaim: '✅ Проценты успешно получены!',
+                successRedeem: '✅ Капитал выкуплен!',
+                successEarly: '⚠️ Досрочный выкуп завершен',
+                errorPrefix: 'Ошибка операции: ',
+                maxBtn: 'MAX'
+            }
+        };
+
         // ======================== 语言切换弹窗逻辑 ========================
         const langBtn = document.getElementById('langBtn');
         const langDropdown = document.getElementById('langDropdown');
+        let currentLang = 'zh';
 
         // 点击按钮切换弹窗显示/隐藏
         langBtn.addEventListener('click', (e) => {
@@ -463,21 +823,68 @@
             }
         });
 
-        // 点击语言选项（演示交互，打印选中语言，此处可接入实际翻译逻辑）
+        // 点击语言选项切换界面文字
         document.querySelectorAll('.lang-option').forEach(option => {
             option.addEventListener('click', () => {
-                const langName = option.querySelector('span:first-child').innerText.trim();
-                const langCode = option.querySelector('.code').innerText.trim();
-                console.log(`用户选择了语言: ${langName} (${langCode})`);
+                const langCode = option.querySelector('.code').innerText.trim().toLowerCase();
+                const langData = translations[langCode];
+                
+                if (langData) {
+                    currentLang = langCode;
+                    applyTranslations(langData);
+                }
                 
                 // 关闭弹窗
                 langDropdown.classList.remove('open');
                 langBtn.classList.remove('active');
-                
-                // (可选) 可以在这里将当前选中的语言显示在按钮上，例如:
-                // langBtn.innerHTML = `${langName} ⌄`;
             });
         });
+
+        // ✅ 应用翻译到界面
+        function applyTranslations(langData) {
+            // 按钮文字
+            langBtn.textContent = langData.langBtn + ' ⌄';
+            
+            // 页面标题
+            document.getElementById('pageTitle').textContent = langData.pageTitle;
+            
+            // 可质押余额
+            document.getElementById('stakeableBalanceLabel').textContent = langData.stakeableBalanceLabel;
+            
+            // 周期选择
+            document.getElementById('selectPeriodLabel').textContent = langData.selectPeriodLabel;
+            
+            // 奖励预览
+            document.getElementById('estRewardLabel').textContent = langData.estRewardLabel;
+            
+            // 质押按钮
+            document.getElementById('stakeSubmitBtn').textContent = langData.stakeSubmitBtn;
+            
+            // 订单列表标题
+            document.getElementById('orderListTitle').textContent = langData.orderListTitle;
+            
+            // 周期按钮文字
+            document.querySelectorAll('.period-btn').forEach((btn, index) => {
+                const periodText = btn.querySelector('.period-text');
+                const rateLabel = btn.querySelector('.rate-label');
+                if (periodText && langData.periodTexts[index]) {
+                    periodText.textContent = langData.periodTexts[index];
+                }
+                if (rateLabel && langData.dailyRateTexts[index]) {
+                    rateLabel.textContent = langData.dailyRateTexts[index];
+                }
+            });
+            
+            // 底部导航
+            document.getElementById('navAssets').textContent = langData.navAssets;
+            document.getElementById('navStake').textContent = langData.navStake;
+            document.getElementById('navLiquidity').textContent = langData.navLiquidity;
+            document.getElementById('navInvite').textContent = langData.navInvite;
+            document.getElementById('navEcosystem').textContent = langData.navEcosystem;
+            
+            // MAX 按钮
+            document.getElementById('maxBtn').textContent = langData.maxBtn;
+        }
 
         // ======================== 配置 ========================
         const AIGC_ADDRESS = '0xdB5A187FE04A249AC2F2E821b72b771d01b2C0e8';
@@ -559,10 +966,11 @@
         }
 
         function getStatusLabel(redeemed, endTime) {
-            if (redeemed) return { text:'已赎回 ✅', cls:'status-redeemed' };
+            const langData = translations[currentLang] || translations.en;
+            if (redeemed) return { text: langData.statusRedeemed, cls:'status-redeemed' };
             const now = Math.floor(Date.now()/1000);
-            if (now >= endTime) return { text:'可赎回 🟢', cls:'status-ready' };
-            return { text:'⏳ 质押中', cls:'status-active' };
+            if (now >= endTime) return { text: langData.statusReady, cls:'status-ready' };
+            return { text: langData.statusActive, cls:'status-active' };
         }
 
         function initContracts() {
@@ -624,22 +1032,24 @@
         // ======================== 加载质押订单 ========================
         async function loadOrders() {
             const container = document.getElementById('orderListContainer');
+            const langData = translations[currentLang] || translations.en;
+            
             if (!currentAccount || !stakeContract) { container.innerHTML = renderSkeleton(); return; }
             container.innerHTML = renderSkeleton();
 
             try {
                 const ids = await stakeContract.getUserStakeIds(currentAccount);
-                if (!ids || ids.length === 0) { container.innerHTML = renderEmptyCard(); return; }
+                if (!ids || ids.length === 0) { container.innerHTML = renderEmptyCard(langData); return; }
 
                 let html = '', successCount = 0, failedCount = 0;
                 for (const id of ids) {
                     try {
-                        const orderHtml = await loadSingleOrder(id);
+                        const orderHtml = await loadSingleOrder(id, langData);
                         html += orderHtml;
                         successCount++;
                     } catch (orderErr) {
                         failedCount++;
-                        html += renderErrorCard(id, orderErr);
+                        html += renderErrorCard(id, orderErr, langData);
                     }
                 }
 
@@ -650,11 +1060,11 @@
                 startCountdown();
                 bindOrderActions();
             } catch (e) {
-                container.innerHTML = renderGlobalErrorCard(e);
+                container.innerHTML = renderGlobalErrorCard(e, langData);
             }
         }
 
-        async function loadSingleOrder(id) {
+        async function loadSingleOrder(id, langData) {
             try {
                 const result = await stakeContract.getStakeInfo(id);
                 const stakeId = (result.id || result[0]).toString();
@@ -665,7 +1075,7 @@
                 const redeemed = result.redeemed !== undefined ? result.redeemed : result[6];
                 const accumulatedClaimed = result.accumulatedClaimed || result[8];
 
-                // ✅ 利息获取失败时不影响订单显示
+                // 利息获取失败时不影响订单显示
                 let pendingDisplay = '0.00000 BCBS', pendingValue = 0;
                 try {
                     const pending = await stakeContract.getPendingInterest(id);
@@ -688,46 +1098,47 @@
                 return `
                     <div class="stake-card" data-stake-id="${stakeId}">
                         <div class="stake-header"><span class="stake-id"># ${stakeId}</span><span class="stake-status ${status.cls}">${status.text}</span></div>
-                        <div class="info-row"><span class="label">质押资产</span><span class="value">${tokenName}</span></div>
-                        <div class="info-row"><span class="label">质押数量</span><span class="value">${formatTokenAmount(amount, decimals)} ${tokenName}</span></div>
-                        <div class="info-row"><span class="label">质押时间</span><span class="value">${formatTimestamp(startTime)}</span></div>
-                        <div class="info-row"><span class="label">到期时间</span><span class="value">${formatTimestamp(endTime)}</span></div>
-                        <div class="info-row"><span class="label">剩余时间</span><span class="value countdown" data-end-time="${endTime}">${formatRemainingTime(endTime)}</span></div>
-                        <div class="info-row"><span class="label">周期</span><span class="value">${periodInfo.name}${cachedDaySeconds !== 86400 ? ' (测试版)' : ''}</span></div>
-                        <div class="info-row"><span class="label">日利率</span><span class="value rate">${dailyRate}</span></div>
+                        <div class="info-row"><span class="label">${langData.labelAsset}</span><span class="value">${tokenName}</span></div>
+                        <div class="info-row"><span class="label">${langData.labelAmount}</span><span class="value">${formatTokenAmount(amount, decimals)} ${tokenName}</span></div>
+                        <div class="info-row"><span class="label">${langData.labelStart}</span><span class="value">${formatTimestamp(startTime)}</span></div>
+                        <div class="info-row"><span class="label">${langData.labelEnd}</span><span class="value">${formatTimestamp(endTime)}</span></div>
+                        <div class="info-row"><span class="label">${langData.labelRemaining}</span><span class="value countdown" data-end-time="${endTime}">${formatRemainingTime(endTime)}</span></div>
+                        <div class="info-row"><span class="label">${langData.labelPeriod}</span><span class="value">${periodInfo.name}${cachedDaySeconds !== 86400 ? ' (测试版)' : ''}</span></div>
+                        <div class="info-row"><span class="label">${langData.labelDailyRate}</span><span class="value rate">${dailyRate}</span></div>
                         <div class="stake-interest">
-                            <div class="info-row"><span class="label">已领取利息</span><span class="value">${formatTokenAmount(accumulatedClaimed)} BCBS</span></div>
-                            <div class="info-row"><span class="label">待领取利息</span><span class="value pending-interest">${pendingDisplay}</span></div>
+                            <div class="info-row"><span class="label">${langData.labelClaimed}</span><span class="value">${formatTokenAmount(accumulatedClaimed)} BCBS</span></div>
+                            <div class="info-row"><span class="label">${langData.labelPending}</span><span class="value pending-interest">${pendingDisplay}</span></div>
                         </div>
                         <div class="stake-actions">
-                            <button class="btn btn-primary" data-id="${stakeId}" data-action="claim" ${redeemed || pendingValue <= 0 ? 'disabled' : ''}>💰 领取利息</button>
-                            ${status.text.includes('可赎回') ? `<button class="btn btn-success" data-id="${stakeId}" data-action="redeem">🔓 赎回本金</button>` : `<button class="btn btn-danger" data-id="${stakeId}" data-action="early" ${redeemed ? 'disabled' : ''}>⚠️ 提前赎回</button>`}
+                            <button class="btn btn-primary" data-id="${stakeId}" data-action="claim" ${redeemed || pendingValue <= 0 ? 'disabled' : ''}>${langData.btnClaim}</button>
+                            ${status.text === langData.statusReady ? `<button class="btn btn-success" data-id="${stakeId}" data-action="redeem">${langData.btnRedeem}</button>` : `<button class="btn btn-danger" data-id="${stakeId}" data-action="early" ${redeemed ? 'disabled' : ''}>${langData.btnEarly}</button>`}
                         </div>
                     </div>`;
             } catch (e) { throw e; }
         }
 
-        function renderGlobalErrorCard(error) {
-            return `<div class="stake-card"><div class="stake-header"><span class="stake-id">⚠️ 系统错误</span><span class="stake-status status-error">加载失败</span></div><div class="info-row"><span class="label">错误详情</span><span class="value" style="color:#ff6b6b;font-size:11px;">${(error.message||'未知').substring(0,150)}</span></div><div class="stake-actions" style="margin-top:12px;"><button class="btn btn-retry" onclick="loadOrders()">🔄 重新加载</button></div></div>`;
+        function renderGlobalErrorCard(error, langData) {
+            return `<div class="stake-card"><div class="stake-header"><span class="stake-id">${langData.systemError}</span><span class="stake-status status-error">${langData.loadFailed}</span></div><div class="info-row"><span class="label">错误详情</span><span class="value" style="color:#ff6b6b;font-size:11px;">${(error.message||'未知').substring(0,150)}</span></div><div class="stake-actions" style="margin-top:12px;"><button class="btn btn-retry" onclick="loadOrders()">${langData.btnRetry}</button></div></div>`;
         }
 
-        function renderErrorCard(id, error) {
-            return `<div class="stake-card"><div class="stake-header"><span class="stake-id"># ${id}</span><span class="stake-status status-error">加载失败</span></div><div class="info-row"><span class="label">错误</span><span class="value" style="color:#ff6b6b;font-size:11px;">${(error.message||'未知').substring(0,100)}</span></div><div class="stake-actions"><button class="btn btn-retry" onclick="retryLoadOrder(${id})">🔄 重试</button></div></div>`;
+        function renderErrorCard(id, error, langData) {
+            return `<div class="stake-card"><div class="stake-header"><span class="stake-id"># ${id}</span><span class="stake-status status-error">${langData.loadFailed}</span></div><div class="info-row"><span class="label">错误</span><span class="value" style="color:#ff6b6b;font-size:11px;">${(error.message||'未知').substring(0,100)}</span></div><div class="stake-actions"><button class="btn btn-retry" onclick="retryLoadOrder(${id})">${langData.btnRetry}</button></div></div>`;
         }
 
         async function retryLoadOrder(id) {
+            const langData = translations[currentLang] || translations.en;
             const card = document.querySelector(`.stake-card[data-stake-id="${id}"]`);
             if (card) { card.innerHTML = '<div style="text-align:center;padding:20px;color:var(--cyan-glow);">⏳ 加载中...</div>'; }
             try {
-                const orderHtml = await loadSingleOrder(id);
+                const orderHtml = await loadSingleOrder(id, langData);
                 if (card) { card.outerHTML = orderHtml; bindOrderActions(); }
             } catch (e) {
-                if (card) { card.innerHTML = renderErrorCard(id, e); bindOrderActions(); }
+                if (card) { card.innerHTML = renderErrorCard(id, e, langData); bindOrderActions(); }
             }
         }
 
-        function renderEmptyCard() {
-            return `<div class="stake-card"><div class="stake-header"><span class="stake-id">📭 暂无质押</span></div><div style="text-align:center;padding:20px 0;color:var(--text-secondary);"><div style="font-size:32px;margin-bottom:8px;">🔓</div><div>还没有质押订单</div></div></div>`;
+        function renderEmptyCard(langData) {
+            return `<div class="stake-card"><div class="stake-header"><span class="stake-id">📭 暂无质押</span></div><div style="text-align:center;padding:20px 0;color:var(--text-secondary);"><div style="font-size:32px;margin-bottom:8px;">🔓</div><div>${langData.emptyOrders}</div></div></div>`;
         }
 
         function renderSkeleton() {
@@ -745,6 +1156,8 @@
         }
 
         function bindOrderActions() {
+            const langData = translations[currentLang] || translations.en;
+            
             document.querySelectorAll('.stake-actions .btn:not(:disabled)').forEach(btn => {
                 const newBtn = btn.cloneNode(true);
                 btn.parentNode.replaceChild(newBtn, btn);
@@ -752,31 +1165,31 @@
                     const id = this.dataset.id, action = this.dataset.action;
                     this.disabled = true;
                     const origText = this.textContent;
-                    this.textContent = '处理中...';
+                    this.textContent = langData.processing;
                     try {
                         if (action === 'claim') {
                             const pending = await stakeContract.getPendingInterest(id);
-                            if (!pending || pending.eq(0)) { alert('没有可领取的利息'); return; }
+                            if (!pending || pending.eq(0)) { alert(langData.noInterest); return; }
                             let fee;
                             try { fee = await stakeContract.getBnbRequiredForClaim(pending); } catch (e) { fee = ethers.utils.parseEther('0.01'); }
                             const tx = await stakeContract.claimInterest(id, { value: fee, gasLimit: 500000 });
                             await tx.wait();
-                            alert('✅ 利息领取成功！');
+                            alert(langData.successClaim);
                         } else if (action === 'redeem') {
-                            if (!confirm('确认赎回本金？')) return;
+                            if (!confirm(langData.confirmRedeem)) return;
                             const tx = await stakeContract.redeemPrincipal(id, { gasLimit: 500000 });
                             await tx.wait();
-                            alert('✅ 本金已赎回！');
+                            alert(langData.successRedeem);
                         } else if (action === 'early') {
-                            if (!confirm('⚠️ 提前赎回将扣除30%本金，确定继续？')) return;
+                            if (!confirm(langData.confirmEarly)) return;
                             const tx = await stakeContract.redeemPrincipalEarly(id, { gasLimit: 500000 });
                             await tx.wait();
-                            alert('⚠️ 提前赎回完成');
+                            alert(langData.successEarly);
                         }
                         await loadOrders();
                         await updateAllBalances();
                     } catch (e) {
-                        alert('操作失败: ' + (e.reason || e.message));
+                        alert(langData.errorPrefix + (e.reason || e.message));
                     } finally {
                         this.disabled = false;
                         this.textContent = origText;
@@ -815,7 +1228,7 @@
 
         document.getElementById('stakeAmount').addEventListener('input', updateRewardPreview);
 
-        // ======================== 质押提交（核心修复） ========================
+        // ======================== 质押提交 ========================
         stakeBtn.addEventListener('click', async () => {
             if (!currentAccount) { alert('请先连接钱包'); return; }
 
@@ -836,7 +1249,7 @@
             stakeBtn.textContent = '检查余额...';
 
             try {
-                // ✅ 检查余额
+                // 检查余额
                 const balance = await tokenContract.balanceOf(currentAccount);
                 if (balance.lt(amountWei)) {
                     alert(`${currentCoin} 余额不足`);
@@ -845,14 +1258,13 @@
                     return;
                 }
 
-                // ✅ 检查授权（授权给 BCBS 合约地址）
+                // 检查授权
                 stakeBtn.textContent = '检查授权...';
                 const allowance = await tokenContract.allowance(currentAccount, BCBS_ADDRESS);
                 
                 if (allowance.lt(amountWei)) {
                     stakeBtn.textContent = '请确认授权...';
                     try {
-                        // ✅ 使用 MaxUint256 避免后续重复授权
                         const tx = await tokenContract.approve(BCBS_ADDRESS, ethers.constants.MaxUint256, { gasLimit: 100000 });
                         await tx.wait();
                         alert('✅ 授权成功！请稍候，正在质押...');
@@ -865,7 +1277,7 @@
                     }
                 }
 
-                // ✅ 执行质押
+                // 执行质押
                 stakeBtn.textContent = '正在质押...';
                 const stakeFunc = currentCoin === 'AIGC' ? stakeContract.stakeAIGC : stakeContract.stakeUSDT;
                 
@@ -878,7 +1290,6 @@
                 await refreshAll();
             } catch (e) {
                 console.error('质押失败:', e);
-                // ✅ 详细错误提示
                 let errMsg = '质押失败';
                 if (e.reason) errMsg += ': ' + e.reason;
                 else if (e.message) {
