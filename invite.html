@@ -131,8 +131,9 @@
             <div class="header">
                 <div class="logo-area"><img src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/bcbs.png" alt="BCBS"><span>BCBS</span></div>
                 <div class="header-controls">
-                    <button class="lang-btn" id="langBtn">🇺🇸 EN ⌄</button>
+                    <button class="lang-btn" id="langBtn">🇨🇳 CN ⌄</button>
                     <div class="lang-dropdown" id="langDropdown">
+                        <div class="lang-option"><span>🇨🇳 简体中文</span><span class="code">CN</span></div>
                         <div class="lang-option"><span>🇺🇸 English</span><span class="code">EN</span></div>
                         <div class="lang-option"><span>🇭🇰 繁體中文</span><span class="code">ZH</span></div>
                         <div class="lang-option"><span>🇪🇸 Español</span><span class="code">ES</span></div>
@@ -222,180 +223,681 @@
     <script>
         // ======================== 多语言翻译数据 ========================
         const translations = {
+            cn: {
+                langBtn: '🇨🇳 CN',
+                pageTitle: '邀请好友',
+                airdropTitle: '限量红包领取计划',
+                airdropDesc: '新用户专享，推荐好友可奖励50HSBC',
+                airdropStatusClaimed: '已领取 100 HSBC',
+                airdropStatusAvailable: '可领取 100 HSBC',
+                claimBtn: '立即领取',
+                claimBtnClaimed: '已领取',
+                nodeTitle1: '首富节点',
+                nodeReward1: '收益3倍',
+                nodeRights1: 'S2权益 极差2%-10%',
+                nodeDividend1: '全球分红1%',
+                nodeTitle2: '星链节点',
+                nodeReward2: '收益5倍',
+                nodeRights2: 'S3权益 极差4%-15%',
+                nodeDividend2: '全球分红1.6%',
+                nodeTitle3: '创世节点',
+                nodeReward3: '收益9倍',
+                nodeRights3: 'S8权益 极差15%-40%',
+                nodeDividend3: '全球分红2.4%',
+                applyBtn: '立即申请',
+                applyBtnDisabled: '已申请',
+                statsLabel1: '累计铸币',
+                statsLabel2: '本次最低提取',
+                currentClaimable: '当前可提取',
+                headerTitle1: '📅 大区总业绩',
+                headerTitle2: '📅 小区总业绩',
+                statLabel1: '累计交易量($)',
+                statLabel2: '累计交易量($)',
+                progressLabel: '考核进度',
+                progressFooterLabel: '个人持币目标: ',
+                directTaskLabel: '直推任务：15节点',
+                directTaskStatus: '完成有效目标: ',
+                levelLabel: '当前层级：',
+                rateLabel: '当前利率: ',
+                progressDetailPrefix: '业绩',
+                processBadge: '邀请流程',
+                step1: '老用户',
+                step2: '转AIGC',
+                step3: '新用户',
+                step4: '绑定成功',
+                cardLabel1: '直推人数',
+                cardLabel2: '团队人数',
+                tabInvite: '邀请记录',
+                tabClaim: '领取记录',
+                navAssets: '资产',
+                navStake: '质押',
+                navLiquidity: '流动性',
+                navInvite: '邀请',
+                navEcosystem: '生态',
+                noRecords: '暂无记录',
+                connectWallet: '请先连接钱包',
+                loading: '加载中...',
+                loadFailed: '加载失败，请重试',
+                noInviteRecords: '暂无邀请记录',
+                noClaimRecords: '暂无领取记录',
+                claimRecordLabel: '最近提币数量',
+                claimRecordTimeLabel: '提币时间',
+                nodeApplyConfirm: '确认申请【{name}】？将铸币贡献 {amount} USDT',
+                applySuccess: '🎉 {name}申请成功！',
+                applyFailed: '操作失败: ',
+                claimAirdropFailed: '领取失败: ',
+                withdrawBtn: '当前可提取 --',
+                noPending: '没有可提取的 AIGC',
+                minClaimFailed: '未达到最低提取要求',
+                confirmWithdraw: '确认提取 {amount} AIGC？',
+                withdrawSuccess: '✅ 提取成功！',
+                withdrawFailed: '提币失败: ',
+                claimAlready: '已领取或不符合条件',
+                claimSuccess: '✅ 领取成功！'
+            },
             en: {
-                langBtn: '🇺🇸 EN', pageTitle: 'Invite Friends', airdropTitle: 'Limited Red Packet Plan', airdropDesc: 'Exclusive for new users, invite friends to earn 50 HSBC',
-                airdropStatusClaimed: 'Claimed 100 HSBC', airdropStatusAvailable: 'Claimable 100 HSBC', claimBtn: 'Claim Now', claimBtnClaimed: 'Claimed',
-                nodeTitle1: 'Rich Node', nodeReward1: '3x Reward', nodeRights1: 'S2 Rights 2%-10%', nodeDividend1: 'Global Dividend 1%',
-                nodeTitle2: 'Starlink Node', nodeReward2: '5x Reward', nodeRights2: 'S3 Rights 4%-15%', nodeDividend2: 'Global Dividend 1.6%',
-                nodeTitle3: 'Genesis Node', nodeReward3: '9x Reward', nodeRights3: 'S8 Rights 15%-40%', nodeDividend3: 'Global Dividend 2.4%',
-                applyBtn: 'Apply Now', applyBtnDisabled: 'Applied',
-                statsLabel1: 'Total Minted', statsLabel2: 'Min Claim Amount', currentClaimable: 'Claimable',
-                headerTitle1: '📅 Max Team Performance', headerTitle2: '📅 Min Team Performance', statLabel1: 'Cumulative Volume ($)', statLabel2: 'Cumulative Volume ($)',
-                progressLabel: 'Progress', progressFooterLabel: 'Personal Holding Target: ', directTaskLabel: 'Direct Referral Task: 15 Nodes', directTaskStatus: 'Completed: ',
-                levelLabel: 'Current Level: ', rateLabel: 'Current Rate: ', progressDetailPrefix: 'Volume ',
-                processBadge: 'Invite Process', step1: 'Old User', step2: 'Transfer AIGC', step3: 'New User', step4: 'Bind Success',
-                cardLabel1: 'Direct Referrals', cardLabel2: 'Team Members', tabInvite: 'Invite Records', tabClaim: 'Claim Records',
-                navAssets: 'Assets', navStake: 'Stake', navLiquidity: 'Liquidity', navInvite: 'Invite', navEcosystem: 'Ecosystem',
-                noRecords: 'No records yet', connectWallet: 'Please connect wallet first', loading: 'Loading...', loadFailed: 'Load failed, please try again',
-                noInviteRecords: 'No invite records', noClaimRecords: 'No claim records',
-                claimRecordLabel: 'Recent Claim Amount', claimRecordTimeLabel: 'Claim Time',
-                nodeApplyConfirm: 'Confirm apply for 【{name}】? Will contribute {amount} USDT', applySuccess: '🎉 {name} applied successfully!',
-                applyFailed: 'Operation failed: ', claimAirdropFailed: 'Claim failed: ', withdrawBtn: 'Claimable --'
+                langBtn: '🇺🇸 EN',
+                pageTitle: 'Invite Friends',
+                airdropTitle: 'Limited Red Packet Plan',
+                airdropDesc: 'Exclusive for new users, invite friends to earn 50 HSBC',
+                airdropStatusClaimed: 'Claimed 100 HSBC',
+                airdropStatusAvailable: 'Claimable 100 HSBC',
+                claimBtn: 'Claim Now',
+                claimBtnClaimed: 'Claimed',
+                nodeTitle1: 'Rich Node',
+                nodeReward1: '3x Reward',
+                nodeRights1: 'S2 Rights 2%-10%',
+                nodeDividend1: 'Global Dividend 1%',
+                nodeTitle2: 'Starlink Node',
+                nodeReward2: '5x Reward',
+                nodeRights2: 'S3 Rights 4%-15%',
+                nodeDividend2: 'Global Dividend 1.6%',
+                nodeTitle3: 'Genesis Node',
+                nodeReward3: '9x Reward',
+                nodeRights3: 'S8 Rights 15%-40%',
+                nodeDividend3: 'Global Dividend 2.4%',
+                applyBtn: 'Apply Now',
+                applyBtnDisabled: 'Applied',
+                statsLabel1: 'Total Minted',
+                statsLabel2: 'Min Claim Amount',
+                currentClaimable: 'Claimable',
+                headerTitle1: '📅 Max Team Performance',
+                headerTitle2: '📅 Min Team Performance',
+                statLabel1: 'Cumulative Volume ($)',
+                statLabel2: 'Cumulative Volume ($)',
+                progressLabel: 'Progress',
+                progressFooterLabel: 'Personal Holding Target: ',
+                directTaskLabel: 'Direct Referral Task: 15 Nodes',
+                directTaskStatus: 'Completed: ',
+                levelLabel: 'Current Level: ',
+                rateLabel: 'Current Rate: ',
+                progressDetailPrefix: 'Volume ',
+                processBadge: 'Invite Process',
+                step1: 'Old User',
+                step2: 'Transfer AIGC',
+                step3: 'New User',
+                step4: 'Bind Success',
+                cardLabel1: 'Direct Referrals',
+                cardLabel2: 'Team Members',
+                tabInvite: 'Invite Records',
+                tabClaim: 'Claim Records',
+                navAssets: 'Assets',
+                navStake: 'Stake',
+                navLiquidity: 'Liquidity',
+                navInvite: 'Invite',
+                navEcosystem: 'Ecosystem',
+                noRecords: 'No records yet',
+                connectWallet: 'Please connect wallet first',
+                loading: 'Loading...',
+                loadFailed: 'Load failed, please try again',
+                noInviteRecords: 'No invite records',
+                noClaimRecords: 'No claim records',
+                claimRecordLabel: 'Recent Claim Amount',
+                claimRecordTimeLabel: 'Claim Time',
+                nodeApplyConfirm: 'Confirm apply for 【{name}】? Will contribute {amount} USDT',
+                applySuccess: '🎉 {name} applied successfully!',
+                applyFailed: 'Operation failed: ',
+                claimAirdropFailed: 'Claim failed: ',
+                withdrawBtn: 'Claimable --',
+                noPending: 'No claimable AIGC',
+                minClaimFailed: 'Does not meet minimum claim requirement',
+                confirmWithdraw: 'Confirm withdraw {amount} AIGC?',
+                withdrawSuccess: '✅ Withdraw successful!',
+                withdrawFailed: 'Withdraw failed: ',
+                claimAlready: 'Already claimed or not eligible',
+                claimSuccess: '✅ Claim successful!'
             },
             zh: {
-                langBtn: '🇭🇰 繁中', pageTitle: '邀請好友', airdropTitle: '限量紅包領取計劃', airdropDesc: '新用戶專享，推薦好友可獎勵50HSBC',
-                airdropStatusClaimed: '已領取 100 HSBC', airdropStatusAvailable: '可領取 100 HSBC', claimBtn: '立即領取', claimBtnClaimed: '已領取',
-                nodeTitle1: '首富節點', nodeReward1: '收益3倍', nodeRights1: 'S2權益 極差2%-10%', nodeDividend1: '全球分紅1%',
-                nodeTitle2: '星鏈節點', nodeReward2: '收益5倍', nodeRights2: 'S3權益 極差4%-15%', nodeDividend2: '全球分紅1.6%',
-                nodeTitle3: '創世節點', nodeReward3: '收益9倍', nodeRights3: 'S8權益 極差15%-40%', nodeDividend3: '全球分紅2.4%',
-                applyBtn: '立即申請', applyBtnDisabled: '已申請',
-                statsLabel1: '累計鑄幣', statsLabel2: '本次最低提取', currentClaimable: '當前可提取',
-                headerTitle1: '📅 大區總業績', headerTitle2: '📅 小區總業績', statLabel1: '累計交易量($)', statLabel2: '累計交易量($)',
-                progressLabel: '考核進度', progressFooterLabel: '個人持幣目標: ', directTaskLabel: '直推任務：15節點', directTaskStatus: '完成有效目標: ',
-                levelLabel: '當前層級：', rateLabel: '當前利率: ', progressDetailPrefix: '業績',
-                processBadge: '邀請流程', step1: '老用戶', step2: '轉AIGC', step3: '新用戶', step4: '綁定成功',
-                cardLabel1: '直推人數', cardLabel2: '團隊人數', tabInvite: '邀請記錄', tabClaim: '領取記錄',
-                navAssets: '資產', navStake: '質押', navLiquidity: '流動性', navInvite: '邀請', navEcosystem: '生態',
-                noRecords: '暫無記錄', connectWallet: '請先連接錢包', loading: '載入中...', loadFailed: '載入失敗，請重試',
-                noInviteRecords: '暫無邀請記錄', noClaimRecords: '暫無領取記錄',
-                claimRecordLabel: '最近提幣數量', claimRecordTimeLabel: '提幣時間',
-                nodeApplyConfirm: '確認申請【{name}】？將鑄幣貢獻 {amount} USDT', applySuccess: '🎉 {name}申請成功！',
-                applyFailed: '操作失敗: ', claimAirdropFailed: '領取失敗: ', withdrawBtn: '當前可提取 --'
+                langBtn: '🇭🇰 繁中',
+                pageTitle: '邀請好友',
+                airdropTitle: '限量紅包領取計劃',
+                airdropDesc: '新用戶專享，推薦好友可獎勵50HSBC',
+                airdropStatusClaimed: '已領取 100 HSBC',
+                airdropStatusAvailable: '可領取 100 HSBC',
+                claimBtn: '立即領取',
+                claimBtnClaimed: '已領取',
+                nodeTitle1: '首富節點',
+                nodeReward1: '收益3倍',
+                nodeRights1: 'S2權益 極差2%-10%',
+                nodeDividend1: '全球分紅1%',
+                nodeTitle2: '星鏈節點',
+                nodeReward2: '收益5倍',
+                nodeRights2: 'S3權益 極差4%-15%',
+                nodeDividend2: '全球分紅1.6%',
+                nodeTitle3: '創世節點',
+                nodeReward3: '收益9倍',
+                nodeRights3: 'S8權益 極差15%-40%',
+                nodeDividend3: '全球分紅2.4%',
+                applyBtn: '立即申請',
+                applyBtnDisabled: '已申請',
+                statsLabel1: '累計鑄幣',
+                statsLabel2: '本次最低提取',
+                currentClaimable: '當前可提取',
+                headerTitle1: '📅 大區總業績',
+                headerTitle2: '📅 小區總業績',
+                statLabel1: '累計交易量($)',
+                statLabel2: '累計交易量($)',
+                progressLabel: '考核進度',
+                progressFooterLabel: '個人持幣目標: ',
+                directTaskLabel: '直推任務：15節點',
+                directTaskStatus: '完成有效目標: ',
+                levelLabel: '當前層級：',
+                rateLabel: '當前利率: ',
+                progressDetailPrefix: '業績',
+                processBadge: '邀請流程',
+                step1: '老用戶',
+                step2: '轉AIGC',
+                step3: '新用戶',
+                step4: '綁定成功',
+                cardLabel1: '直推人數',
+                cardLabel2: '團隊人數',
+                tabInvite: '邀請記錄',
+                tabClaim: '領取記錄',
+                navAssets: '資產',
+                navStake: '質押',
+                navLiquidity: '流動性',
+                navInvite: '邀請',
+                navEcosystem: '生態',
+                noRecords: '暫無記錄',
+                connectWallet: '請先連接錢包',
+                loading: '載入中...',
+                loadFailed: '載入失敗，請重試',
+                noInviteRecords: '暫無邀請記錄',
+                noClaimRecords: '暫無領取記錄',
+                claimRecordLabel: '最近提幣數量',
+                claimRecordTimeLabel: '提幣時間',
+                nodeApplyConfirm: '確認申請【{name}】？將鑄幣貢獻 {amount} USDT',
+                applySuccess: '🎉 {name}申請成功！',
+                applyFailed: '操作失敗: ',
+                claimAirdropFailed: '領取失敗: ',
+                withdrawBtn: '當前可提取 --',
+                noPending: '沒有可提取的 AIGC',
+                minClaimFailed: '未達到最低提取要求',
+                confirmWithdraw: '確認提取 {amount} AIGC？',
+                withdrawSuccess: '✅ 提取成功！',
+                withdrawFailed: '提幣失敗: ',
+                claimAlready: '已領取或不符合條件',
+                claimSuccess: '✅ 領取成功！'
             },
             es: {
-                langBtn: '🇪🇸 ES', pageTitle: 'Invitar Amigos', airdropTitle: 'Plan de Sobres Rojos Limitados', airdropDesc: 'Exclusivo para nuevos usuarios, invite amigos para ganar 50 HSBC',
-                airdropStatusClaimed: 'Reclamado 100 HSBC', airdropStatusAvailable: 'Reclamable 100 HSBC', claimBtn: 'Reclamar Ahora', claimBtnClaimed: 'Reclamado',
-                nodeTitle1: 'Nodo Rico', nodeReward1: '3x Recompensa', nodeRights1: 'Derechos S2 2%-10%', nodeDividend1: 'Dividendo Global 1%',
-                nodeTitle2: 'Nodo Starlink', nodeReward2: '5x Recompensa', nodeRights2: 'Derechos S3 4%-15%', nodeDividend2: 'Dividendo Global 1.6%',
-                nodeTitle3: 'Nodo Génesis', nodeReward3: '9x Recompensa', nodeRights3: 'Derechos S8 15%-40%', nodeDividend3: 'Dividendo Global 2.4%',
-                applyBtn: 'Solicitar Ahora', applyBtnDisabled: 'Solicitado',
-                statsLabel1: 'Total Acuñado', statsLabel2: 'Cantidad Mínima', currentClaimable: 'Reclamable',
-                headerTitle1: '📅 Rendimiento Máximo', headerTitle2: '📅 Rendimiento Mínimo', statLabel1: 'Volumen Acumulado ($)', statLabel2: 'Volumen Acumulado ($)',
-                progressLabel: 'Progreso', progressFooterLabel: 'Objetivo de Tenencia: ', directTaskLabel: 'Tarea de Referidos: 15 Nodos', directTaskStatus: 'Completados: ',
-                levelLabel: 'Nivel Actual: ', rateLabel: 'Tasa Actual: ', progressDetailPrefix: 'Volumen ',
-                processBadge: 'Proceso de Invitación', step1: 'Usuario Antiguo', step2: 'Transferir AIGC', step3: 'Nuevo Usuario', step4: 'Vinculación Exitosa',
-                cardLabel1: 'Referidos Directos', cardLabel2: 'Miembros del Equipo', tabInvite: 'Registros de Invitaciones', tabClaim: 'Registros de Reclamaciones',
-                navAssets: 'Activos', navStake: 'Staking', navLiquidity: 'Liquidez', navInvite: 'Invitar', navEcosystem: 'Ecosistema',
-                noRecords: 'Sin registros', connectWallet: 'Conecte la billetera primero', loading: 'Cargando...', loadFailed: 'Carga fallida, intente de nuevo',
-                noInviteRecords: 'Sin registros de invitación', noClaimRecords: 'Sin registros de reclamación',
-                claimRecordLabel: 'Cantidad Reclamada Reciente', claimRecordTimeLabel: 'Tiempo de Reclamación',
-                nodeApplyConfirm: 'Confirmar solicitud para 【{name}】? Contribuirá {amount} USDT', applySuccess: '🎉 ¡{name} solicitado con éxito!',
-                applyFailed: 'Operación fallida: ', claimAirdropFailed: 'Reclamación fallida: ', withdrawBtn: 'Reclamable --'
+                langBtn: '🇪🇸 ES',
+                pageTitle: 'Invitar Amigos',
+                airdropTitle: 'Plan de Sobres Rojos Limitados',
+                airdropDesc: 'Exclusivo para nuevos usuarios, invite amigos para ganar 50 HSBC',
+                airdropStatusClaimed: 'Reclamado 100 HSBC',
+                airdropStatusAvailable: 'Reclamable 100 HSBC',
+                claimBtn: 'Reclamar Ahora',
+                claimBtnClaimed: 'Reclamado',
+                nodeTitle1: 'Nodo Rico',
+                nodeReward1: '3x Recompensa',
+                nodeRights1: 'Derechos S2 2%-10%',
+                nodeDividend1: 'Dividendo Global 1%',
+                nodeTitle2: 'Nodo Starlink',
+                nodeReward2: '5x Recompensa',
+                nodeRights2: 'Derechos S3 4%-15%',
+                nodeDividend2: 'Dividendo Global 1.6%',
+                nodeTitle3: 'Nodo Génesis',
+                nodeReward3: '9x Recompensa',
+                nodeRights3: 'Derechos S8 15%-40%',
+                nodeDividend3: 'Dividendo Global 2.4%',
+                applyBtn: 'Solicitar Ahora',
+                applyBtnDisabled: 'Solicitado',
+                statsLabel1: 'Total Acuñado',
+                statsLabel2: 'Cantidad Mínima',
+                currentClaimable: 'Reclamable',
+                headerTitle1: '📅 Rendimiento Máximo',
+                headerTitle2: '📅 Rendimiento Mínimo',
+                statLabel1: 'Volumen Acumulado ($)',
+                statLabel2: 'Volumen Acumulado ($)',
+                progressLabel: 'Progreso',
+                progressFooterLabel: 'Objetivo de Tenencia: ',
+                directTaskLabel: 'Tarea de Referidos: 15 Nodos',
+                directTaskStatus: 'Completados: ',
+                levelLabel: 'Nivel Actual: ',
+                rateLabel: 'Tasa Actual: ',
+                progressDetailPrefix: 'Volumen ',
+                processBadge: 'Proceso de Invitación',
+                step1: 'Usuario Antiguo',
+                step2: 'Transferir AIGC',
+                step3: 'Nuevo Usuario',
+                step4: 'Vinculación Exitosa',
+                cardLabel1: 'Referidos Directos',
+                cardLabel2: 'Miembros del Equipo',
+                tabInvite: 'Registros de Invitaciones',
+                tabClaim: 'Registros de Reclamaciones',
+                navAssets: 'Activos',
+                navStake: 'Staking',
+                navLiquidity: 'Liquidez',
+                navInvite: 'Invitar',
+                navEcosystem: 'Ecosistema',
+                noRecords: 'Sin registros',
+                connectWallet: 'Conecte la billetera primero',
+                loading: 'Cargando...',
+                loadFailed: 'Carga fallida, intente de nuevo',
+                noInviteRecords: 'Sin registros de invitación',
+                noClaimRecords: 'Sin registros de reclamación',
+                claimRecordLabel: 'Cantidad Reclamada Reciente',
+                claimRecordTimeLabel: 'Tiempo de Reclamación',
+                nodeApplyConfirm: 'Confirmar solicitud para 【{name}】? Contribuirá {amount} USDT',
+                applySuccess: '🎉 ¡{name} solicitado con éxito!',
+                applyFailed: 'Operación fallida: ',
+                claimAirdropFailed: 'Reclamación fallida: ',
+                withdrawBtn: 'Reclamable --',
+                noPending: 'Sin AIGC reclamable',
+                minClaimFailed: 'No cumple con el requisito mínimo',
+                confirmWithdraw: '¿Confirmar retiro de {amount} AIGC?',
+                withdrawSuccess: '✅ ¡Retiro exitoso!',
+                withdrawFailed: 'Fallo en el retiro: ',
+                claimAlready: 'Ya reclamado o no elegible',
+                claimSuccess: '✅ ¡Reclamación exitosa!'
             },
             fr: {
-                langBtn: '🇫🇷 FR', pageTitle: 'Inviter des Amis', airdropTitle: 'Plan d\'Enveloppes Rouges Limité', airdropDesc: 'Exclusif pour les nouveaux utilisateurs, invitez des amis pour gagner 50 HSBC',
-                airdropStatusClaimed: 'Réclamé 100 HSBC', airdropStatusAvailable: 'Réclamable 100 HSBC', claimBtn: 'Réclamer Maintenant', claimBtnClaimed: 'Réclamé',
-                nodeTitle1: 'Nœud Riche', nodeReward1: '3x Récompense', nodeRights1: 'Droits S2 2%-10%', nodeDividend1: 'Dividende Global 1%',
-                nodeTitle2: 'Nœud Starlink', nodeReward2: '5x Récompense', nodeRights2: 'Droits S3 4%-15%', nodeDividend2: 'Dividende Global 1.6%',
-                nodeTitle3: 'Nœud Genesis', nodeReward3: '9x Récompense', nodeRights3: 'Droits S8 15%-40%', nodeDividend3: 'Dividende Global 2.4%',
-                applyBtn: 'Postuler Maintenant', applyBtnDisabled: 'Postulé',
-                statsLabel1: 'Total Frappé', statsLabel2: 'Montant Minimum', currentClaimable: 'Réclamable',
-                headerTitle1: '📅 Performance Max', headerTitle2: '📅 Performance Min', statLabel1: 'Volume Cumulé ($)', statLabel2: 'Volume Cumulé ($)',
-                progressLabel: 'Progression', progressFooterLabel: 'Objectif de Détention: ', directTaskLabel: 'Tâche de Parrainage: 15 Nœuds', directTaskStatus: 'Complétés: ',
-                levelLabel: 'Niveau Actuel: ', rateLabel: 'Taux Actuel: ', progressDetailPrefix: 'Volume ',
-                processBadge: 'Processus d\'Invitation', step1: 'Ancien Utilisateur', step2: 'Transférer AIGC', step3: 'Nouvel Utilisateur', step4: 'Liaison Réussie',
-                cardLabel1: 'Parrainages Directs', cardLabel2: 'Membres de l\'Équipe', tabInvite: 'Historique des Invitations', tabClaim: 'Historique des Réclamations',
-                navAssets: 'Actifs', navStake: 'Staking', navLiquidity: 'Liquidité', navInvite: 'Inviter', navEcosystem: 'Écosystème',
-                noRecords: 'Aucun enregistrement', connectWallet: 'Connectez le portefeuille d\'abord', loading: 'Chargement...', loadFailed: 'Échec du chargement, réessayez',
-                noInviteRecords: 'Aucun enregistrement d\'invitation', noClaimRecords: 'Aucun enregistrement de réclamation',
-                claimRecordLabel: 'Montant Réclamé Récent', claimRecordTimeLabel: 'Temps de Réclamation',
-                nodeApplyConfirm: 'Confirmer la demande pour 【{name}】? Contribuera {amount} USDT', applySuccess: '🎉 {name} demandé avec succès!',
-                applyFailed: 'Opération échouée: ', claimAirdropFailed: 'Réclamation échouée: ', withdrawBtn: 'Réclamable --'
+                langBtn: '🇫🇷 FR',
+                pageTitle: 'Inviter des Amis',
+                airdropTitle: 'Plan d\'Enveloppes Rouges Limité',
+                airdropDesc: 'Exclusif pour les nouveaux utilisateurs, invitez des amis pour gagner 50 HSBC',
+                airdropStatusClaimed: 'Réclamé 100 HSBC',
+                airdropStatusAvailable: 'Réclamable 100 HSBC',
+                claimBtn: 'Réclamer Maintenant',
+                claimBtnClaimed: 'Réclamé',
+                nodeTitle1: 'Nœud Riche',
+                nodeReward1: '3x Récompense',
+                nodeRights1: 'Droits S2 2%-10%',
+                nodeDividend1: 'Dividende Global 1%',
+                nodeTitle2: 'Nœud Starlink',
+                nodeReward2: '5x Récompense',
+                nodeRights2: 'Droits S3 4%-15%',
+                nodeDividend2: 'Dividende Global 1.6%',
+                nodeTitle3: 'Nœud Genesis',
+                nodeReward3: '9x Récompense',
+                nodeRights3: 'Droits S8 15%-40%',
+                nodeDividend3: 'Dividende Global 2.4%',
+                applyBtn: 'Postuler Maintenant',
+                applyBtnDisabled: 'Postulé',
+                statsLabel1: 'Total Frappé',
+                statsLabel2: 'Montant Minimum',
+                currentClaimable: 'Réclamable',
+                headerTitle1: '📅 Performance Max',
+                headerTitle2: '📅 Performance Min',
+                statLabel1: 'Volume Cumulé ($)',
+                statLabel2: 'Volume Cumulé ($)',
+                progressLabel: 'Progression',
+                progressFooterLabel: 'Objectif de Détention: ',
+                directTaskLabel: 'Tâche de Parrainage: 15 Nœuds',
+                directTaskStatus: 'Complétés: ',
+                levelLabel: 'Niveau Actuel: ',
+                rateLabel: 'Taux Actuel: ',
+                progressDetailPrefix: 'Volume ',
+                processBadge: 'Processus d\'Invitation',
+                step1: 'Ancien Utilisateur',
+                step2: 'Transférer AIGC',
+                step3: 'Nouvel Utilisateur',
+                step4: 'Liaison Réussie',
+                cardLabel1: 'Parrainages Directs',
+                cardLabel2: 'Membres de l\'Équipe',
+                tabInvite: 'Historique des Invitations',
+                tabClaim: 'Historique des Réclamations',
+                navAssets: 'Actifs',
+                navStake: 'Staking',
+                navLiquidity: 'Liquidité',
+                navInvite: 'Inviter',
+                navEcosystem: 'Écosystème',
+                noRecords: 'Aucun enregistrement',
+                connectWallet: 'Connectez le portefeuille d\'abord',
+                loading: 'Chargement...',
+                loadFailed: 'Échec du chargement, réessayez',
+                noInviteRecords: 'Aucun enregistrement d\'invitation',
+                noClaimRecords: 'Aucun enregistrement de réclamation',
+                claimRecordLabel: 'Montant Réclamé Récent',
+                claimRecordTimeLabel: 'Temps de Réclamation',
+                nodeApplyConfirm: 'Confirmer la demande pour 【{name}】? Contribuera {amount} USDT',
+                applySuccess: '🎉 {name} demandé avec succès!',
+                applyFailed: 'Opération échouée: ',
+                claimAirdropFailed: 'Réclamation échouée: ',
+                withdrawBtn: 'Réclamable --',
+                noPending: 'Aucun AIGC réclamable',
+                minClaimFailed: 'Ne répond pas à l\'exigence minimale',
+                confirmWithdraw: 'Confirmer le retrait de {amount} AIGC?',
+                withdrawSuccess: '✅ Retrait réussi!',
+                withdrawFailed: 'Échec du retrait: ',
+                claimAlready: 'Déjà réclamé ou non éligible',
+                claimSuccess: '✅ Réclamation réussie!'
             },
             ko: {
-                langBtn: '🇰🇷 KO', pageTitle: '친구 초대', airdropTitle: '한정판 레드패킷 플랜', airdropDesc: '신규 사용자 전용, 친구 초대 시 50 HSBC 보상',
-                airdropStatusClaimed: '100 HSBC 수령 완료', airdropStatusAvailable: '100 HSBC 수령 가능', claimBtn: '지금 수령', claimBtnClaimed: '수령 완료',
-                nodeTitle1: '부자 노드', nodeReward1: '3배 보상', nodeRights1: 'S2 권한 2%-10%', nodeDividend1: '글로벌 배당 1%',
-                nodeTitle2: '스타링크 노드', nodeReward2: '5배 보상', nodeRights2: 'S3 권한 4%-15%', nodeDividend2: '글로벌 배당 1.6%',
-                nodeTitle3: '창세 노드', nodeReward3: '9배 보상', nodeRights3: 'S8 권한 15%-40%', nodeDividend3: '글로벌 배당 2.4%',
-                applyBtn: '지금 신청', applyBtnDisabled: '신청 완료',
-                statsLabel1: '누적 채굴량', statsLabel2: '최소 수령액', currentClaimable: '현재 수령 가능',
-                headerTitle1: '📅 대구역 총 실적', headerTitle2: '📅 소구역 총 실적', statLabel1: '누적 거래량($)', statLabel2: '누적 거래량($)',
-                progressLabel: '평가 진행률', progressFooterLabel: '개인 보유 목표: ', directTaskLabel: '직추 작업: 15 노드', directTaskStatus: '완료된 목표: ',
-                levelLabel: '현재 레벨: ', rateLabel: '현재 이자율: ', progressDetailPrefix: '실적 ',
-                processBadge: '초대 프로세스', step1: '기존 사용자', step2: 'AIGC 전송', step3: '신규 사용자', step4: '바인딩 성공',
-                cardLabel1: '직추 인원', cardLabel2: '팀 인원', tabInvite: '초대 기록', tabClaim: '수령 기록',
-                navAssets: '자산', navStake: '스테이킹', navLiquidity: '유동성', navInvite: '초대', navEcosystem: '생태계',
-                noRecords: '기록 없음', connectWallet: '지갑을 먼저 연결하세요', loading: '로딩 중...', loadFailed: '로드 실패, 다시 시도하세요',
-                noInviteRecords: '초대 기록 없음', noClaimRecords: '수령 기록 없음',
-                claimRecordLabel: '최근 수령량', claimRecordTimeLabel: '수령 시간',
-                nodeApplyConfirm: '【{name}】 신청을 확인하시겠습니까? {amount} USDT 기여합니다', applySuccess: '🎉 {name} 신청 성공!',
-                applyFailed: '작업 실패: ', claimAirdropFailed: '수령 실패: ', withdrawBtn: '현재 수령 가능 --'
+                langBtn: '🇰🇷 KO',
+                pageTitle: '친구 초대',
+                airdropTitle: '한정판 레드패킷 플랜',
+                airdropDesc: '신규 사용자 전용, 친구 초대 시 50 HSBC 보상',
+                airdropStatusClaimed: '100 HSBC 수령 완료',
+                airdropStatusAvailable: '100 HSBC 수령 가능',
+                claimBtn: '지금 수령',
+                claimBtnClaimed: '수령 완료',
+                nodeTitle1: '부자 노드',
+                nodeReward1: '3배 보상',
+                nodeRights1: 'S2 권한 2%-10%',
+                nodeDividend1: '글로벌 배당 1%',
+                nodeTitle2: '스타링크 노드',
+                nodeReward2: '5배 보상',
+                nodeRights2: 'S3 권한 4%-15%',
+                nodeDividend2: '글로벌 배당 1.6%',
+                nodeTitle3: '창세 노드',
+                nodeReward3: '9배 보상',
+                nodeRights3: 'S8 권한 15%-40%',
+                nodeDividend3: '글로벌 배당 2.4%',
+                applyBtn: '지금 신청',
+                applyBtnDisabled: '신청 완료',
+                statsLabel1: '누적 채굴량',
+                statsLabel2: '최소 수령액',
+                currentClaimable: '현재 수령 가능',
+                headerTitle1: '📅 대구역 총 실적',
+                headerTitle2: '📅 소구역 총 실적',
+                statLabel1: '누적 거래량($)',
+                statLabel2: '누적 거래량($)',
+                progressLabel: '평가 진행률',
+                progressFooterLabel: '개인 보유 목표: ',
+                directTaskLabel: '직추 작업: 15 노드',
+                directTaskStatus: '완료된 목표: ',
+                levelLabel: '현재 레벨: ',
+                rateLabel: '현재 이자율: ',
+                progressDetailPrefix: '실적 ',
+                processBadge: '초대 프로세스',
+                step1: '기존 사용자',
+                step2: 'AIGC 전송',
+                step3: '신규 사용자',
+                step4: '바인딩 성공',
+                cardLabel1: '직추 인원',
+                cardLabel2: '팀 인원',
+                tabInvite: '초대 기록',
+                tabClaim: '수령 기록',
+                navAssets: '자산',
+                navStake: '스테이킹',
+                navLiquidity: '유동성',
+                navInvite: '초대',
+                navEcosystem: '생태계',
+                noRecords: '기록 없음',
+                connectWallet: '지갑을 먼저 연결하세요',
+                loading: '로딩 중...',
+                loadFailed: '로드 실패, 다시 시도하세요',
+                noInviteRecords: '초대 기록 없음',
+                noClaimRecords: '수령 기록 없음',
+                claimRecordLabel: '최근 수령량',
+                claimRecordTimeLabel: '수령 시간',
+                nodeApplyConfirm: '【{name}】 신청을 확인하시겠습니까? {amount} USDT 기여합니다',
+                applySuccess: '🎉 {name} 신청 성공!',
+                applyFailed: '작업 실패: ',
+                claimAirdropFailed: '수령 실패: ',
+                withdrawBtn: '현재 수령 가능 --',
+                noPending: '수령 가능한 AIGC가 없습니다',
+                minClaimFailed: '최소 수령 요건을 충족하지 않습니다',
+                confirmWithdraw: '{amount} AIGC를 인출하시겠습니까?',
+                withdrawSuccess: '✅ 인출 성공!',
+                withdrawFailed: '인출 실패: ',
+                claimAlready: '이미 수령했거나 자격이 없습니다',
+                claimSuccess: '✅ 수령 성공!'
             },
             ja: {
-                langBtn: '🇯🇵 JA', pageTitle: '友達を招待', airdropTitle: '限定レッドパケットプラン', airdropDesc: '新規ユーザー限定、友達招待で50 HSBC獲得',
-                airdropStatusClaimed: '100 HSBC受領済み', airdropStatusAvailable: '100 HSBC受領可能', claimBtn: '今すぐ受領', claimBtnClaimed: '受領済み',
-                nodeTitle1: 'リッチノード', nodeReward1: '3倍報酬', nodeRights1: 'S2権限 2%-10%', nodeDividend1: 'グローバル配当 1%',
-                nodeTitle2: 'スターリンクノード', nodeReward2: '5倍報酬', nodeRights2: 'S3権限 4%-15%', nodeDividend2: 'グローバル配当 1.6%',
-                nodeTitle3: 'ジェネシスノード', nodeReward3: '9倍報酬', nodeRights3: 'S8権限 15%-40%', nodeDividend3: 'グローバル配当 2.4%',
-                applyBtn: '今すぐ申請', applyBtnDisabled: '申請済み',
-                statsLabel1: '累計鋳造量', statsLabel2: '最低受領額', currentClaimable: '現在受領可能',
-                headerTitle1: '📅 大区総業績', headerTitle2: '📅 小区総業績', statLabel1: '累計取引量($)', statLabel2: '累計取引量($)',
-                progressLabel: '評価進捗', progressFooterLabel: '個人保有目標: ', directTaskLabel: '直推タスク: 15ノード', directTaskStatus: '完了目標: ',
-                levelLabel: '現在のレベル: ', rateLabel: '現在の利率: ', progressDetailPrefix: '業績 ',
-                processBadge: '招待プロセス', step1: '既存ユーザー', step2: 'AIGC送信', step3: '新規ユーザー', step4: 'バインディング成功',
-                cardLabel1: '直推人数', cardLabel2: 'チーム人数', tabInvite: '招待記録', tabClaim: '受領記録',
-                navAssets: '資産', navStake: 'ステーキング', navLiquidity: '流動性', navInvite: '招待', navEcosystem: 'エコシステム',
-                noRecords: '記録なし', connectWallet: 'ウォレットを接続してください', loading: '読み込み中...', loadFailed: '読み込み失敗、もう一度お試しください',
-                noInviteRecords: '招待記録なし', noClaimRecords: '受領記録なし',
-                claimRecordLabel: '最近の受領量', claimRecordTimeLabel: '受領時間',
-                nodeApplyConfirm: '【{name}】申請を確認しますか？ {amount} USDTを貢献します', applySuccess: '🎉 {name}申請成功！',
-                applyFailed: '操作失敗: ', claimAirdropFailed: '受領失敗: ', withdrawBtn: '現在受領可能 --'
+                langBtn: '🇯🇵 JA',
+                pageTitle: '友達を招待',
+                airdropTitle: '限定レッドパケットプラン',
+                airdropDesc: '新規ユーザー限定、友達招待で50 HSBC獲得',
+                airdropStatusClaimed: '100 HSBC受領済み',
+                airdropStatusAvailable: '100 HSBC受領可能',
+                claimBtn: '今すぐ受領',
+                claimBtnClaimed: '受領済み',
+                nodeTitle1: 'リッチノード',
+                nodeReward1: '3倍報酬',
+                nodeRights1: 'S2権限 2%-10%',
+                nodeDividend1: 'グローバル配当 1%',
+                nodeTitle2: 'スターリンクノード',
+                nodeReward2: '5倍報酬',
+                nodeRights2: 'S3権限 4%-15%',
+                nodeDividend2: 'グローバル配当 1.6%',
+                nodeTitle3: 'ジェネシスノード',
+                nodeReward3: '9倍報酬',
+                nodeRights3: 'S8権限 15%-40%',
+                nodeDividend3: 'グローバル配当 2.4%',
+                applyBtn: '今すぐ申請',
+                applyBtnDisabled: '申請済み',
+                statsLabel1: '累計鋳造量',
+                statsLabel2: '最低受領額',
+                currentClaimable: '現在受領可能',
+                headerTitle1: '📅 大区総業績',
+                headerTitle2: '📅 小区総業績',
+                statLabel1: '累計取引量($)',
+                statLabel2: '累計取引量($)',
+                progressLabel: '評価進捗',
+                progressFooterLabel: '個人保有目標: ',
+                directTaskLabel: '直推タスク: 15ノード',
+                directTaskStatus: '完了目標: ',
+                levelLabel: '現在のレベル: ',
+                rateLabel: '現在の利率: ',
+                progressDetailPrefix: '業績 ',
+                processBadge: '招待プロセス',
+                step1: '既存ユーザー',
+                step2: 'AIGC送信',
+                step3: '新規ユーザー',
+                step4: 'バインディング成功',
+                cardLabel1: '直推人数',
+                cardLabel2: 'チーム人数',
+                tabInvite: '招待記録',
+                tabClaim: '受領記録',
+                navAssets: '資産',
+                navStake: 'ステーキング',
+                navLiquidity: '流動性',
+                navInvite: '招待',
+                navEcosystem: 'エコシステム',
+                noRecords: '記録なし',
+                connectWallet: 'ウォレットを接続してください',
+                loading: '読み込み中...',
+                loadFailed: '読み込み失敗、もう一度お試しください',
+                noInviteRecords: '招待記録なし',
+                noClaimRecords: '受領記録なし',
+                claimRecordLabel: '最近の受領量',
+                claimRecordTimeLabel: '受領時間',
+                nodeApplyConfirm: '【{name}】申請を確認しますか？ {amount} USDTを貢献します',
+                applySuccess: '🎉 {name}申請成功！',
+                applyFailed: '操作失敗: ',
+                claimAirdropFailed: '受領失敗: ',
+                withdrawBtn: '現在受領可能 --',
+                noPending: '受領可能なAIGCはありません',
+                minClaimFailed: '最低受領要件を満たしていません',
+                confirmWithdraw: '{amount} AIGCを引き出しますか？',
+                withdrawSuccess: '✅ 引き出し成功！',
+                withdrawFailed: '引き出し失敗: ',
+                claimAlready: '受領済みまたは資格なし',
+                claimSuccess: '✅ 受領成功！'
             },
             ar: {
-                langBtn: '🇸🇦 AR', pageTitle: 'دعوة الأصدقاء', airdropTitle: 'خطة المغلفات الحمراء المحدودة', airdropDesc: 'حصري للمستخدمين الجدد، ادعُ الأصدقاء لربح 50 HSBC',
-                airdropStatusClaimed: 'تم المطالبة بـ 100 HSBC', airdropStatusAvailable: 'قابل للمطالبة 100 HSBC', claimBtn: 'المطالبة الآن', claimBtnClaimed: 'تم المطالبة',
-                nodeTitle1: 'عقدة الأغنياء', nodeReward1: '3x مكافأة', nodeRights1: 'حقوق S2 2%-10%', nodeDividend1: 'توزيع عالمي 1%',
-                nodeTitle2: 'عقدة ستارلينك', nodeReward2: '5x مكافأة', nodeRights2: 'حقوق S3 4%-15%', nodeDividend2: 'توزيع عالمي 1.6%',
-                nodeTitle3: 'عقدة التكوين', nodeReward3: '9x مكافأة', nodeRights3: 'حقوق S8 15%-40%', nodeDividend3: 'توزيع عالمي 2.4%',
-                applyBtn: 'تقديم الآن', applyBtnDisabled: 'تم التقديم',
-                statsLabel1: 'إجمالي السك', statsLabel2: 'الحد الأدنى للمطالبة', currentClaimable: 'قابل للمطالبة',
-                headerTitle1: '📅 إجمالي أداء المنطقة الكبرى', headerTitle2: '📅 إجمالي أداء المنطقة الصغرى', statLabel1: 'حجم التداول التراكمي ($)', statLabel2: 'حجم التداول التراكمي ($)',
-                progressLabel: 'تقدم التقييم', progressFooterLabel: 'هدف الاحتفاظ الشخصي: ', directTaskLabel: 'مهمة الإحالة المباشرة: 15 عقدة', directTaskStatus: 'الهدف المكتمل: ',
-                levelLabel: 'المستوى الحالي: ', rateLabel: 'سعر الفائدة الحالي: ', progressDetailPrefix: 'أداء ',
-                processBadge: 'عملية الدعوة', step1: 'المستخدم القديم', step2: 'تحويل AIGC', step3: 'المستخدم الجديد', step4: 'ربط ناجح',
-                cardLabel1: 'عدد الإحالات المباشرة', cardLabel2: 'أعضاء الفريق', tabInvite: 'سجلات الدعوة', tabClaim: 'سجلات المطالبة',
-                navAssets: 'الأصول', navStake: 'تخزين', navLiquidity: 'سيولة', navInvite: 'دعوة', navEcosystem: 'النظام البيئي',
-                noRecords: 'لا توجد سجلات', connectWallet: 'يرجى توصيل المحفظة أولاً', loading: 'جاري التحميل...', loadFailed: 'فشل التحميل، حاول مرة أخرى',
-                noInviteRecords: 'لا توجد سجلات دعوة', noClaimRecords: 'لا توجد سجلات مطالبة',
-                claimRecordLabel: 'كمية المطالبة الأخيرة', claimRecordTimeLabel: 'وقت المطالبة',
-                nodeApplyConfirm: 'تأكيد طلب 【{name}】؟ سيتم المساهمة بـ {amount} USDT', applySuccess: '🎉 تم تقديم {name} بنجاح!',
-                applyFailed: 'فشل العملية: ', claimAirdropFailed: 'فشل المطالبة: ', withdrawBtn: 'قابل للمطالبة --'
+                langBtn: '🇸🇦 AR',
+                pageTitle: 'دعوة الأصدقاء',
+                airdropTitle: 'خطة المغلفات الحمراء المحدودة',
+                airdropDesc: 'حصري للمستخدمين الجدد، ادعُ الأصدقاء لربح 50 HSBC',
+                airdropStatusClaimed: 'تم المطالبة بـ 100 HSBC',
+                airdropStatusAvailable: 'قابل للمطالبة 100 HSBC',
+                claimBtn: 'المطالبة الآن',
+                claimBtnClaimed: 'تم المطالبة',
+                nodeTitle1: 'عقدة الأغنياء',
+                nodeReward1: '3x مكافأة',
+                nodeRights1: 'حقوق S2 2%-10%',
+                nodeDividend1: 'توزيع عالمي 1%',
+                nodeTitle2: 'عقدة ستارلينك',
+                nodeReward2: '5x مكافأة',
+                nodeRights2: 'حقوق S3 4%-15%',
+                nodeDividend2: 'توزيع عالمي 1.6%',
+                nodeTitle3: 'عقدة التكوين',
+                nodeReward3: '9x مكافأة',
+                nodeRights3: 'حقوق S8 15%-40%',
+                nodeDividend3: 'توزيع عالمي 2.4%',
+                applyBtn: 'تقديم الآن',
+                applyBtnDisabled: 'تم التقديم',
+                statsLabel1: 'إجمالي السك',
+                statsLabel2: 'الحد الأدنى للمطالبة',
+                currentClaimable: 'قابل للمطالبة',
+                headerTitle1: '📅 إجمالي أداء المنطقة الكبرى',
+                headerTitle2: '📅 إجمالي أداء المنطقة الصغرى',
+                statLabel1: 'حجم التداول التراكمي ($)',
+                statLabel2: 'حجم التداول التراكمي ($)',
+                progressLabel: 'تقدم التقييم',
+                progressFooterLabel: 'هدف الاحتفاظ الشخصي: ',
+                directTaskLabel: 'مهمة الإحالة المباشرة: 15 عقدة',
+                directTaskStatus: 'الهدف المكتمل: ',
+                levelLabel: 'المستوى الحالي: ',
+                rateLabel: 'سعر الفائدة الحالي: ',
+                progressDetailPrefix: 'أداء ',
+                processBadge: 'عملية الدعوة',
+                step1: 'المستخدم القديم',
+                step2: 'تحويل AIGC',
+                step3: 'المستخدم الجديد',
+                step4: 'ربط ناجح',
+                cardLabel1: 'عدد الإحالات المباشرة',
+                cardLabel2: 'أعضاء الفريق',
+                tabInvite: 'سجلات الدعوة',
+                tabClaim: 'سجلات المطالبة',
+                navAssets: 'الأصول',
+                navStake: 'تخزين',
+                navLiquidity: 'سيولة',
+                navInvite: 'دعوة',
+                navEcosystem: 'النظام البيئي',
+                noRecords: 'لا توجد سجلات',
+                connectWallet: 'يرجى توصيل المحفظة أولاً',
+                loading: 'جاري التحميل...',
+                loadFailed: 'فشل التحميل، حاول مرة أخرى',
+                noInviteRecords: 'لا توجد سجلات دعوة',
+                noClaimRecords: 'لا توجد سجلات مطالبة',
+                claimRecordLabel: 'كمية المطالبة الأخيرة',
+                claimRecordTimeLabel: 'وقت المطالبة',
+                nodeApplyConfirm: 'تأكيد طلب 【{name}】؟ سيتم المساهمة بـ {amount} USDT',
+                applySuccess: '🎉 تم تقديم {name} بنجاح!',
+                applyFailed: 'فشل العملية: ',
+                claimAirdropFailed: 'فشل المطالبة: ',
+                withdrawBtn: 'قابل للمطالبة --',
+                noPending: 'لا يوجد AIGC قابل للمطالبة',
+                minClaimFailed: 'لا يفي بالحد الأدنى للمطالبة',
+                confirmWithdraw: 'تأكيد سحب {amount} AIGC؟',
+                withdrawSuccess: '✅ تم السحب بنجاح!',
+                withdrawFailed: 'فشل السحب: ',
+                claimAlready: 'تمت المطالبة مسبقًا أو غير مؤهل',
+                claimSuccess: '✅ تمت المطالبة بنجاح!'
             },
             ru: {
-                langBtn: '🇷🇺 RU', pageTitle: 'Пригласить друзей', airdropTitle: 'Лимитированный план красных конвертов', airdropDesc: 'Эксклюзивно для новых пользователей, пригласите друзей и получите 50 HSBC',
-                airdropStatusClaimed: 'Получено 100 HSBC', airdropStatusAvailable: 'Можно получить 100 HSBC', claimBtn: 'Получить сейчас', claimBtnClaimed: 'Получено',
-                nodeTitle1: 'Узел богатства', nodeReward1: '3x вознаграждение', nodeRights1: 'Права S2 2%-10%', nodeDividend1: 'Глобальные дивиденды 1%',
-                nodeTitle2: 'Узел Starlink', nodeReward2: '5x вознаграждение', nodeRights2: 'Права S3 4%-15%', nodeDividend2: 'Глобальные дивиденды 1.6%',
-                nodeTitle3: 'Узел Genesis', nodeReward3: '9x вознаграждение', nodeRights3: 'Права S8 15%-40%', nodeDividend3: 'Глобальные дивиденды 2.4%',
-                applyBtn: 'Подать заявку сейчас', applyBtnDisabled: 'Заявка подана',
-                statsLabel1: 'Всего отчеканено', statsLabel2: 'Минимальная сумма', currentClaimable: 'Доступно для получения',
-                headerTitle1: '📅 Общая производительность большой зоны', headerTitle2: '📅 Общая производительность малой зоны', statLabel1: 'Совокупный объем ($)', statLabel2: 'Совокупный объем ($)',
-                progressLabel: 'Ход оценки', progressFooterLabel: 'Цель личного владения: ', directTaskLabel: 'Задача прямых рекомендаций: 15 узлов', directTaskStatus: 'Завершенная цель: ',
-                levelLabel: 'Текущий уровень: ', rateLabel: 'Текущая ставка: ', progressDetailPrefix: 'Производительность ',
-                processBadge: 'Процесс приглашения', step1: 'Старый пользователь', step2: 'Перевести AIGC', step3: 'Новый пользователь', step4: 'Привязка успешна',
-                cardLabel1: 'Прямые рекомендации', cardLabel2: 'Члены команды', tabInvite: 'История приглашений', tabClaim: 'История получения',
-                navAssets: 'Активы', navStake: 'Стейкинг', navLiquidity: 'Ликвидность', navInvite: 'Пригласить', navEcosystem: 'Экосистема',
-                noRecords: 'Нет записей', connectWallet: 'Сначала подключите кошелек', loading: 'Загрузка...', loadFailed: 'Ошибка загрузки, попробуйте еще раз',
-                noInviteRecords: 'Нет записей о приглашениях', noClaimRecords: 'Нет записей о получении',
-                claimRecordLabel: 'Последняя полученная сумма', claimRecordTimeLabel: 'Время получения',
-                nodeApplyConfirm: 'Подтвердить заявку на 【{name}】? Будет внесено {amount} USDT', applySuccess: '🎉 {name} успешно подана заявка!',
-                applyFailed: 'Ошибка операции: ', claimAirdropFailed: 'Ошибка получения: ', withdrawBtn: 'Доступно для получения --'
+                langBtn: '🇷🇺 RU',
+                pageTitle: 'Пригласить друзей',
+                airdropTitle: 'Лимитированный план красных конвертов',
+                airdropDesc: 'Эксклюзивно для новых пользователей, пригласите друзей и получите 50 HSBC',
+                airdropStatusClaimed: 'Получено 100 HSBC',
+                airdropStatusAvailable: 'Можно получить 100 HSBC',
+                claimBtn: 'Получить сейчас',
+                claimBtnClaimed: 'Получено',
+                nodeTitle1: 'Узел богатства',
+                nodeReward1: '3x вознаграждение',
+                nodeRights1: 'Права S2 2%-10%',
+                nodeDividend1: 'Глобальные дивиденды 1%',
+                nodeTitle2: 'Узел Starlink',
+                nodeReward2: '5x вознаграждение',
+                nodeRights2: 'Права S3 4%-15%',
+                nodeDividend2: 'Глобальные дивиденды 1.6%',
+                nodeTitle3: 'Узел Genesis',
+                nodeReward3: '9x вознаграждение',
+                nodeRights3: 'Права S8 15%-40%',
+                nodeDividend3: 'Глобальные дивиденды 2.4%',
+                applyBtn: 'Подать заявку сейчас',
+                applyBtnDisabled: 'Заявка подана',
+                statsLabel1: 'Всего отчеканено',
+                statsLabel2: 'Минимальная сумма',
+                currentClaimable: 'Доступно для получения',
+                headerTitle1: '📅 Общая производительность большой зоны',
+                headerTitle2: '📅 Общая производительность малой зоны',
+                statLabel1: 'Совокупный объем ($)',
+                statLabel2: 'Совокупный объем ($)',
+                progressLabel: 'Ход оценки',
+                progressFooterLabel: 'Цель личного владения: ',
+                directTaskLabel: 'Задача прямых рекомендаций: 15 узлов',
+                directTaskStatus: 'Завершенная цель: ',
+                levelLabel: 'Текущий уровень: ',
+                rateLabel: 'Текущая ставка: ',
+                progressDetailPrefix: 'Производительность ',
+                processBadge: 'Процесс приглашения',
+                step1: 'Старый пользователь',
+                step2: 'Перевести AIGC',
+                step3: 'Новый пользователь',
+                step4: 'Привязка успешна',
+                cardLabel1: 'Прямые рекомендации',
+                cardLabel2: 'Члены команды',
+                tabInvite: 'История приглашений',
+                tabClaim: 'История получения',
+                navAssets: 'Активы',
+                navStake: 'Стейкинг',
+                navLiquidity: 'Ликвидность',
+                navInvite: 'Пригласить',
+                navEcosystem: 'Экосистема',
+                noRecords: 'Нет записей',
+                connectWallet: 'Сначала подключите кошелек',
+                loading: 'Загрузка...',
+                loadFailed: 'Ошибка загрузки, попробуйте еще раз',
+                noInviteRecords: 'Нет записей о приглашениях',
+                noClaimRecords: 'Нет записей о получении',
+                claimRecordLabel: 'Последняя полученная сумма',
+                claimRecordTimeLabel: 'Время получения',
+                nodeApplyConfirm: 'Подтвердить заявку на 【{name}】? Будет внесено {amount} USDT',
+                applySuccess: '🎉 {name} успешно подана заявка!',
+                applyFailed: 'Ошибка операции: ',
+                claimAirdropFailed: 'Ошибка получения: ',
+                withdrawBtn: 'Доступно для получения --',
+                noPending: 'Нет доступных для получения AIGC',
+                minClaimFailed: 'Не соответствует минимальному требованию',
+                confirmWithdraw: 'Подтвердить вывод {amount} AIGC?',
+                withdrawSuccess: '✅ Вывод успешен!',
+                withdrawFailed: 'Ошибка вывода: ',
+                claimAlready: 'Уже получено или не подходит',
+                claimSuccess: '✅ Получение успешно!'
             }
         };
 
-        // ======================== 语言切换 ========================
+        // ======================== 语言切换逻辑 ========================
         const langBtn = document.getElementById('langBtn');
         const langDropdown = document.getElementById('langDropdown');
-        let currentLang = 'zh';
-        langBtn.addEventListener('click', (e) => { e.stopPropagation(); langDropdown.classList.toggle('open'); langBtn.classList.toggle('active'); });
-        document.addEventListener('click', (e) => { if (!langDropdown.contains(e.target) && e.target !== langBtn) { langDropdown.classList.remove('open'); langBtn.classList.remove('active'); } });
+        let currentLang = 'cn';
+
+        langBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            langDropdown.classList.toggle('open');
+            langBtn.classList.toggle('active');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!langDropdown.contains(e.target) && e.target !== langBtn) {
+                langDropdown.classList.remove('open');
+                langBtn.classList.remove('active');
+            }
+        });
+
         document.querySelectorAll('.lang-option').forEach(option => {
             option.addEventListener('click', () => {
                 const langCode = option.querySelector('.code').innerText.trim().toLowerCase();
                 const langData = translations[langCode];
                 if (langData) { currentLang = langCode; applyTranslations(langData); refreshAllData(); }
-                langDropdown.classList.remove('open'); langBtn.classList.remove('active');
+                langDropdown.classList.remove('open');
+                langBtn.classList.remove('active');
             });
         });
 
@@ -453,7 +955,6 @@
         const NodeLevel = { FIRST: 1, STAR: 2, GENESIS: 3 };
 
         const USDT_ABI = ["function allowance(address,address) view returns (uint256)","function approve(address,uint256) returns (bool)","function decimals() view returns (uint8)"];
-        // ✅ 修复：使用正确的结构体 ABI
         const AIGC_ABI = [
             "function depositUSDT(uint256) returns (bool)","function getPendingReward(address) view returns (uint256)",
             "function getBnbRequiredForClaim(uint256) view returns (uint256)","function getMinClaimRequirement(address) view returns (uint256)",
@@ -504,16 +1005,15 @@
 
         async function updateAirdropStatus() {
             if (!hsbcContract) return;
-            try { const hc = await hsbcContract.hasClaimed(currentAccount); const s = document.getElementById('airdropStatus'); const b = document.getElementById('claimAirdropBtn'); const ld = translations[currentLang]||translations.en; if (hc) { s.textContent = ld.airdropStatusClaimed; b.textContent = ld.claimBtnClaimed; b.disabled = true; } else { s.textContent = ld.airdropStatusAvailable; b.textContent = ld.claimBtn; b.disabled = false; } } catch (e) {}
+            try { const hc = await hsbcContract.hasClaimed(currentAccount); const s = document.getElementById('airdropStatus'); const b = document.getElementById('claimAirdropBtn'); const ld = translations[currentLang]||translations.cn; if (hc) { s.textContent = ld.airdropStatusClaimed; b.textContent = ld.claimBtnClaimed; b.disabled = true; } else { s.textContent = ld.airdropStatusAvailable; b.textContent = ld.claimBtn; b.disabled = false; } } catch (e) {}
         }
 
         async function updateClaimableReward() {
-            const ld = translations[currentLang]||translations.en;
+            const ld = translations[currentLang]||translations.cn;
             if (!aigcContract) { withdrawBtn.textContent = ld.withdrawBtn; return; }
             try { const p = await aigcContract.getPendingReward(currentAccount); withdrawBtn.textContent = `${ld.currentClaimable} ${parseFloat(ethers.utils.formatEther(p)).toFixed(4)} AIGC`; } catch (e) { withdrawBtn.textContent = ld.withdrawBtn; }
         }
 
-        // ✅ 累计铸币 = getTotalMinted
         async function updateClaimStats() {
             if (!currentAccount) return;
             try {
@@ -525,7 +1025,7 @@
         }
 
         async function updateTeamPerformance() {
-            const ld = translations[currentLang]||translations.en;
+            const ld = translations[currentLang]||translations.cn;
             if (!currentAccount) return;
             try {
                 const refs = await rpcBcbsContract.getDirectReferrals(currentAccount);
@@ -552,7 +1052,6 @@
             try { const c = await rpcAigcContract.getUpgradedReferralCount(currentAccount); document.getElementById('completedNodes').textContent = parseInt(c.toString()); renderNodeProgress(parseInt(c.toString())); } catch (e) {}
         }
 
-        // ✅ 修复：全部从 AIGC 读取团队数据
         async function updateReferralCounts() {
             if (!currentAccount) return;
             try {
@@ -579,7 +1078,7 @@
         }
 
         async function updateNodeButtonStates() {
-            const ld = translations[currentLang]||translations.en;
+            const ld = translations[currentLang]||translations.cn;
             if (!currentAccount) return;
             try {
                 document.querySelectorAll('.node-apply-btn').forEach(b => { b.disabled = false; b.textContent = ld.applyBtn; });
@@ -592,31 +1091,35 @@
         function renderNodeProgress(c) { const el = document.getElementById('nodeProgress'); let h = ''; for (let i = 1; i <= 15; i++) h += `<div class="node-item ${i <= c ? 'active' : ''}">${i}</div>`; el.innerHTML = h; }
 
         withdrawBtn.addEventListener('click', async () => {
+            const ld = translations[currentLang]||translations.cn;
             if (!currentAccount || !aigcContract) { alert('请先连接钱包'); return; }
             withdrawBtn.disabled = true; withdrawBtn.innerHTML = '<span class="loading-spinner"></span> 检查中...';
             try {
-                const p = await aigcContract.getPendingReward(currentAccount); if (p.isZero()) { alert('没有可提取的 AIGC'); return; }
-                const mc = await aigcContract.getMinClaimRequirement(currentAccount); if (p.lt(mc)) { alert('未达到最低提取要求'); return; }
+                const p = await aigcContract.getPendingReward(currentAccount);
+                if (p.isZero()) { alert(ld.noPending); return; }
+                const mc = await aigcContract.getMinClaimRequirement(currentAccount);
+                if (p.lt(mc)) { alert(ld.minClaimFailed); return; }
                 const br = await aigcContract.getBnbRequiredForClaim(p);
-                if (!confirm(`确认提取 ${ethers.utils.formatEther(p)} AIGC？`)) return;
+                if (!confirm(ld.confirmWithdraw.replace('{amount}', ethers.utils.formatEther(p)))) return;
                 withdrawBtn.innerHTML = '<span class="loading-spinner"></span> 交易中...';
                 const tx = await aigcContract.claimReward({ value: br, gasLimit: 500000 }); await tx.wait();
-                alert('✅ 提取成功！'); await updateClaimableReward(); await updateClaimStats(); await updateNodeButtonStates(); await loadClaimRecords();
-            } catch (e) { alert('提币失败: ' + (e.reason || e.message)); }
+                alert(ld.withdrawSuccess); await updateClaimableReward(); await updateClaimStats(); await updateNodeButtonStates(); await loadClaimRecords();
+            } catch (e) { alert(ld.withdrawFailed + (e.reason || e.message)); }
             finally { withdrawBtn.disabled = false; await updateClaimableReward(); }
         });
 
         document.getElementById('claimAirdropBtn').addEventListener('click', async () => {
+            const ld = translations[currentLang]||translations.cn;
             if (!currentAccount) { alert('请先连接钱包'); return; }
             const b = document.getElementById('claimAirdropBtn'); b.disabled = true; b.innerHTML = '<span class="loading-spinner"></span> 领取中...';
-            try { if (!await hsbcContract.canClaim(currentAccount)) { alert('已领取或不符合条件'); await updateAirdropStatus(); return; } const tx = await hsbcContract.claimHSBC({ value: await hsbcContract.getClaimFee(), gasLimit: 300000 }); await tx.wait(); alert('✅ 领取成功！'); document.getElementById('airdropStatus').textContent = '已领取 100 HSBC'; b.textContent = '已领取'; b.disabled = true; }
-            catch (e) { alert('领取失败: ' + (e.reason || e.message)); b.disabled = false; b.textContent = '立即领取'; }
+            try { if (!await hsbcContract.canClaim(currentAccount)) { alert(ld.claimAlready); await updateAirdropStatus(); return; } const tx = await hsbcContract.claimHSBC({ value: await hsbcContract.getClaimFee(), gasLimit: 300000 }); await tx.wait(); alert(ld.claimSuccess); document.getElementById('airdropStatus').textContent = ld.airdropStatusClaimed; b.textContent = ld.claimBtnClaimed; b.disabled = true; }
+            catch (e) { alert(ld.claimAirdropFailed + (e.reason || e.message)); b.disabled = false; b.textContent = ld.claimBtn; }
         });
 
         document.querySelectorAll('.node-apply-btn').forEach(btn => {
             btn.addEventListener('click', async () => {
                 if (!currentAccount) { alert('请先连接钱包'); return; }
-                const info = nodeAmountMap[btn.dataset.node]; const ld = translations[currentLang]||translations.en;
+                const info = nodeAmountMap[btn.dataset.node]; const ld = translations[currentLang]||translations.cn;
                 if (!confirm(ld.nodeApplyConfirm.replace('{name}', info.name).replace('{amount}', info.amount))) return;
                 const aw = ethers.utils.parseUnits(info.amount, 18); btn.disabled = true; btn.textContent = '处理中...';
                 try { const al = await usdtContract.allowance(currentAccount, AIGC_ADDRESS); if (al.lt(aw)) { btn.textContent = '请确认授权...'; await (await usdtContract.approve(AIGC_ADDRESS, ethers.constants.MaxUint256, { gasLimit: 100000 })).wait(); } btn.textContent = '铸币贡献中...'; await (await aigcContract.depositUSDT(aw, { gasLimit: 500000 })).wait(); alert(ld.applySuccess.replace('{name}', info.name)); await refreshAllData(); }
@@ -628,9 +1131,8 @@
             btn.addEventListener('click', function() { document.querySelectorAll('.record-tab-btn').forEach(b => b.classList.remove('active')); this.classList.add('active'); currentTab = this.dataset.tab; if (currentTab === 'invite') loadInviteRecords(); else loadClaimRecords(); });
         });
 
-        // ✅ 修复：正确解析结构体数组
         async function loadInviteRecords() {
-            const c = document.getElementById('recordListContainer'); const ld = translations[currentLang]||translations.en;
+            const c = document.getElementById('recordListContainer'); const ld = translations[currentLang]||translations.cn;
             if (!currentAccount) { c.innerHTML = `<div style="text-align:center;color:var(--text-secondary);padding:20px;">${ld.connectWallet}</div>`; return; }
             c.innerHTML = `<div style="text-align:center;color:var(--text-secondary);padding:20px;"><span class="loading-spinner"></span> ${ld.loading}</div>`;
             try {
@@ -645,9 +1147,8 @@
             } catch (e) { c.innerHTML = `<div class="record-item" style="justify-content:center;color:var(--text-secondary);">${ld.loadFailed}</div>`; }
         }
 
-        // ✅ 修复：遍历三个等级取最大 lastClaimTime
         async function loadClaimRecords() {
-            const c = document.getElementById('recordListContainer'); const ld = translations[currentLang]||translations.en;
+            const c = document.getElementById('recordListContainer'); const ld = translations[currentLang]||translations.cn;
             if (!currentAccount) { c.innerHTML = `<div style="text-align:center;color:var(--text-secondary);padding:20px;">${ld.connectWallet}</div>`; return; }
             c.innerHTML = `<div style="text-align:center;color:var(--text-secondary);padding:20px;"><span class="loading-spinner"></span> ${ld.loading}</div>`;
             try {
@@ -662,7 +1163,7 @@
 
         function updateUIForConnected(acc) { connectBtn.textContent = `${acc.substring(0,6)}...${acc.substring(acc.length-4)}`; connectBtn.classList.add('connected'); }
         function setDisconnectedUI() {
-            const ld = translations[currentLang]||translations.en;
+            const ld = translations[currentLang]||translations.cn;
             connectBtn.textContent = 'Connect wallet'; connectBtn.classList.remove('connected'); withdrawBtn.textContent = ld.withdrawBtn;
             document.getElementById('totalClaimed').textContent = '0.0000'; document.getElementById('minClaimAmount').textContent = '0.0000';
             document.getElementById('maxPerformance').textContent = '0.00'; document.getElementById('minPerformance').textContent = '0.00';
