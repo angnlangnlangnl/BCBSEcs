@@ -407,7 +407,13 @@
         // ======================== 语言切换弹窗逻辑 ========================
         const langBtn = document.getElementById('langBtn');
         const langDropdown = document.getElementById('langDropdown');
-        let currentLang = 'cn'; // ✅ 默认简体中文
+        let currentLang = localStorage.getItem('bcbsLang') || 'cn'; // ✅ 从 localStorage 读取
+
+        // 页面加载后应用保存的语言
+        window.addEventListener('DOMContentLoaded', function() {
+            const langData = translations[currentLang];
+            if (langData) applyTranslations(langData);
+        });
 
         // 点击按钮切换弹窗显示/隐藏
         langBtn.addEventListener('click', (e) => {
@@ -432,6 +438,8 @@
                 
                 if (langData) {
                     currentLang = langCode;
+                    // ✅ 保存到 localStorage 实现跨页同步
+                    localStorage.setItem('bcbsLang', langCode);
                     applyTranslations(langData);
                 }
                 
