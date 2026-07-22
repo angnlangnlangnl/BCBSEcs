@@ -293,7 +293,6 @@
             try { const p = await aigcContract.getPendingReward(currentAccount); withdrawBtn.textContent = `当前可提取 ${parseFloat(ethers.utils.formatEther(p)).toFixed(4)} AIGC`; } catch (e) { withdrawBtn.textContent = '当前可提取 --'; }
         }
 
-        // ✅ 累计铸币 = getTotalMinted（只含已铸造，不含待领取）
         async function updateClaimStats() {
             if (!currentAccount) return;
             try {
@@ -328,7 +327,7 @@
                 document.getElementById('bcbseBalance').textContent = bal.toFixed(4);
                 let idLvl = 0;
                 try { idLvl = parseInt((await rpcAigcContract.identityLevel(currentAccount)).toString()); } catch (e) {}
-                document.getElementById('targetHolding').textContent (HOLDING_TARGETS[Math.min(Math.floor(idLvl/2),8)] || 10).toFixed(2);
+                document.getElementById('targetHolding').textContent = (HOLDING_TARGETS[Math.min(Math.floor(idLvl/2),8)] || 10).toFixed(2);
             } catch (e) {}
         }
 
@@ -337,15 +336,26 @@
             try { const c = await rpcAigcContract.getUpgradedReferralCount(currentAccount); document.getElementById('completedNodes').textContent = parseInt(c.toString()); renderNodeProgress(parseInt(c.toString())); } catch (e) {}
         }
 
+        // ✅ 修复：全部从 AIGC 读取，保证数据一致
         async function updateReferralCounts() {
             if (!currentAccount) return;
             try {
+                // 直推人数
                 const dc = await rpcAigcContract.getDirectReferralCount(currentAccount);
-                document.getElementById('directCount').textContent = parseInt(dc.toString());
-                const refs = await rpcBcbsContract.getDirectReferrals(currentAccount);
-                let tc = parseInt(dc.toString());
-                for (const ref of (refs || [])) { try { const sr = await rpcBcbsContract.getDirectReferrals(ref); tc += sr ? sr.length : 0; } catch (e) {} }
-                document.getElementById('teamCount').textContent = tc;
+                const directCount = parseInt(dc.toString());
+                document.getElementById('directCount').textContent = directCount;
+
+                // 团队人数 = 直推 + 间推（从 AIGC 递归一层）
+                const records = await rpcAigcContract.getDirectReferralsWithTime(currentAccount);
+                let teamCount = directCount;
+                for (const r of (records || [])) {
+                    const addr = r.user || r[0];
+                    try {
+                        const subCount = await rpcAigcContract.getDirectReferralCount(addr);
+                        teamCount += parseInt(subCount.toString());
+                    } catch (e) {}
+                }
+                document.getElementById('teamCount').textContent = teamCount;
             } catch (e) {}
         }
 
