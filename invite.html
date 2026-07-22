@@ -95,7 +95,7 @@
         }
         .lang-btn.active { background: rgba(0, 136, 255, 0.1); border-color: var(--cyan-dim); color: var(--cyan-glow); }
 
-        /* --- 新增语言弹窗样式 --- */
+        /* --- 语言弹窗样式 --- */
         .lang-dropdown {
             display: none;
             position: absolute;
@@ -191,7 +191,12 @@
             text-align: center; 
             margin: 10px 0 20px; 
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
+        .page-title img { width: 28px; height: 28px; object-fit: contain; }
 
         /* ================= 空投卡片 ================= */
         .airdrop-card .airdrop-header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
@@ -463,80 +468,117 @@
                         <div class="lang-option"><span>🇷🇺 Русский</span><span class="code">RU</span></div>
                     </div>
 
-                    <button id="connectWalletBtn" class="connect-btn">Connect wallet</button>
+                    <button id="connectWalletBtn" class="connect-btn" data-i18n="connect">Connect wallet</button>
                 </div>
             </div>
-            <div class="page-title">📨 邀请好友</div>
+            
+            <div class="page-title"><img src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/rp.png" alt="邀请"> <span data-i18n="page_title">邀请好友</span></div>
 
             <div class="panel airdrop-card">
                 <div class="airdrop-header">
                     <div class="airdrop-icon"><img src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/HSBC.icon.png" alt="HSBC"></div>
                     <div>
-                        <div class="airdrop-title">限量红包领取计划</div>
-                        <div class="airdrop-desc">新用户专享，推荐好友可奖励50HSBC</div>
+                        <div class="airdrop-title" data-i18n="airdrop_title">限量红包领取计划</div>
+                        <div class="airdrop-desc" data-i18n="airdrop_desc">新用户专享，推荐好友可奖励50HSBC</div>
                     </div>
                 </div>
-                <div class="airdrop-amount-box" id="airdropStatus">未领取</div>
-                <button class="airdrop-btn" id="claimAirdropBtn">立即领取</button>
+                <div class="airdrop-amount-box" id="airdropStatus" data-i18n="airdrop_status">未领取</div>
+                <button class="airdrop-btn" id="claimAirdropBtn" data-i18n="airdrop_btn">立即领取</button>
             </div>
 
             <div class="panel">
                 <div class="node-slider" id="nodeSlider">
-                    <div class="node-card"><div class="node-title">首富节点</div><div class="node-reward">收益3倍</div><div class="node-rights">S2权益 极差2%-10%</div><div class="node-dividend">全球分红1%</div><button class="node-apply-btn" data-node="rich">立即申请</button></div>
-                    <div class="node-card"><div class="node-title">星链节点</div><div class="node-reward">收益5倍</div><div class="node-rights">S3权益 极差4%-15%</div><div class="node-dividend">全球分红1.6%</div><button class="node-apply-btn" data-node="starlink">立即申请</button></div>
-                    <div class="node-card"><div class="node-title">创世节点</div><div class="node-reward">收益9倍</div><div class="node-rights">S8权益 极差15%-40%</div><div class="node-dividend">全球分红2.4%</div><button class="node-apply-btn" data-node="genesis">立即申请</button></div>
+                    <div class="node-card">
+                        <div class="node-title" data-i18n="node_rich_title">首富节点</div>
+                        <div class="node-reward" data-i18n="node_rich_reward">收益3倍</div>
+                        <div class="node-rights" data-i18n="node_rich_rights">S2权益 极差2%-10%</div>
+                        <div class="node-dividend" data-i18n="node_rich_dividend">全球分红1%</div>
+                        <button class="node-apply-btn" data-node="rich" data-i18n="apply_now">立即申请</button>
+                    </div>
+                    <div class="node-card">
+                        <div class="node-title" data-i18n="node_star_title">星链节点</div>
+                        <div class="node-reward" data-i18n="node_star_reward">收益5倍</div>
+                        <div class="node-rights" data-i18n="node_star_rights">S3权益 极差4%-15%</div>
+                        <div class="node-dividend" data-i18n="node_star_dividend">全球分红1.6%</div>
+                        <button class="node-apply-btn" data-node="starlink" data-i18n="apply_now">立即申请</button>
+                    </div>
+                    <div class="node-card">
+                        <div class="node-title" data-i18n="node_genesis_title">创世节点</div>
+                        <div class="node-reward" data-i18n="node_genesis_reward">收益9倍</div>
+                        <div class="node-rights" data-i18n="node_genesis_rights">S8权益 极差15%-40%</div>
+                        <div class="node-dividend" data-i18n="node_genesis_dividend">全球分红2.4%</div>
+                        <button class="node-apply-btn" data-node="genesis" data-i18n="apply_now">立即申请</button>
+                    </div>
                 </div>
                 <div class="claim-stats-row">
                     <div class="claim-stats-item">
-                        <div class="claim-stats-label">累计铸币</div>
+                        <div class="claim-stats-label" data-i18n="total_claimed_label">累计铸币</div>
                         <div class="claim-stats-value" style="color: var(--cyan-glow);"><span id="totalClaimed">0.0000</span> <span style="font-size:11px;color:var(--text-secondary);">AIGC</span></div>
                     </div>
                     <div class="claim-stats-item">
-                        <div class="claim-stats-label">本次最低提取</div>
+                        <div class="claim-stats-label" data-i18n="min_claim_label">本次最低提取</div>
                         <div class="claim-stats-value" style="color: #ff6b6b;"><span id="minClaimAmount">0.0000</span> <span style="font-size:11px;color:var(--text-secondary);">AIGC</span></div>
                     </div>
                 </div>
-                <button class="withdraw-reward-btn" id="withdrawRewardBtn">当前可提取 --</button>
+                <button class="withdraw-reward-btn" id="withdrawRewardBtn" data-i18n="withdraw_btn">当前可提取 --</button>
             </div>
 
             <div class="panel">
-                <div class="header-row"><div class="header-title">📅 <span>大区总业绩</span></div><div class="header-title">📅 <span>小区总业绩</span></div></div>
-                <div class="stats-row"><div class="stat-box"><div class="stat-label">累计交易量($)</div><div class="stat-val" id="maxPerformance">0.00</div></div><div class="stat-box"><div class="stat-label">累计交易量($)</div><div class="stat-val" id="minPerformance">0.00</div></div></div>
+                <div class="header-row">
+                    <div class="header-title">📅 <span data-i18n="max_perf_title">大区总业绩</span></div>
+                    <div class="header-title">📅 <span data-i18n="min_perf_title">小区总业绩</span></div>
+                </div>
+                <div class="stats-row">
+                    <div class="stat-box">
+                        <div class="stat-label" data-i18n="max_perf_label">累计交易量($)</div>
+                        <div class="stat-val" id="maxPerformance">0.00</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label" data-i18n="min_perf_label">累计交易量($)</div>
+                        <div class="stat-val" id="minPerformance">0.00</div>
+                    </div>
+                </div>
                 <div class="progress-area">
-                    <div class="progress-header"><span>考核进度</span><span class="right" id="progressPercent">0.00%</span></div>
+                    <div class="progress-header">
+                        <span data-i18n="progress_label">考核进度</span>
+                        <span class="right" id="progressPercent">0.00%</span>
+                    </div>
                     <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%;"></div></div>
-                    <div class="progress-footer"><span>个人持币目标: <span id="bcbseBalance">0.00</span> / <span id="targetHolding">10.00</span> BCBS</span><span id="progressDetail">业绩0/500</span></div>
+                    <div class="progress-footer">
+                        <span data-i18n="holding_goal">个人持币目标: <span id="bcbseBalance">0.00</span> / <span id="targetHolding">10.00</span> BCBS</span>
+                        <span id="progressDetail" data-i18n="progress_detail">业绩0/500</span>
+                    </div>
                     <div style="margin-top:12px;">
-                        <div class="direct-row"><span>直推任务：15节点</span><span>完成有效目标: <span id="completedNodes">0</span>节点</span></div>
+                        <div class="direct-row"><span data-i18n="direct_task">直推任务：15节点</span><span data-i18n="completed_nodes">完成有效目标: <span id="completedNodes">0</span>节点</span></div>
                         <div class="node-progress" id="nodeProgress"></div>
-                        <div class="direct-row"><span>当前层级：<span id="identityLevel">--</span></span><span>当前利率: <span id="rateLevel">--</span></span></div>
+                        <div class="direct-row"><span data-i18n="current_level">当前层级：<span id="identityLevel">--</span></span><span data-i18n="current_rate">当前利率: <span id="rateLevel">--</span></span></div>
                     </div>
                 </div>
             </div>
 
             <div class="panel process-panel">
-                <div class="process-badge">邀请流程</div>
+                <div class="process-badge" data-i18n="process_badge">邀请流程</div>
                 <div class="process-flow">
-                    <div class="process-step"><div class="step-icon">👤</div><span>老用户</span></div>
+                    <div class="process-step"><div class="step-icon">👤</div><span data-i18n="step_old_user">老用户</span></div>
                     <span class="process-arrow">→</span>
-                    <div class="process-step"><div class="step-icon"><img src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/aigc.png" alt="AIGC"></div><span>转AIGC</span></div>
+                    <div class="process-step"><div class="step-icon"><img src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/aigc.png" alt="AIGC"></div><span data-i18n="step_transfer">转AIGC</span></div>
                     <span class="process-arrow">→</span>
-                    <div class="process-step"><div class="step-icon">👥</div><span>新用户</span></div>
+                    <div class="process-step"><div class="step-icon">👥</div><span data-i18n="step_new_user">新用户</span></div>
                     <span class="process-arrow">→</span>
-                    <div class="process-step"><div class="step-icon">✅</div><span>绑定成功</span></div>
+                    <div class="process-step"><div class="step-icon">✅</div><span data-i18n="step_bind">绑定成功</span></div>
                 </div>
                 <div class="stats-card-row">
                     <div class="stats-card">
                         <div class="stats-card-icon">👤</div>
                         <div class="stats-card-info">
-                            <div class="stats-card-label">直推人数</div>
+                            <div class="stats-card-label" data-i18n="direct_count_label">直推人数</div>
                             <div class="stats-card-value" id="directCount">0</div>
                         </div>
                     </div>
                     <div class="stats-card">
                         <div class="stats-card-icon">👥</div>
                         <div class="stats-card-info">
-                            <div class="stats-card-label">团队人数</div>
+                            <div class="stats-card-label" data-i18n="team_count_label">团队人数</div>
                             <div class="stats-card-value" id="teamCount">0</div>
                         </div>
                     </div>
@@ -545,35 +587,437 @@
 
             <div class="panel">
                 <div class="record-tab-switch">
-                    <div class="record-tab-btn active" data-tab="invite">邀请记录</div>
-                    <div class="record-tab-btn" data-tab="claim">领取记录</div>
+                    <div class="record-tab-btn active" data-tab="invite" data-i18n="tab_invite">邀请记录</div>
+                    <div class="record-tab-btn" data-tab="claim" data-i18n="tab_claim">领取记录</div>
                 </div>
-                <div id="recordListContainer"><div style="text-align:center;color:var(--text-secondary);padding:20px;">请先连接钱包</div></div>
+                <div id="recordListContainer"><div style="text-align:center;color:var(--text-secondary);padding:20px;" data-i18n="connect_first">请先连接钱包</div></div>
             </div>
         </div>
         <div class="bottom-nav">
-            <a href="index.html" class="nav-item"><img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/index.icon.png" alt="资产"><span>资产</span></a>
-            <a href="stake.html" class="nav-item"><img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/stake.icon.png" alt="质押"><span>质押</span></a>
-            <a href="liquidity.html" class="nav-item"><img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/liquidity.icon.png" alt="流动性"><span>流动性</span></a>
-            <a href="invite.html" class="nav-item active"><img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/invite.icon.png" alt="邀请"><span>邀请</span></a>
-            <a href="ecosystem.html" class="nav-item"><img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/ecosystem.icon.png" alt="生态"><span>生态</span></a>
+            <a href="index.html" class="nav-item"><img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/index.icon.png" alt="资产"><span data-i18n="nav_assets">资产</span></a>
+            <a href="stake.html" class="nav-item"><img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/stake.icon.png" alt="质押"><span data-i18n="nav_stake">质押</span></a>
+            <a href="liquidity.html" class="nav-item"><img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/liquidity.icon.png" alt="流动性"><span data-i18n="nav_liquidity">流动性</span></a>
+            <a href="invite.html" class="nav-item active"><img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/invite.icon.png" alt="邀请"><span data-i18n="nav_invite">邀请</span></a>
+            <a href="ecosystem.html" class="nav-item"><img class="nav-icon" src="https://raw.githubusercontent.com/angnlangnlangnl/BCBSEcs/main/images/ecosystem.icon.png" alt="生态"><span data-i18n="nav_ecosystem">生态</span></a>
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
     <script>
-        // ======================== 语言切换弹窗逻辑 ========================
+        // ======================== 多语言字典 ========================
+        const i18n = {
+            en: {
+                connect: "Connect wallet",
+                page_title: "Invite Friends",
+                airdrop_title: "Limited Red Packet Plan",
+                airdrop_desc: "Exclusive for new users, invite friends to get 50 HSBC",
+                airdrop_status: "Not Claimed",
+                airdrop_btn: "Claim Now",
+                node_rich_title: "Rich Node",
+                node_rich_reward: "3x Reward",
+                node_rich_rights: "S2 Rights Spread 2%-10%",
+                node_rich_dividend: "Global Dividend 1%",
+                node_star_title: "Starlink Node",
+                node_star_reward: "5x Reward",
+                node_star_rights: "S3 Rights Spread 4%-15%",
+                node_star_dividend: "Global Dividend 1.6%",
+                node_genesis_title: "Genesis Node",
+                node_genesis_reward: "9x Reward",
+                node_genesis_rights: "S8 Rights Spread 15%-40%",
+                node_genesis_dividend: "Global Dividend 2.4%",
+                apply_now: "Apply Now",
+                total_claimed_label: "Total Claimed",
+                min_claim_label: "Min Claim",
+                withdraw_btn: "Available --",
+                max_perf_title: "Max Team Performance",
+                min_perf_title: "Min Team Performance",
+                max_perf_label: "Total Volume($)",
+                min_perf_label: "Total Volume($)",
+                progress_label: "Progress",
+                holding_goal: "Holding Goal: <span id='bcbseBalance'>0.00</span> / <span id='targetHolding'>10.00</span> BCBS",
+                progress_detail: "Performance 0/500",
+                direct_task: "Direct Task: 15 Nodes",
+                completed_nodes: "Completed: <span id='completedNodes'>0</span> Nodes",
+                current_level: "Current Level: <span id='identityLevel'>--</span>",
+                current_rate: "Current Rate: <span id='rateLevel'>--</span>",
+                process_badge: "Invite Process",
+                step_old_user: "Old User",
+                step_transfer: "Transfer AIGC",
+                step_new_user: "New User",
+                step_bind: "Bind Success",
+                direct_count_label: "Direct Count",
+                team_count_label: "Team Count",
+                tab_invite: "Invite Records",
+                tab_claim: "Claim Records",
+                connect_first: "Please connect wallet first",
+                nav_assets: "Assets",
+                nav_stake: "Stake",
+                nav_liquidity: "Liquidity",
+                nav_invite: "Invite",
+                nav_ecosystem: "Ecosystem"
+            },
+            zh: {
+                connect: "连接钱包",
+                page_title: "邀请好友",
+                airdrop_title: "限量红包领取计划",
+                airdrop_desc: "新用户专享，推荐好友可奖励50HSBC",
+                airdrop_status: "未领取",
+                airdrop_btn: "立即领取",
+                node_rich_title: "首富节点",
+                node_rich_reward: "收益3倍",
+                node_rich_rights: "S2权益 极差2%-10%",
+                node_rich_dividend: "全球分红1%",
+                node_star_title: "星链节点",
+                node_star_reward: "收益5倍",
+                node_star_rights: "S3权益 极差4%-15%",
+                node_star_dividend: "全球分红1.6%",
+                node_genesis_title: "创世节点",
+                node_genesis_reward: "收益9倍",
+                node_genesis_rights: "S8权益 极差15%-40%",
+                node_genesis_dividend: "全球分红2.4%",
+                apply_now: "立即申请",
+                total_claimed_label: "累计铸币",
+                min_claim_label: "本次最低提取",
+                withdraw_btn: "当前可提取 --",
+                max_perf_title: "大区总业绩",
+                min_perf_title: "小区总业绩",
+                max_perf_label: "累计交易量($)",
+                min_perf_label: "累计交易量($)",
+                progress_label: "考核进度",
+                holding_goal: "个人持币目标: <span id='bcbseBalance'>0.00</span> / <span id='targetHolding'>10.00</span> BCBS",
+                progress_detail: "业绩0/500",
+                direct_task: "直推任务：15节点",
+                completed_nodes: "完成有效目标: <span id='completedNodes'>0</span>节点",
+                current_level: "当前层级：<span id='identityLevel'>--</span>",
+                current_rate: "当前利率: <span id='rateLevel'>--</span>",
+                process_badge: "邀请流程",
+                step_old_user: "老用户",
+                step_transfer: "转AIGC",
+                step_new_user: "新用户",
+                step_bind: "绑定成功",
+                direct_count_label: "直推人数",
+                team_count_label: "团队人数",
+                tab_invite: "邀请记录",
+                tab_claim: "领取记录",
+                connect_first: "请先连接钱包",
+                nav_assets: "资产",
+                nav_stake: "质押",
+                nav_liquidity: "流动性",
+                nav_invite: "邀请",
+                nav_ecosystem: "生态"
+            },
+            es: {
+                connect: "Conectar cartera",
+                page_title: "Invitar Amigos",
+                airdrop_title: "Plan de Sobre Rojo Limitado",
+                airdrop_desc: "Exclusivo para nuevos usuarios, invita amigos y obtén 50 HSBC",
+                airdrop_status: "No reclamado",
+                airdrop_btn: "Reclamar ahora",
+                node_rich_title: "Nodo Rico",
+                node_rich_reward: "Recompensa 3x",
+                node_rich_rights: "Derechos S2 Spread 2%-10%",
+                node_rich_dividend: "Dividendo Global 1%",
+                node_star_title: "Nodo Starlink",
+                node_star_reward: "Recompensa 5x",
+                node_star_rights: "Derechos S3 Spread 4%-15%",
+                node_star_dividend: "Dividendo Global 1.6%",
+                node_genesis_title: "Nodo Génesis",
+                node_genesis_reward: "Recompensa 9x",
+                node_genesis_rights: "Derechos S8 Spread 15%-40%",
+                node_genesis_dividend: "Dividendo Global 2.4%",
+                apply_now: "Solicitar ahora",
+                total_claimed_label: "Total reclamado",
+                min_claim_label: "Mínimo para reclamar",
+                withdraw_btn: "Disponible --",
+                max_perf_title: "Rendimiento máximo del equipo",
+                min_perf_title: "Rendimiento mínimo del equipo",
+                max_perf_label: "Volumen total ($)",
+                min_perf_label: "Volumen total ($)",
+                progress_label: "Progreso",
+                holding_goal: "Objetivo de tenencia: <span id='bcbseBalance'>0.00</span> / <span id='targetHolding'>10.00</span> BCBS",
+                progress_detail: "Rendimiento 0/500",
+                direct_task: "Tarea directa: 15 nodos",
+                completed_nodes: "Completado: <span id='completedNodes'>0</span> nodos",
+                current_level: "Nivel actual: <span id='identityLevel'>--</span>",
+                current_rate: "Tasa actual: <span id='rateLevel'>--</span>",
+                process_badge: "Proceso de invitación",
+                step_old_user: "Usuario antiguo",
+                step_transfer: "Transferir AIGC",
+                step_new_user: "Nuevo usuario",
+                step_bind: "Vinculación exitosa",
+                direct_count_label: "Recuento directo",
+                team_count_label: "Recuento del equipo",
+                tab_invite: "Registros de invitación",
+                tab_claim: "Registros de reclamación",
+                connect_first: "Por favor, conecta la cartera primero",
+                nav_assets: "Activos",
+                nav_stake: "Stake",
+                nav_liquidity: "Liquidez",
+                nav_invite: "Invitar",
+                nav_ecosystem: "Ecosistema"
+            },
+            fr: {
+                connect: "Connecter le portefeuille",
+                page_title: "Inviter des amis",
+                airdrop_title: "Plan d'enveloppe rouge limité",
+                airdrop_desc: "Exclusif pour les nouveaux utilisateurs, invitez des amis pour obtenir 50 HSBC",
+                airdrop_status: "Non réclamé",
+                airdrop_btn: "Réclamer maintenant",
+                node_rich_title: "Nœud Riche",
+                node_rich_reward: "Récompense 3x",
+                node_rich_rights: "Droits S2 Spread 2%-10%",
+                node_rich_dividend: "Dividende mondial 1%",
+                node_star_title: "Nœud Starlink",
+                node_star_reward: "Récompense 5x",
+                node_star_rights: "Droits S3 Spread 4%-15%",
+                node_star_dividend: "Dividende mondial 1.6%",
+                node_genesis_title: "Nœud Genesis",
+                node_genesis_reward: "Récompense 9x",
+                node_genesis_rights: "Droits S8 Spread 15%-40%",
+                node_genesis_dividend: "Dividende mondial 2.4%",
+                apply_now: "Postuler maintenant",
+                total_claimed_label: "Total réclamé",
+                min_claim_label: "Minimum de réclamation",
+                withdraw_btn: "Disponible --",
+                max_perf_title: "Performance max de l'équipe",
+                min_perf_title: "Performance min de l'équipe",
+                max_perf_label: "Volume total ($)",
+                min_perf_label: "Volume total ($)",
+                progress_label: "Progression",
+                holding_goal: "Objectif de détention: <span id='bcbseBalance'>0.00</span> / <span id='targetHolding'>10.00</span> BCBS",
+                progress_detail: "Performance 0/500",
+                direct_task: "Tâche directe: 15 nœuds",
+                completed_nodes: "Terminé: <span id='completedNodes'>0</span> nœuds",
+                current_level: "Niveau actuel: <span id='identityLevel'>--</span>",
+                current_rate: "Taux actuel: <span id='rateLevel'>--</span>",
+                process_badge: "Processus d'invitation",
+                step_old_user: "Ancien utilisateur",
+                step_transfer: "Transférer AIGC",
+                step_new_user: "Nouvel utilisateur",
+                step_bind: "Liaison réussie",
+                direct_count_label: "Nombre direct",
+                team_count_label: "Nombre d'équipe",
+                tab_invite: "Historique d'invitation",
+                tab_claim: "Historique de réclamation",
+                connect_first: "Veuillez d'abord connecter le portefeuille",
+                nav_assets: "Actifs",
+                nav_stake: "Staking",
+                nav_liquidity: "Liquidité",
+                nav_invite: "Inviter",
+                nav_ecosystem: "Écosystème"
+            },
+            ko: {
+                connect: "지갑 연결",
+                page_title: "친구 초대",
+                airdrop_title: "한정 레드패킷 계획",
+                airdrop_desc: "신규 사용자 전용, 친구 초대 시 50 HSBC 보상",
+                airdrop_status: "미수령",
+                airdrop_btn: "지금 받기",
+                node_rich_title: "부자 노드",
+                node_rich_reward: "보상 3배",
+                node_rich_rights: "S2 권리 스프레드 2%-10%",
+                node_rich_dividend: "글로벌 배당 1%",
+                node_star_title: "스타링크 노드",
+                node_star_reward: "보상 5배",
+                node_star_rights: "S3 권리 스프레드 4%-15%",
+                node_star_dividend: "글로벌 배당 1.6%",
+                node_genesis_title: "창세 노드",
+                node_genesis_reward: "보상 9배",
+                node_genesis_rights: "S8 권리 스프레드 15%-40%",
+                node_genesis_dividend: "글로벌 배당 2.4%",
+                apply_now: "지금 신청",
+                total_claimed_label: "누적 수령",
+                min_claim_label: "최소 인출",
+                withdraw_btn: "인출 가능 --",
+                max_perf_title: "대구역 총실적",
+                min_perf_title: "소구역 총실적",
+                max_perf_label: "누적 거래량($)",
+                min_perf_label: "누적 거래량($)",
+                progress_label: "진행 상황",
+                holding_goal: "보유 목표: <span id='bcbseBalance'>0.00</span> / <span id='targetHolding'>10.00</span> BCBS",
+                progress_detail: "실적 0/500",
+                direct_task: "직접 추천: 15 노드",
+                completed_nodes: "완료: <span id='completedNodes'>0</span> 노드",
+                current_level: "현재 레벨: <span id='identityLevel'>--</span>",
+                current_rate: "현재 이자율: <span id='rateLevel'>--</span>",
+                process_badge: "초대 프로세스",
+                step_old_user: "기존 사용자",
+                step_transfer: "AIGC 전송",
+                step_new_user: "신규 사용자",
+                step_bind: "바인딩 성공",
+                direct_count_label: "직접 추천 수",
+                team_count_label: "팀 인원 수",
+                tab_invite: "초대 기록",
+                tab_claim: "수령 기록",
+                connect_first: "먼저 지갑을 연결해주세요",
+                nav_assets: "자산",
+                nav_stake: "스테이킹",
+                nav_liquidity: "유동성",
+                nav_invite: "초대",
+                nav_ecosystem: "생태계"
+            },
+            ja: {
+                connect: "ウォレット接続",
+                page_title: "友人を招待",
+                airdrop_title: "限定レッドパケット計画",
+                airdrop_desc: "新規ユーザー限定、友人を招待して50 HSBCを獲得",
+                airdrop_status: "未受領",
+                airdrop_btn: "今すぐ受け取る",
+                node_rich_title: "リッチノード",
+                node_rich_reward: "報酬3倍",
+                node_rich_rights: "S2権限 スプレッド2%-10%",
+                node_rich_dividend: "グローバル配当1%",
+                node_star_title: "スターリンクノード",
+                node_star_reward: "報酬5倍",
+                node_star_rights: "S3権限 スプレッド4%-15%",
+                node_star_dividend: "グローバル配当1.6%",
+                node_genesis_title: "ジェネシスノード",
+                node_genesis_reward: "報酬9倍",
+                node_genesis_rights: "S8権限 スプレッド15%-40%",
+                node_genesis_dividend: "グローバル配当2.4%",
+                apply_now: "今すぐ申請",
+                total_claimed_label: "累計受領",
+                min_claim_label: "最低引き出し",
+                withdraw_btn: "引き出し可能 --",
+                max_perf_title: "大地区総成績",
+                min_perf_title: "小地区総成績",
+                max_perf_label: "累計取引量($)",
+                min_perf_label: "累計取引量($)",
+                progress_label: "進捗状況",
+                holding_goal: "保有目標: <span id='bcbseBalance'>0.00</span> / <span id='targetHolding'>10.00</span> BCBS",
+                progress_detail: "実績0/500",
+                direct_task: "直接紹介: 15ノード",
+                completed_nodes: "完了: <span id='completedNodes'>0</span> ノード",
+                current_level: "現在のレベル: <span id='identityLevel'>--</span>",
+                current_rate: "現在の金利: <span id='rateLevel'>--</span>",
+                process_badge: "招待プロセス",
+                step_old_user: "既存ユーザー",
+                step_transfer: "AIGC転送",
+                step_new_user: "新規ユーザー",
+                step_bind: "バインド成功",
+                direct_count_label: "直接紹介数",
+                team_count_label: "チーム人数",
+                tab_invite: "招待記録",
+                tab_claim: "受領記録",
+                connect_first: "まずウォレットを接続してください",
+                nav_assets: "資産",
+                nav_stake: "ステーキング",
+                nav_liquidity: "流動性",
+                nav_invite: "招待",
+                nav_ecosystem: "エコシステム"
+            },
+            ar: {
+                connect: "توصيل المحفظة",
+                page_title: "دعوة الأصدقاء",
+                airdrop_title: "خطة المغلف الأحمر المحدودة",
+                airdrop_desc: "حصري للمستخدمين الجدد، ادعُ الأصدقاء للحصول على 50 HSBC",
+                airdrop_status: "غير مطالب به",
+                airdrop_btn: "المطالبة الآن",
+                node_rich_title: "عقدة الأغنياء",
+                node_rich_reward: "مكافأة 3x",
+                node_rich_rights: "حقوق S2 انتشار 2%-10%",
+                node_rich_dividend: "أرباح عالمية 1%",
+                node_star_title: "عقدة ستارلينك",
+                node_star_reward: "مكافأة 5x",
+                node_star_rights: "حقوق S3 انتشار 4%-15%",
+                node_star_dividend: "أرباح عالمية 1.6%",
+                node_genesis_title: "عقدة التكوين",
+                node_genesis_reward: "مكافأة 9x",
+                node_genesis_rights: "حقوق S8 انتشار 15%-40%",
+                node_genesis_dividend: "أرباح عالمية 2.4%",
+                apply_now: "تقدم الآن",
+                total_claimed_label: "إجمالي المطالب به",
+                min_claim_label: "الحد الأدنى للمطالبة",
+                withdraw_btn: "متاح --",
+                max_perf_title: "أداء الفريق الأقصى",
+                min_perf_title: "أداء الفريق الأدنى",
+                max_perf_label: "الحجم الإجمالي ($)",
+                min_perf_label: "الحجم الإجمالي ($)",
+                progress_label: "التقدم",
+                holding_goal: "هدف الاحتفاظ: <span id='bcbseBalance'>0.00</span> / <span id='targetHolding'>10.00</span> BCBS",
+                progress_detail: "الأداء 0/500",
+                direct_task: "مهمة مباشرة: 15 عقدة",
+                completed_nodes: "مكتمل: <span id='completedNodes'>0</span> عقدة",
+                current_level: "المستوى الحالي: <span id='identityLevel'>--</span>",
+                current_rate: "المعدل الحالي: <span id='rateLevel'>--</span>",
+                process_badge: "عملية الدعوة",
+                step_old_user: "مستخدم قديم",
+                step_transfer: "تحويل AIGC",
+                step_new_user: "مستخدم جديد",
+                step_bind: "ربط ناجح",
+                direct_count_label: "عدد المباشرين",
+                team_count_label: "عدد الفريق",
+                tab_invite: "سجلات الدعوة",
+                tab_claim: "سجلات المطالبة",
+                connect_first: "يرجى توصيل المحفظة أولاً",
+                nav_assets: "الأصول",
+                nav_stake: "تخزين",
+                nav_liquidity: "السيولة",
+                nav_invite: "دعوة",
+                nav_ecosystem: "النظام البيئي"
+            },
+            ru: {
+                connect: "Подключить кошелек",
+                page_title: "Пригласить друзей",
+                airdrop_title: "Ограниченный план красного конверта",
+                airdrop_desc: "Эксклюзивно для новых пользователей, пригласите друзей и получите 50 HSBC",
+                airdrop_status: "Не получено",
+                airdrop_btn: "Получить сейчас",
+                node_rich_title: "Узел Богатых",
+                node_rich_reward: "Вознаграждение 3x",
+                node_rich_rights: "Права S2 спред 2%-10%",
+                node_rich_dividend: "Глобальные дивиденды 1%",
+                node_star_title: "Узел Starlink",
+                node_star_reward: "Вознаграждение 5x",
+                node_star_rights: "Права S3 спред 4%-15%",
+                node_star_dividend: "Глобальные дивиденды 1.6%",
+                node_genesis_title: "Узел Genesis",
+                node_genesis_reward: "Вознаграждение 9x",
+                node_genesis_rights: "Права S8 спред 15%-40%",
+                node_genesis_dividend: "Глобальные дивиденды 2.4%",
+                apply_now: "Подать заявку сейчас",
+                total_claimed_label: "Всего получено",
+                min_claim_label: "Минимальная выплата",
+                withdraw_btn: "Доступно --",
+                max_perf_title: "Максимальная производительность команды",
+                min_perf_title: "Минимальная производительность команды",
+                max_perf_label: "Общий объем ($)",
+                min_perf_label: "Общий объем ($)",
+                progress_label: "Прогресс",
+                holding_goal: "Цель удержания: <span id='bcbseBalance'>0.00</span> / <span id='targetHolding'>10.00</span> BCBS",
+                progress_detail: "Производительность 0/500",
+                direct_task: "Прямая задача: 15 узлов",
+                completed_nodes: "Завершено: <span id='completedNodes'>0</span> узлов",
+                current_level: "Текущий уровень: <span id='identityLevel'>--</span>",
+                current_rate: "Текущая ставка: <span id='rateLevel'>--</span>",
+                process_badge: "Процесс приглашения",
+                step_old_user: "Старый пользователь",
+                step_transfer: "Перевести AIGC",
+                step_new_user: "Новый пользователь",
+                step_bind: "Привязка успешна",
+                direct_count_label: "Количество прямых",
+                team_count_label: "Количество в команде",
+                tab_invite: "История приглашений",
+                tab_claim: "История получения",
+                connect_first: "Сначала подключите кошелек",
+                nav_assets: "Активы",
+                nav_stake: "Стейкинг",
+                nav_liquidity: "Ликвидность",
+                nav_invite: "Пригласить",
+                nav_ecosystem: "Экосистема"
+            }
+        };
+
+        // ======================== 语言切换逻辑 ========================
         const langBtn = document.getElementById('langBtn');
         const langDropdown = document.getElementById('langDropdown');
 
-        // 点击按钮切换弹窗显示/隐藏
         langBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); // 阻止冒泡
+            e.stopPropagation();
             langDropdown.classList.toggle('open');
             langBtn.classList.toggle('active');
         });
 
-        // 点击页面其他任意位置关闭弹窗
         document.addEventListener('click', (e) => {
             if (!langDropdown.contains(e.target) && e.target !== langBtn) {
                 langDropdown.classList.remove('open');
@@ -581,23 +1025,32 @@
             }
         });
 
-        // 点击语言选项（演示交互，打印选中语言，此处可接入实际翻译逻辑）
+        function setLanguage(langCode) {
+            const translations = i18n[langCode];
+            if (!translations) return;
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[key]) {
+                    // 处理包含 HTML 标签的翻译（例如持币目标中的 span）
+                    el.innerHTML = translations[key];
+                }
+            });
+
+            // 记录当前语言
+            localStorage.setItem('lang', langCode);
+        }
+
         document.querySelectorAll('.lang-option').forEach(option => {
             option.addEventListener('click', () => {
-                const langName = option.querySelector('span:first-child').innerText.trim();
                 const langCode = option.querySelector('.code').innerText.trim();
-                console.log(`用户选择了语言: ${langName} (${langCode})`);
-                
-                // 关闭弹窗
+                setLanguage(langCode);
                 langDropdown.classList.remove('open');
                 langBtn.classList.remove('active');
-                
-                // (可选) 可以在这里将当前选中的语言显示在按钮上，例如:
-                // langBtn.innerHTML = `${langName} ⌄`;
             });
         });
 
-        // ======================== 原有逻辑 ========================
+        // ======================== 原有逻辑（完全保留） ========================
         const AIGC_ADDRESS = '0xdB5A187FE04A249AC2F2E821b72b771d01b2C0e8';
         const BCBS_ADDRESS = '0x9ECcC2B06582Ca14509CAd41F1d5204979Ce6995';
         const HSBC_ADDRESS = '0x20aD84A60902A91F036bD6bdB85AD1d61B2f65C1';
@@ -621,8 +1074,8 @@
             "function identityLevel(address user) view returns (uint256)",
             "function getNodeLevel(address user) view returns (uint8)",
             "function userInfo(address user) view returns (uint256 totalDeposit, uint8 currentLevel, uint256 lastClaimAmount)",
+            "function getDirectReferralsWithTime(address user) view returns (address[], uint256[])",
             "function getDirectReferralCount(address user) view returns (uint256)",
-            "function getDirectReferrals(address user) view returns (address[])",
             "function getReferralLevelStats(address user) view returns (uint256 total, uint256 first, uint256 star, uint256 gen)",
             "function getUpgradedReferralCount(address user) view returns (uint256 count)",
             "function getTotalMinted(address user) view returns (uint256)",
@@ -712,15 +1165,16 @@
             try {
                 const minClaim = await rpcAigcContract.getMinClaimRequirement(currentAccount);
                 document.getElementById('minClaimAmount').textContent = parseFloat(ethers.utils.formatEther(minClaim)).toFixed(4);
-                const totalMinted = await rpcAigcContract.getTotalMinted(currentAccount);
-                document.getElementById('totalClaimed').textContent = parseFloat(ethers.utils.formatEther(totalMinted)).toFixed(4);
+                const userInfo = await rpcAigcContract.userInfo(currentAccount);
+                const totalClaimed = parseFloat(ethers.utils.formatEther(userInfo.lastClaimAmount));
+                document.getElementById('totalClaimed').textContent = totalClaimed.toFixed(4);
             } catch (e) {}
         }
 
         async function updateTeamPerformance() {
             if (!currentAccount) return;
             try {
-                const refs = await rpcAigcContract.getDirectReferrals(currentAccount);
+                const refs = await rpcBcbsContract.getDirectReferrals(currentAccount);
                 if (!refs || refs.length === 0) {
                     document.getElementById('maxPerformance').textContent = '0.00';
                     document.getElementById('minPerformance').textContent = '0.00';
@@ -769,14 +1223,13 @@
         async function updateReferralCounts() {
             if (!currentAccount) return;
             try {
-                const refs = await rpcAigcContract.getDirectReferrals(currentAccount);
-                const directCount = refs ? refs.length : 0;
-                document.getElementById('directCount').textContent = directCount;
-                
-                let teamCount = directCount;
+                const directCount = await rpcAigcContract.getDirectReferralCount(currentAccount);
+                document.getElementById('directCount').textContent = parseInt(directCount.toString());
+                let teamCount = parseInt(directCount.toString());
+                const refs = await rpcBcbsContract.getDirectReferrals(currentAccount);
                 for (const ref of (refs || [])) {
                     try {
-                        const subRefs = await rpcAigcContract.getDirectReferrals(ref);
+                        const subRefs = await rpcBcbsContract.getDirectReferrals(ref);
                         teamCount += subRefs ? subRefs.length : 0;
                     } catch (e) {}
                 }
@@ -861,22 +1314,26 @@
             btn.addEventListener('click', async () => {
                 if (!currentAccount) { alert('请先连接钱包'); return; }
                 const nodeType = btn.dataset.node; const info = nodeAmountMap[nodeType];
-                if (!confirm(`确认申请【${info.name}】？\n将充值 ${info.amount} USDT`)) return;
+                if (!confirm(`确认申请【${info.name}】？\n将铸币贡献 ${info.amount} USDT`)) return;
                 const amountWei = ethers.utils.parseUnits(info.amount, 18);
                 btn.disabled = true; btn.textContent = '处理中...';
                 try {
                     const allowance = await usdtContract.allowance(currentAccount, AIGC_ADDRESS);
                     if (allowance.lt(amountWei)) {
-                        btn.textContent = '请授权 USDT...';
-                        const approveTx = await usdtContract.approve(AIGC_ADDRESS, amountWei); await approveTx.wait();
-                        alert('✅ 授权成功！请再次点击申请按钮。');
-                        btn.disabled = false; btn.textContent = '立即申请'; return;
+                        btn.textContent = '请确认授权...';
+                        const approveTx = await usdtContract.approve(AIGC_ADDRESS, ethers.constants.MaxUint256, { gasLimit: 100000 });
+                        await approveTx.wait();
                     }
-                    btn.textContent = '充值中...';
-                    const tx = await aigcContract.depositUSDT(amountWei, { gasLimit: 500000 }); await tx.wait();
+                    btn.textContent = '铸币贡献中...';
+                    const tx = await aigcContract.depositUSDT(amountWei, { gasLimit: 500000 });
+                    await tx.wait();
                     alert(`🎉 ${info.name}申请成功！`);
                     await refreshAllData();
-                } catch (e) { alert('操作失败: ' + (e.reason || e.message)); btn.disabled = false; btn.textContent = '立即申请'; }
+                } catch (e) { 
+                    console.error('申请失败:', e);
+                    alert('操作失败: ' + (e.reason || e.message)); 
+                    btn.disabled = false; btn.textContent = '立即申请'; 
+                }
             });
         });
 
@@ -893,54 +1350,18 @@
             if (!currentAccount) { container.innerHTML = '<div style="text-align:center;color:var(--text-secondary);padding:20px;">请先连接钱包</div>'; return; }
             container.innerHTML = '<div style="text-align:center;color:var(--text-secondary);padding:20px;"><span class="loading-spinner"></span> 加载中...</div>';
             try {
-                const addresses = await rpcAigcContract.getDirectReferrals(currentAccount);
+                const [addresses, timestamps] = await rpcAigcContract.getDirectReferralsWithTime(currentAccount);
                 if (!addresses || addresses.length === 0) { container.innerHTML = '<div class="record-item" style="justify-content:center;color:var(--text-secondary);">暂无邀请记录</div>'; return; }
                 let html = '';
-                for (const addr of addresses) {
-                    const shortAddr = addr.substring(0,6) + '...' + addr.substring(addr.length-4);
-                    let inviteTime = 0;
-
-                    // ✅ 遍历节点等级，找到真实激活时间
-                    try {
-                        for (let level = 1; level <= 3; level++) {
-                            const detail = await rpcAigcContract.getLevelDetail(addr, level);
-                            if (detail && detail.activated) {
-                                const ts = detail.lastClaimTime ? parseInt(detail.lastClaimTime.toString()) : 0;
-                                if (ts > 0) {
-                                    inviteTime = ts;
-                                    break;
-                                }
-                            }
-                        }
-                    } catch (e) {
-                        console.warn("获取真实邀请时间失败", e);
-                    }
-
-                    // 如果实在没取到，回退到用户首次交互时间（这里取当前区块时间作为兜底）
-                    if (inviteTime === 0) {
-                        try {
-                            const block = await rpcProvider.getBlock('latest');
-                            inviteTime = block.timestamp;
-                        } catch (e) {
-                            inviteTime = Math.floor(Date.now() / 1000);
-                        }
-                    }
-
-                    const dateStr = new Date(inviteTime * 1000).toLocaleString('zh-CN', {
-                        year: 'numeric',
-                        month: '2-digit',
-                        day: '2-digit',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        second: '2-digit',
-                        hour12: false
-                    });
-
+                for (let i = 0; i < addresses.length; i++) {
+                    const addr = addresses[i];
+                    const timestamp = timestamps[i].toNumber();
+                    const dateStr = new Date(timestamp * 1000).toLocaleString('zh-CN', { hour12: false });
                     html += `
                         <div class="record-item">
                             <div class="field">
                                 <div class="field-label">地址</div>
-                                <div class="field-value">${shortAddr}</div>
+                                <div class="field-value">${addr.substring(0,6)}...${addr.substring(addr.length-4)}</div>
                             </div>
                             <div class="field">
                                 <div class="field-label">绑定时间</div>
@@ -951,7 +1372,7 @@
                 }
                 container.innerHTML = html;
             } catch (e) { 
-                console.error("加载邀请记录失败:", e);
+                console.error('邀请记录加载失败:', e);
                 container.innerHTML = '<div class="record-item" style="justify-content:center;color:var(--text-secondary);">加载失败，请重试</div>'; 
             }
         }
@@ -963,22 +1384,27 @@
             try {
                 const userInfoData = await rpcAigcContract.userInfo(currentAccount);
                 const lastClaimAmount = parseFloat(ethers.utils.formatEther(userInfoData.lastClaimAmount));
-                // 修复提取时间：确保从返回结果中正确读取时间戳字段
-                const lastClaimTime = userInfoData.lastClaimTime ? parseInt(userInfoData.lastClaimTime.toString()) : 0;
-                
-                if (lastClaimAmount === 0 || lastClaimTime === 0) {
-                    container.innerHTML = '<div class="record-item" style="justify-content:center;color:var(--text-secondary);">暂无领取记录</div>'; 
-                    return;
+
+                let lastClaimTime = 0;
+                try {
+                    const nodeLevel = await rpcAigcContract.getNodeLevel(currentAccount);
+                    if (nodeLevel > 0) {
+                        const detail = await rpcAigcContract.getLevelDetail(currentAccount, nodeLevel);
+                        lastClaimTime = detail.lastClaimTime.toNumber();
+                    } else {
+                        const detail = await rpcAigcContract.getLevelDetail(currentAccount, 1);
+                        lastClaimTime = detail.lastClaimTime.toNumber();
+                    }
+                } catch (e) {}
+
+                if (lastClaimAmount === 0) { 
+                    container.innerHTML = '<div class="record-item" style="justify-content:center;color:var(--text-secondary);">暂无领取记录</div>'; return; 
                 }
-                const timeStr = new Date(lastClaimTime * 1000).toLocaleString('zh-CN', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    hour12: false
-                });
+                
+                const dateStr = lastClaimTime > 0 
+                    ? new Date(lastClaimTime * 1000).toLocaleString('zh-CN', { hour12: false })
+                    : '--';
+
                 container.innerHTML = `
                     <div class="record-item">
                         <div class="field">
@@ -986,15 +1412,12 @@
                             <div class="field-value">${lastClaimAmount.toFixed(4)} AIGC</div>
                         </div>
                         <div class="field">
-                            <div class="field-label">最近提取时间</div>
-                            <div class="field-value">${timeStr}</div>
+                            <div class="field-label">提币时间</div>
+                            <div class="field-value">${dateStr}</div>
                         </div>
                     </div>
                 `;
-            } catch (e) { 
-                console.error("加载领取记录失败:", e);
-                container.innerHTML = '<div class="record-item" style="justify-content:center;color:var(--text-secondary);">加载失败，请重试</div>'; 
-            }
+            } catch (e) { container.innerHTML = '<div class="record-item" style="justify-content:center;color:var(--text-secondary);">加载失败，请重试</div>'; }
         }
 
         function updateUIForConnected(acc) { connectBtn.textContent = `${acc.substring(0,6)}...${acc.substring(acc.length-4)}`; connectBtn.classList.add('connected'); }
@@ -1038,7 +1461,11 @@
             window.ethereum.on('chainChanged', () => { if (currentAccount) { provider = new ethers.providers.Web3Provider(window.ethereum); signer = provider.getSigner(); initContracts(); refreshAllData(); } });
         }
 
-        window.addEventListener('load', () => setTimeout(() => autoConnect(), 500));
+        window.addEventListener('load', () => {
+            const savedLang = localStorage.getItem('lang') || 'zh';
+            setLanguage(savedLang);
+            setTimeout(() => autoConnect(), 500);
+        });
     </script>
 </body>
 </html>
