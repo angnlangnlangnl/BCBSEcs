@@ -51,8 +51,27 @@
         .rate-row { font-size: 11px; color: var(--cyan-glow); line-height: 1.4; font-weight: 500; }
         .total-value { text-align: right; }
         .total-label { font-size: 12px; color: var(--text-secondary); }
-        .total-amount { font-size: 22px; font-weight: 700; color: var(--text-primary); }
-        .total-amount small { font-size: 14px; font-weight: 400; color: var(--text-secondary); }
+        /* ✅ 修复：自适应总资产数字大小 */
+        .total-amount { 
+            font-size: 22px; 
+            font-weight: 700; 
+            color: var(--text-primary); 
+            white-space: nowrap; 
+            max-width: 100%; 
+            display: inline-block;
+            /* 当长度超过时自动缩小字号 */
+            transition: font-size 0.2s ease;
+        }
+        /* 智能字体适配 - 数字越长字号越小 */
+        .total-amount.small-text { font-size: 18px; }
+        .total-amount.xsmall-text { font-size: 15px; }
+        .total-amount.xxsmall-text { font-size: 12px; }
+        .total-amount small { 
+            font-size: 14px; 
+            font-weight: 400; 
+            color: var(--text-secondary); 
+            white-space: nowrap;
+        }
         .dividend-container { width: 100%; margin-top: 15px; padding-top: 12px; border-top: 1px solid rgba(0, 136, 255, 0.1); }
         .dividend-title { font-size: 11px; color: var(--text-secondary); margin-bottom: 6px; display: block; }
         .dividend-list { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -397,6 +416,25 @@
             document.getElementById('dividendTitle').textContent = langData.dividendTitle;
         }
 
+        // ✅ 智能字号调整：根据总资产数字长度自动缩小
+        function adjustTotalAmountSize() {
+            const el = document.getElementById('totalAssetValue');
+            const text = el.textContent.replace(/[^0-9.]/g, ''); // 只取数字和小数点
+            const len = text.replace('.', '').length; // 去掉小数点计算实际数字位数
+            
+            // 移除所有尺寸类
+            el.classList.remove('small-text', 'xsmall-text', 'xxsmall-text');
+            
+            // 根据长度自动加类
+            if (len >= 10) {
+                el.classList.add('xxsmall-text');
+            } else if (len >= 8) {
+                el.classList.add('xsmall-text');
+            } else if (len >= 6) {
+                el.classList.add('small-text');
+            }
+        }
+
         // ======================== 配置 ========================
         const AIGC_ADDRESS = '0xdB5A187FE04A249AC2F2E821b72b771d01b2C0e8';
         const BCBS_ADDRESS = '0x9ECcC2B06582Ca14509CAd41F1d5204979Ce6995';
@@ -516,6 +554,9 @@
             let total = 0;
             for (const t of tokens) { const usdVal = t.balance * t.price; total += usdVal; document.getElementById('bal-' + t.sym).textContent = t.balance.toFixed(4); document.getElementById('usd-' + t.sym).textContent = '≈ $' + usdVal.toFixed(2); }
             document.getElementById('totalAssetValue').innerHTML = '$' + total.toFixed(2) + ' <small>USD</small>';
+            
+            // ✅ 调用字号自适应
+            adjustTotalAmountSize();
         }
 
         window.claimPoolDividend = async function(poolId) {
@@ -536,6 +577,8 @@
                 document.getElementById('bal-' + s).textContent = '0.0000';
                 document.getElementById('usd-' + s).textContent = '≈ $0.00';
             });
+            // 重置字号
+            document.getElementById('totalAssetValue').classList.remove('small-text', 'xsmall-text', 'xxsmall-text');
         }
 
         async function autoConnect() {
