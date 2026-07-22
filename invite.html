@@ -1025,6 +1025,7 @@
             }
         });
 
+        // ✅ 修复：用更稳定通用的方式替换文本（兼容所有 DOM 结构）
         function setLanguage(langCode) {
             const translations = i18n[langCode];
             if (!translations) return;
@@ -1032,8 +1033,24 @@
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (translations[key]) {
-                    // 处理包含 HTML 标签的翻译（例如持币目标中的 span）
-                    el.innerHTML = translations[key];
+                    // 如果包含 < 符号（含 HTML 标签），用 innerHTML 替换
+                    if (translations[key].includes('<')) {
+                        el.innerHTML = translations[key];
+                    } else {
+                        // 否则遍历所有文本节点，统一替换
+                        const walker = document.createTreeWalker(
+                            el,
+                            NodeFilter.SHOW_TEXT,
+                            null,
+                            false
+                        );
+                        let node;
+                        while (node = walker.nextNode()) {
+                            if (node.textContent.trim().length > 0) {
+                                node.textContent = translations[key];
+                            }
+                        }
+                    }
                 }
             });
 
