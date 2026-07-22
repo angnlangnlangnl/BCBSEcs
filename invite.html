@@ -719,8 +719,11 @@
             try {
                 const minClaim = await rpcAigcContract.getMinClaimRequirement(currentAccount);
                 document.getElementById('minClaimAmount').textContent = parseFloat(ethers.utils.formatEther(minClaim)).toFixed(4);
-                const totalMinted = await rpcAigcContract.getTotalMinted(currentAccount);
-                document.getElementById('totalClaimed').textContent = parseFloat(ethers.utils.formatEther(totalMinted)).toFixed(4);
+                
+                // ✅ 累计已领取铸币：从 userInfo.lastClaimAmount 读取
+                const userInfo = await rpcAigcContract.userInfo(currentAccount);
+                const totalClaimed = parseFloat(ethers.utils.formatEther(userInfo.lastClaimAmount));
+                document.getElementById('totalClaimed').textContent = totalClaimed.toFixed(4);
             } catch (e) {}
         }
 
