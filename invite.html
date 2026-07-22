@@ -220,7 +220,6 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
     <script>
-        // 语言切换
         const langBtn = document.getElementById('langBtn');
         const langDropdown = document.getElementById('langDropdown');
         langBtn.addEventListener('click', (e) => { e.stopPropagation(); langDropdown.classList.toggle('open'); langBtn.classList.toggle('active'); });
@@ -294,7 +293,7 @@
             try { const p = await aigcContract.getPendingReward(currentAccount); withdrawBtn.textContent = `当前可提取 ${parseFloat(ethers.utils.formatEther(p)).toFixed(4)} AIGC`; } catch (e) { withdrawBtn.textContent = '当前可提取 --'; }
         }
 
-        // ✅ 累计铸币 = getTotalMinted（100%准确）
+        // ✅ 累计铸币 = getTotalMinted（只含已铸造，不含待领取）
         async function updateClaimStats() {
             if (!currentAccount) return;
             try {
@@ -338,7 +337,6 @@
             try { const c = await rpcAigcContract.getUpgradedReferralCount(currentAccount); document.getElementById('completedNodes').textContent = parseInt(c.toString()); renderNodeProgress(parseInt(c.toString())); } catch (e) {}
         }
 
-        // ✅ 直推人数=从AIGC读取，团队人数=从BCBS读取（100%准确）
         async function updateReferralCounts() {
             if (!currentAccount) return;
             try {
@@ -425,7 +423,6 @@
             });
         });
 
-        // ✅ 邀请记录：正确解析 ReferralInfo 结构体数组
         async function loadInviteRecords() {
             const c = document.getElementById('recordListContainer');
             if (!currentAccount) { c.innerHTML = '<div style="text-align:center;color:var(--text-secondary);padding:20px;">请先连接钱包</div>'; return; }
@@ -443,7 +440,6 @@
             } catch (e) { c.innerHTML = '<div class="record-item" style="justify-content:center;color:var(--text-secondary);">加载失败，请重试</div>'; }
         }
 
-        // ✅ 领取记录：取所有等级中最大 lastClaimTime
         async function loadClaimRecords() {
             const c = document.getElementById('recordListContainer');
             if (!currentAccount) { c.innerHTML = '<div style="text-align:center;color:var(--text-secondary);padding:20px;">请先连接钱包</div>'; return; }
@@ -452,7 +448,6 @@
                 const ui = await rpcAigcContract.userInfo(currentAccount);
                 const lca = parseFloat(ethers.utils.formatEther(ui.lastClaimAmount));
                 if (lca === 0) { c.innerHTML = '<div class="record-item" style="justify-content:center;color:var(--text-secondary);">暂无领取记录</div>'; return; }
-                // 遍历三个等级取最大 lastClaimTime
                 let maxTime = 0;
                 for (const lv of [1,2,3]) {
                     try { const d = await rpcAigcContract.getLevelDetail(currentAccount, lv); if (d.activated && d.lastClaimTime.toNumber() > maxTime) maxTime = d.lastClaimTime.toNumber(); } catch (e) {}
