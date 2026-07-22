@@ -97,7 +97,7 @@
         }
         .lang-btn.active { background: rgba(0, 136, 255, 0.1); border-color: var(--cyan-dim); color: var(--cyan-glow); }
 
-        /* --- 新增语言弹窗样式 --- */
+        /* --- 语言弹窗样式 --- */
         .lang-dropdown {
             display: none;
             position: absolute;
@@ -272,12 +272,12 @@
                     <button id="connectWalletBtn" class="connect-btn">Connect wallet</button>
                 </div>
             </div>
-            <div class="page-title">💧 流动性</div>
+            <div class="page-title" id="pageTitle">💧 流动性</div>
             
             <div class="panel">
-                <div style="color:var(--text-primary);font-size:14px;font-weight:600;margin-bottom:8px;">添加流动性</div>
-                <div style="color:var(--text-secondary);font-size:12px;margin-bottom:12px;">为交易对提供流动性，赚取手续费奖励</div>
-                <button class="btn-primary">添加流动性</button>
+                <div style="color:var(--text-primary);font-size:14px;font-weight:600;margin-bottom:8px;" id="panelTitle">添加流动性</div>
+                <div style="color:var(--text-secondary);font-size:12px;margin-bottom:12px;" id="panelDesc">为交易对提供流动性，赚取手续费奖励</div>
+                <button class="btn-primary" id="panelBtn">添加流动性</button>
             </div>
         </div>
         
@@ -291,6 +291,66 @@
     </div>
     
     <script>
+        // ======================== 多语言翻译数据 ========================
+        const translations = {
+            en: {
+                pageTitle: '💧 Liquidity',
+                panelTitle: 'Add Liquidity',
+                panelDesc: 'Provide liquidity for trading pairs and earn fee rewards',
+                panelBtn: 'Add Liquidity',
+                langBtn: '🇺🇸 EN'
+            },
+            zh: {
+                pageTitle: '💧 流動性',
+                panelTitle: '添加流動性',
+                panelDesc: '為交易對提供流動性，賺取手續費獎勵',
+                panelBtn: '添加流動性',
+                langBtn: '🇭🇰 繁中'
+            },
+            es: {
+                pageTitle: '💧 Liquidez',
+                panelTitle: 'Agregar Liquidez',
+                panelDesc: 'Proporcione liquidez para pares comerciales y gane recompensas por tarifas',
+                panelBtn: 'Agregar Liquidez',
+                langBtn: '🇪🇸 ES'
+            },
+            fr: {
+                pageTitle: '💧 Liquidité',
+                panelTitle: 'Ajouter de la Liquidité',
+                panelDesc: 'Fournissez de la liquidité pour les paires de trading et gagnez des récompenses de frais',
+                panelBtn: 'Ajouter de la Liquidité',
+                langBtn: '🇫🇷 FR'
+            },
+            ko: {
+                pageTitle: '💧 유동성',
+                panelTitle: '유동성 추가',
+                panelDesc: '거래 쌍에 유동성을 제공하고 수수료 보상을 받으세요',
+                panelBtn: '유동성 추가',
+                langBtn: '🇰🇷 KO'
+            },
+            ja: {
+                pageTitle: '💧 流動性',
+                panelTitle: '流動性を追加',
+                panelDesc: '取引ペアに流動性を提供し、手数料報酬を獲得',
+                panelBtn: '流動性を追加',
+                langBtn: '🇯🇵 JA'
+            },
+            ar: {
+                pageTitle: '💧 السيولة',
+                panelTitle: 'إضافة سيولة',
+                panelDesc: 'تقديم السيولة لأزواج التداول وكسب مكافآت الرسوم',
+                panelBtn: 'إضافة سيولة',
+                langBtn: '🇸🇦 AR'
+            },
+            ru: {
+                pageTitle: '💧 Ликвидность',
+                panelTitle: 'Добавить ликвидность',
+                panelDesc: 'Предоставьте ликвидность для торговых пар и получайте вознаграждение за комиссии',
+                panelBtn: 'Добавить ликвидность',
+                langBtn: '🇷🇺 RU'
+            }
+        };
+
         // ======================== 语言切换弹窗逻辑 ========================
         const langBtn = document.getElementById('langBtn');
         const langDropdown = document.getElementById('langDropdown');
@@ -310,19 +370,23 @@
             }
         });
 
-        // 点击语言选项（演示交互，打印选中语言，此处可接入实际翻译逻辑）
+        // 点击语言选项切换界面文字
         document.querySelectorAll('.lang-option').forEach(option => {
             option.addEventListener('click', () => {
-                const langName = option.querySelector('span:first-child').innerText.trim();
-                const langCode = option.querySelector('.code').innerText.trim();
-                console.log(`用户选择了语言: ${langName} (${langCode})`);
+                const langCode = option.querySelector('.code').innerText.trim().toLowerCase();
+                const langData = translations[langCode];
+                
+                if (langData) {
+                    document.getElementById('pageTitle').textContent = langData.pageTitle;
+                    document.getElementById('panelTitle').textContent = langData.panelTitle;
+                    document.getElementById('panelDesc').textContent = langData.panelDesc;
+                    document.getElementById('panelBtn').textContent = langData.panelBtn;
+                    langBtn.textContent = langData.langBtn + ' ⌄';
+                }
                 
                 // 关闭弹窗
                 langDropdown.classList.remove('open');
                 langBtn.classList.remove('active');
-                
-                // (可选) 可以在这里将当前选中的语言显示在按钮上，例如:
-                // langBtn.innerHTML = `${langName} ⌄`;
             });
         });
 
