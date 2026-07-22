@@ -468,7 +468,7 @@
                         <div class="lang-option"><span>🇷🇺 Русский</span><span class="code">RU</span></div>
                     </div>
 
-                    <button id="connectWalletBtn" class="connect-btn" data-i18n="connect">Connect wallet</button>
+                    <button id="connectWalletBtn" class="connect-btn"><span data-i18n="connect">Connect wallet</span></button>
                 </div>
             </div>
             
@@ -482,8 +482,8 @@
                         <div class="airdrop-desc" data-i18n="airdrop_desc">新用户专享，推荐好友可奖励50HSBC</div>
                     </div>
                 </div>
-                <div class="airdrop-amount-box" id="airdropStatus" data-i18n="airdrop_status">未领取</div>
-                <button class="airdrop-btn" id="claimAirdropBtn" data-i18n="airdrop_btn">立即领取</button>
+                <div class="airdrop-amount-box" id="airdropStatus"><span data-i18n="airdrop_status">未领取</span></div>
+                <button class="airdrop-btn" id="claimAirdropBtn"><span data-i18n="airdrop_btn">立即领取</span></button>
             </div>
 
             <div class="panel">
@@ -493,21 +493,21 @@
                         <div class="node-reward" data-i18n="node_rich_reward">收益3倍</div>
                         <div class="node-rights" data-i18n="node_rich_rights">S2权益 极差2%-10%</div>
                         <div class="node-dividend" data-i18n="node_rich_dividend">全球分红1%</div>
-                        <button class="node-apply-btn" data-node="rich" data-i18n="apply_now">立即申请</button>
+                        <button class="node-apply-btn" data-node="rich"><span data-i18n="apply_now">立即申请</span></button>
                     </div>
                     <div class="node-card">
                         <div class="node-title" data-i18n="node_star_title">星链节点</div>
                         <div class="node-reward" data-i18n="node_star_reward">收益5倍</div>
                         <div class="node-rights" data-i18n="node_star_rights">S3权益 极差4%-15%</div>
                         <div class="node-dividend" data-i18n="node_star_dividend">全球分红1.6%</div>
-                        <button class="node-apply-btn" data-node="starlink" data-i18n="apply_now">立即申请</button>
+                        <button class="node-apply-btn" data-node="starlink"><span data-i18n="apply_now">立即申请</span></button>
                     </div>
                     <div class="node-card">
                         <div class="node-title" data-i18n="node_genesis_title">创世节点</div>
                         <div class="node-reward" data-i18n="node_genesis_reward">收益9倍</div>
                         <div class="node-rights" data-i18n="node_genesis_rights">S8权益 极差15%-40%</div>
                         <div class="node-dividend" data-i18n="node_genesis_dividend">全球分红2.4%</div>
-                        <button class="node-apply-btn" data-node="genesis" data-i18n="apply_now">立即申请</button>
+                        <button class="node-apply-btn" data-node="genesis"><span data-i18n="apply_now">立即申请</span></button>
                     </div>
                 </div>
                 <div class="claim-stats-row">
@@ -520,7 +520,7 @@
                         <div class="claim-stats-value" style="color: #ff6b6b;"><span id="minClaimAmount">0.0000</span> <span style="font-size:11px;color:var(--text-secondary);">AIGC</span></div>
                     </div>
                 </div>
-                <button class="withdraw-reward-btn" id="withdrawRewardBtn" data-i18n="withdraw_btn">当前可提取 --</button>
+                <button class="withdraw-reward-btn" id="withdrawRewardBtn"><span data-i18n="withdraw_btn">当前可提取 --</span></button>
             </div>
 
             <div class="panel">
@@ -587,8 +587,8 @@
 
             <div class="panel">
                 <div class="record-tab-switch">
-                    <div class="record-tab-btn active" data-tab="invite" data-i18n="tab_invite">邀请记录</div>
-                    <div class="record-tab-btn" data-tab="claim" data-i18n="tab_claim">领取记录</div>
+                    <div class="record-tab-btn active" data-tab="invite"><span data-i18n="tab_invite">邀请记录</span></div>
+                    <div class="record-tab-btn" data-tab="claim"><span data-i18n="tab_claim">领取记录</span></div>
                 </div>
                 <div id="recordListContainer"><div style="text-align:center;color:var(--text-secondary);padding:20px;" data-i18n="connect_first">请先连接钱包</div></div>
             </div>
@@ -1025,7 +1025,7 @@
             }
         });
 
-        // ✅ 修复：用更稳定通用的方式替换文本（兼容所有 DOM 结构）
+        // ✅ 最终修复：直接替换 innerHTML，100% 稳定
         function setLanguage(langCode) {
             const translations = i18n[langCode];
             if (!translations) return;
@@ -1033,28 +1033,10 @@
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (translations[key]) {
-                    // 如果包含 < 符号（含 HTML 标签），用 innerHTML 替换
-                    if (translations[key].includes('<')) {
-                        el.innerHTML = translations[key];
-                    } else {
-                        // 否则遍历所有文本节点，统一替换
-                        const walker = document.createTreeWalker(
-                            el,
-                            NodeFilter.SHOW_TEXT,
-                            null,
-                            false
-                        );
-                        let node;
-                        while (node = walker.nextNode()) {
-                            if (node.textContent.trim().length > 0) {
-                                node.textContent = translations[key];
-                            }
-                        }
-                    }
+                    el.innerHTML = translations[key];
                 }
             });
 
-            // 记录当前语言
             localStorage.setItem('lang', langCode);
         }
 
