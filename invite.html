@@ -771,22 +771,31 @@
             } catch (e) {}
         }
 
+        // ✅ 团队人数：修复为准确来源（使用 AIGC.getDirectReferralsWithTime）
         async function updateReferralCounts() {
             if (!currentAccount) return;
             try {
                 const directCount = await rpcAigcContract.getDirectReferralCount(currentAccount);
                 document.getElementById('directCount').textContent = parseInt(directCount.toString());
-                
+
+                // 获取一级地址
+                const [firstLevelRefs] = await rpcAigcContract.getDirectReferralsWithTime(currentAccount);
                 let teamCount = parseInt(directCount.toString());
-                const refs = await rpcBcbsContract.getDirectReferrals(currentAccount);
-                for (const ref of (refs || [])) {
+
+                // 遍历一级地址，获取二级
+                for (const ref of (firstLevelRefs || [])) {
                     try {
-                        const subRefs = await rpcBcbsContract.getDirectReferrals(ref);
-                        teamCount += subRefs ? subRefs.length : 0;
-                    } catch (e) {}
+                        const [secondLevelRefs] = await rpcAigcContract.getDirectReferralsWithTime(ref);
+                        teamCount += secondLevelRefs ? secondLevelRefs.length : 0;
+                    } catch (e) {
+                        // 某个下级查询失败不影响整体统计
+                    }
                 }
+                
                 document.getElementById('teamCount').textContent = teamCount;
-            } catch (e) {}
+            } catch (e) {
+                console.error('团队人数统计失败:', e);
+            }
         }
 
         async function updateIdentityAndRate() {
