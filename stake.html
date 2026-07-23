@@ -219,7 +219,7 @@
         .reward-preview span { color: var(--text-secondary); font-size: 13px; }
         .reward-preview strong { color: var(--cyan-glow); font-size: 16px; font-weight: 600; }
 
-        /* 主按钮：科技蓝渐变 */
+        /* 主按钮：科技蓝渐变 - 但现为禁用状态 */
         .stake-btn { 
             width: 100%; 
             background: linear-gradient(90deg, var(--cyan-dim), var(--cyan-glow)); 
@@ -228,10 +228,11 @@
             padding: 14px; 
             font-weight: bold; 
             color: #050B15; 
-            cursor: pointer; 
+            cursor: not-allowed; 
             box-shadow: 0 4px 15px rgba(0, 136, 255, 0.4); 
             font-size: 16px; 
             transition: all 0.3s;
+            opacity: 0.6; /* 视觉上减弱，更符合禁用态 */
         }
         .stake-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(0, 204, 255, 0.6); }
 
@@ -388,7 +389,8 @@
                     <span id="estRewardLabel">预计可获得利息</span>
                     <strong id="estimatedReward">0.00000 BCBS</strong>
                 </div>
-                <button class="stake-btn" id="stakeSubmitBtn">立即质押</button>
+                <!-- ✅ 按钮禁用，文字随语言变化 -->
+                <button class="stake-btn" id="stakeSubmitBtn" disabled>暂未开放</button>
             </div>
 
             <div class="panel">
@@ -448,7 +450,8 @@
                 stakeableBalanceLabel: '可质押余额: ',
                 selectPeriodLabel: '选择质押周期',
                 estRewardLabel: '预计可获得利息',
-                stakeSubmitBtn: '立即质押',
+                // ✅ 禁用按钮文字
+                stakeSubmitBtn: '暂未开放',
                 orderListTitle: '📋 我的质押订单',
                 navAssets: '资产',
                 navStake: '质押',
@@ -503,7 +506,8 @@
                 stakeableBalanceLabel: 'Stakeable Balance: ',
                 selectPeriodLabel: 'Select Staking Period',
                 estRewardLabel: 'Estimated Interest',
-                stakeSubmitBtn: 'Stake Now',
+                // ✅ 禁用按钮文字
+                stakeSubmitBtn: 'Under Development',
                 orderListTitle: '📋 My Staking Orders',
                 navAssets: 'Assets',
                 navStake: 'Stake',
@@ -558,7 +562,8 @@
                 stakeableBalanceLabel: '可質押餘額: ',
                 selectPeriodLabel: '選擇質押週期',
                 estRewardLabel: '預計可獲得利息',
-                stakeSubmitBtn: '立即質押',
+                // ✅ 禁用按钮文字
+                stakeSubmitBtn: '暫未開放',
                 orderListTitle: '📋 我的質押訂單',
                 navAssets: '資產',
                 navStake: '質押',
@@ -613,7 +618,8 @@
                 stakeableBalanceLabel: 'Saldo Apostable: ',
                 selectPeriodLabel: 'Seleccionar Período de Staking',
                 estRewardLabel: 'Interés Estimado',
-                stakeSubmitBtn: 'Hacer Staking Ahora',
+                // ✅ 禁用按钮文字
+                stakeSubmitBtn: 'En Desarrollo',
                 orderListTitle: '📋 Mis Órdenes de Staking',
                 navAssets: 'Activos',
                 navStake: 'Staking',
@@ -668,7 +674,8 @@
                 stakeableBalanceLabel: 'Solde à Staker: ',
                 selectPeriodLabel: 'Choisir la Période de Staking',
                 estRewardLabel: 'Intérêts Estimés',
-                stakeSubmitBtn: 'Staker Maintenant',
+                // ✅ 禁用按钮文字
+                stakeSubmitBtn: 'En Développement',
                 orderListTitle: '📋 Mes Ordres de Staking',
                 navAssets: 'Actifs',
                 navStake: 'Staking',
@@ -723,7 +730,8 @@
                 stakeableBalanceLabel: '스테이킹 가능 잔액: ',
                 selectPeriodLabel: '스테이킹 기간 선택',
                 estRewardLabel: '예상 이자',
-                stakeSubmitBtn: '지금 스테이킹',
+                // ✅ 禁用按钮文字
+                stakeSubmitBtn: '개발 중',
                 orderListTitle: '📋 내 스테이킹 주문',
                 navAssets: '자산',
                 navStake: '스테이킹',
@@ -778,7 +786,8 @@
                 stakeableBalanceLabel: 'ステーキング可能残高: ',
                 selectPeriodLabel: 'ステーキング期間を選択',
                 estRewardLabel: '予想利息',
-                stakeSubmitBtn: '今すぐステーキング',
+                // ✅ 禁用按钮文字
+                stakeSubmitBtn: '開発中',
                 orderListTitle: '📋 マイステーキング注文',
                 navAssets: '資産',
                 navStake: 'ステーキング',
@@ -833,7 +842,8 @@
                 stakeableBalanceLabel: 'رصيد قابل للتخزين: ',
                 selectPeriodLabel: 'اختر فترة التخزين',
                 estRewardLabel: 'الفائدة المقدرة',
-                stakeSubmitBtn: 'تخزين الآن',
+                // ✅ 禁用按钮文字
+                stakeSubmitBtn: 'قيد التطوير',
                 orderListTitle: '📋 طلبات التخزين الخاصة بي',
                 navAssets: 'الأصول',
                 navStake: 'تخزين',
@@ -888,7 +898,8 @@
                 stakeableBalanceLabel: 'Баланс для стейкинга: ',
                 selectPeriodLabel: 'Выберите период стейкинга',
                 estRewardLabel: 'Ожидаемые проценты',
-                stakeSubmitBtn: 'Стейкинг сейчас',
+                // ✅ 禁用按钮文字
+                stakeSubmitBtn: 'В разработке',
                 orderListTitle: '📋 Мои заказы стейкинга',
                 navAssets: 'Активы',
                 navStake: 'Стейкинг',
@@ -1009,7 +1020,7 @@
             // 奖励预览
             document.getElementById('estRewardLabel').textContent = langData.estRewardLabel;
             
-            // 质押按钮
+            // ✅ 禁用按钮文字
             document.getElementById('stakeSubmitBtn').textContent = langData.stakeSubmitBtn;
             
             // 订单列表标题
@@ -1381,83 +1392,9 @@
         document.getElementById('stakeAmount').addEventListener('input', updateRewardPreview);
 
         // ======================== 质押提交 ========================
+        // ✅ 已禁用，但保留代码以避免报错
         stakeBtn.addEventListener('click', async () => {
-            const langData = translations[currentLang] || translations.cn;
-            
-            if (!currentAccount) { alert(langData.noWallet); return; }
-
-            const amount = document.getElementById('stakeAmount').value;
-            if (!amount || parseFloat(amount) <= 0) { alert(langData.invalidAmount); return; }
-
-            const tokenContract = currentCoin === 'AIGC' ? aigcContract : usdtContract;
-            const decimals = await getDecimals(tokenContract);
-            let amountWei;
-            try {
-                amountWei = ethers.utils.parseUnits(amount, decimals);
-            } catch (e) {
-                alert(langData.amountFormatError);
-                return;
-            }
-
-            stakeBtn.disabled = true;
-            stakeBtn.textContent = '检查余额...';
-
-            try {
-                // 检查余额
-                const balance = await tokenContract.balanceOf(currentAccount);
-                if (balance.lt(amountWei)) {
-                    alert(langData.notEnoughBalance);
-                    stakeBtn.disabled = false;
-                    stakeBtn.textContent = '立即质押';
-                    return;
-                }
-
-                // 检查授权
-                stakeBtn.textContent = '检查授权...';
-                const allowance = await tokenContract.allowance(currentAccount, BCBS_ADDRESS);
-                
-                if (allowance.lt(amountWei)) {
-                    stakeBtn.textContent = '请确认授权...';
-                    try {
-                        const tx = await tokenContract.approve(BCBS_ADDRESS, ethers.constants.MaxUint256, { gasLimit: 100000 });
-                        await tx.wait();
-                        alert('✅ 授权成功！请稍候，正在质押...');
-                    } catch (approveErr) {
-                        console.error('授权失败:', approveErr);
-                        alert(langData.approvalFailedFull);
-                        stakeBtn.disabled = false;
-                        stakeBtn.textContent = '立即质押';
-                        return;
-                    }
-                }
-
-                // 执行质押
-                stakeBtn.textContent = '正在质押...';
-                const stakeFunc = currentCoin === 'AIGC' ? stakeContract.stakeAIGC : stakeContract.stakeUSDT;
-                
-                const tx = await stakeFunc(amountWei, currentPeriod, { gasLimit: 500000 });
-                await tx.wait();
-                
-                alert('✅ 质押成功！');
-                document.getElementById('stakeAmount').value = '0';
-                updateRewardPreview();
-                await refreshAll();
-            } catch (e) {
-                console.error('质押失败:', e);
-                let errMsg = langData.stakeFailed;
-                if (e.reason) errMsg += ': ' + e.reason;
-                else if (e.message) {
-                    if (e.message.includes('user rejected')) errMsg += ': ' + langData.userRejected;
-                    else if (e.message.includes('insufficient funds')) errMsg += ': ' + langData.insufficientGas;
-                    else errMsg += ': ' + e.message.substring(0, 100);
-                } else {
-                    errMsg += ': ' + langData.unknownError;
-                }
-                alert(errMsg);
-            } finally {
-                stakeBtn.disabled = false;
-                stakeBtn.textContent = '立即质押';
-            }
+            alert('质押功能正在开发中，暂未开放');
         });
 
         // ======================== 钱包连接 ========================
