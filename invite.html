@@ -1091,11 +1091,28 @@
                 const dc = await rpcAigcContract.getDirectReferralCount(currentAccount);
                 const directCount = parseInt(dc.toString());
                 document.getElementById('directCount').textContent = directCount;
-                const records = await rpcAigcContract.getDirectReferralsWithTime(currentAccount);
-                let teamCount = directCount;
-                for (const r of (records || [])) {
-                    const addr = r.user || r[0];
-                    try { const sc = await rpcAigcContract.getDirectReferralCount(addr); teamCount += parseInt(sc.toString()); } catch (e) {}
+                
+                // ✅ 修复：递归统计伞下所有人
+                let teamCount = 0;
+                const visited = new Set();
+                const stack = [currentAccount];
+                
+                while (stack.length > 0) {
+                    const addr = stack.pop();
+                    // 跳过已访问（避免重复统计同一节点）
+                    if (visited.has(addr.toLowerCase())) continue;
+                    visited.add(addr.toLowerCase());
+                    
+                    // 获取当前节点的下级
+                    const subRecords = await rpcAigcContract.getDirectReferralsWithTime(addr);
+                    for (const r of (subRecords || [])) {
+                        const subAddr = r.user || r[0];
+                        if (!visited.has(subAddr.toLowerCase())) {
+                            teamCount++;
+                            // 将下级加入栈，继续向下遍历
+                            stack.push(subAddr);
+                        }
+                    }
                 }
                 document.getElementById('teamCount').textContent = teamCount;
             } catch (e) {}
