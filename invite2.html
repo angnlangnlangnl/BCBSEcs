@@ -336,25 +336,25 @@
             try { const c = await rpcAigcContract.getUpgradedReferralCount(currentAccount); document.getElementById('completedNodes').textContent = parseInt(c.toString()); renderNodeProgress(parseInt(c.toString())); } catch (e) {}
         }
 
-        // ✅ 修复：全部从 AIGC 读取，保证数据一致
+        // ✅ 递归统计伞下全部人数
+        async function countAllDownlines(userAddr) {
+            let total = 0;
+            const records = await rpcAigcContract.getDirectReferralsWithTime(userAddr);
+            if (!records || records.length === 0) return 0;
+            total = records.length;
+            for (const r of records) {
+                const addr = r.user || r[0];
+                try { total += await countAllDownlines(addr); } catch (e) {}
+            }
+            return total;
+        }
+
         async function updateReferralCounts() {
             if (!currentAccount) return;
             try {
-                // 直推人数
                 const dc = await rpcAigcContract.getDirectReferralCount(currentAccount);
-                const directCount = parseInt(dc.toString());
-                document.getElementById('directCount').textContent = directCount;
-
-                // 团队人数 = 直推 + 间推（从 AIGC 递归一层）
-                const records = await rpcAigcContract.getDirectReferralsWithTime(currentAccount);
-                let teamCount = directCount;
-                for (const r of (records || [])) {
-                    const addr = r.user || r[0];
-                    try {
-                        const subCount = await rpcAigcContract.getDirectReferralCount(addr);
-                        teamCount += parseInt(subCount.toString());
-                    } catch (e) {}
-                }
+                document.getElementById('directCount').textContent = parseInt(dc.toString());
+                const teamCount = await countAllDownlines(currentAccount);
                 document.getElementById('teamCount').textContent = teamCount;
             } catch (e) {}
         }
