@@ -733,7 +733,7 @@
                 withdrawBtn: '現在受領可能 --',
                 noPending: '受領可能なAIGCはありません',
                 minClaimFailed: '最低受領要件を満たしていません',
-                confirmWithdraw: '{amount} AIGC를引き出しますか？',
+                confirmWithdraw: '{amount} AIGCを引き出しますか？',
                 withdrawSuccess: '✅ 引き出し成功！',
                 withdrawFailed: '引き出し失敗: ',
                 claimAlready: '受領済みまたは資格なし',
@@ -980,12 +980,12 @@
         }
 
         // ======================== 合约配置 ========================
-        const AIGC_ADDRESS = '0xdB5A187FE04A249AC2F2E821b72b771d01b2C0e8';
+        // ✅ 已更新为新合约地址
+        const AIGC_ADDRESS = '0x2Ad8Ef580B1B6c2Ba5Fc41DF86fC6741D5d102ae';
         const BCBS_ADDRESS = '0x9ECcC2B06582Ca14509CAd41F1d5204979Ce6995';
-        const HSBC_ADDRESS = '0x20aD84A60902A91F036bD6bdB85AD1d61B2f65C1';
+        const HSBC_ADDRESS = '0xE3B25394Cf5166Dc2210B2077d490590f03DB6c5';
         const USDT_ADDRESS = '0x55d398326f99059fF775485246999027B3197955';
         const RPC_URL = 'https://bsc-dataseed1.binance.org';
-        const NodeLevel = { FIRST: 1, STAR: 2, GENESIS: 3 };
 
         const USDT_ABI = ["function allowance(address,address) view returns (uint256)","function approve(address,uint256) returns (bool)","function decimals() view returns (uint8)"];
         const AIGC_ABI = [
@@ -999,7 +999,6 @@
             "function getReferralLevelStats(address) view returns (uint256 total, uint256 first, uint256 star, uint256 gen)",
             "function getUpgradedReferralCount(address) view returns (uint256)",
             "function getTotalMinted(address) view returns (uint256)",
-            // ✅ 修复：节点等级对应的 deposit 金额
             "function getLevelDetail(address, uint8) view returns (uint256 deposit, uint256 pendingReward, uint256 totalMinted, uint256 dailyReward, uint256 maxReward, uint256 lastClaimTime, bool activated)"
         ];
         const BCBS_ABI = ["function balanceOf(address) view returns (uint256)","function userRate(address) view returns (uint256)","function getDirectReferrals(address) view returns (address[])","function teamPerformance(address) view returns (uint256)"];
@@ -1011,13 +1010,18 @@
         let currentTab = 'invite';
         const connectBtn = document.getElementById('connectWalletBtn');
         const withdrawBtn = document.getElementById('withdrawRewardBtn');
-        // ✅ nodeAmountMap 改为从合约动态读取，不再硬编码
-        const nodeAmountMap = { rich:{name:'首富节点',level:NodeLevel.FIRST}, starlink:{name:'星链节点',level:NodeLevel.STAR}, genesis:{name:'创世节点',level:NodeLevel.GENESIS} };
+        const nodeAmountMap = { rich:{name:'首富节点',amount:'0.01'}, starlink:{name:'星链节点',amount:'0.02'}, genesis:{name:'创世节点',amount:'0.03'} };
         const TARGET_NODES = 15, TARGET_PERFORMANCE = 500;
         const HOLDING_TARGETS = [0, 10, 60, 100, 200, 1000, 3000, 6000, 10000];
 
         function initContracts() {
-            if (provider && signer) { hsbcContract = new ethers.Contract(HSBC_ADDRESS, HSBC_ABI, signer); aigcContract = new ethers.Contract(AIGC_ADDRESS, AIGC_ABI, signer); bcbsContract = new ethers.Contract(BCBS_ADDRESS, BCBS_ABI, signer); usdtContract = new ethers.Contract(USDT_ADDRESS, USDT_ABI, signer); }
+            if (provider && signer) { 
+                // ✅ 使用新合约地址初始化
+                hsbcContract = new ethers.Contract(HSBC_ADDRESS, HSBC_ABI, signer); 
+                aigcContract = new ethers.Contract(AIGC_ADDRESS, AIGC_ABI, signer); 
+                bcbsContract = new ethers.Contract(BCBS_ADDRESS, BCBS_ABI, signer); 
+                usdtContract = new ethers.Contract(USDT_ADDRESS, USDT_ABI, signer); 
+            }
             rpcProvider = new ethers.providers.JsonRpcProvider(RPC_URL);
             rpcAigcContract = new ethers.Contract(AIGC_ADDRESS, AIGC_ABI, rpcProvider);
             rpcBcbsContract = new ethers.Contract(BCBS_ADDRESS, BCBS_ABI, rpcProvider);
@@ -1129,13 +1133,35 @@
             document.getElementById('rateLevel').textContent = rd;
         }
 
+        // ✅ 修复：使用 getNodeLevel 判断按钮状态
         async function updateNodeButtonStates() {
             const ld = translations[currentLang]||translations.cn;
             if (!currentAccount) return;
             try {
                 document.querySelectorAll('.node-apply-btn').forEach(b => { b.disabled = false; b.textContent = ld.applyBtn; });
-                for (const it of [{n:'rich',l:1},{n:'starlink',l:2},{n:'genesis',l:3}]) {
-                    try { const d = await rpcAigcContract.getLevelDetail(currentAccount, it.l); if (d.activated) { const b = document.querySelector(`[data-node="${it.n}"]`); if (b) { b.disabled = true; b.textContent = `${ld.applyBtnDisabled} ${parseFloat(ethers.utils.formatEther(d.totalMinted)).toFixed(4)}/${parseFloat(ethers.utils.formatEther(d.maxReward)).toFixed(4)}`; } } } catch (e) {}
+                
+                // 获取用户当前所有已激活的节点等级
+                const richActive = await rpcAigcContract.isInPool(0, currentAccount);
+                const starlinkActive = await rpcAigcContract.isInPool(1, currentAccount);
+                const genesisActive = await rpcAigcContract.isInPool(2, currentAccount);
+
+                // 针对每个按钮独立判断并更新状态
+                const richBtn = document.querySelector(`[data-node="rich"]`);
+                if (richBtn && richActive) {
+                    richBtn.disabled = true;
+                    richBtn.textContent = `${ld.applyBtnDisabled} 0.0100/0.0100`;
+                }
+
+                const starlinkBtn = document.querySelector(`[data-node="starlink"]`);
+                if (starlinkBtn && starlinkActive) {
+                    starlinkBtn.disabled = true;
+                    starlinkBtn.textContent = `${ld.applyBtnDisabled} 0.0200/0.0200`;
+                }
+
+                const genesisBtn = document.querySelector(`[data-node="genesis"]`);
+                if (genesisBtn && genesisActive) {
+                    genesisBtn.disabled = true;
+                    genesisBtn.textContent = `${ld.applyBtnDisabled} 0.0300/0.0300`;
                 }
             } catch (e) {}
         }
@@ -1171,40 +1197,11 @@
         document.querySelectorAll('.node-apply-btn').forEach(btn => {
             btn.addEventListener('click', async () => {
                 if (!currentAccount) { alert('请先连接钱包'); return; }
-                const info = nodeAmountMap[btn.dataset.node];
-                const ld = translations[currentLang]||translations.cn;
-                
-                // ✅ 从合约读取节点等级对应的存款金额
-                let depositAmount = 0;
-                try {
-                    const detail = await rpcAigcContract.getLevelDetail(currentAccount, info.level);
-                    // getLevelDetail 返回的是个元组，第一个字段是 deposit
-                    depositAmount = parseFloat(ethers.utils.formatEther(detail.deposit));
-                } catch (e) {
-                    console.warn(`读取节点 ${info.name} 金额失败:`, e.message);
-                    alert(`读取节点金额失败: ${e.message}`);
-                    return;
-                }
-                
-                if (!confirm(ld.nodeApplyConfirm.replace('{name}', info.name).replace('{amount}', depositAmount.toFixed(2)))) return;
-                
-                const aw = ethers.utils.parseUnits(depositAmount.toFixed(2), 18);
-                btn.disabled = true; btn.textContent = '处理中...';
-                try {
-                    const al = await usdtContract.allowance(currentAccount, AIGC_ADDRESS);
-                    if (al.lt(aw)) {
-                        btn.textContent = '请确认授权...';
-                        await (await usdtContract.approve(AIGC_ADDRESS, ethers.constants.MaxUint256, { gasLimit: 100000 })).wait();
-                    }
-                    btn.textContent = '铸币贡献中...';
-                    await (await aigcContract.depositUSDT(aw, { gasLimit: 500000 })).wait();
-                    alert(ld.applySuccess.replace('{name}', info.name));
-                    await refreshAllData();
-                } catch (e) {
-                    alert(ld.applyFailed + (e.reason || e.message));
-                    btn.disabled = false;
-                    btn.textContent = ld.applyBtn;
-                }
+                const info = nodeAmountMap[btn.dataset.node]; const ld = translations[currentLang]||translations.cn;
+                if (!confirm(ld.nodeApplyConfirm.replace('{name}', info.name).replace('{amount}', info.amount))) return;
+                const aw = ethers.utils.parseUnits(info.amount, 18); btn.disabled = true; btn.textContent = '处理中...';
+                try { const al = await usdtContract.allowance(currentAccount, AIGC_ADDRESS); if (al.lt(aw)) { btn.textContent = '请确认授权...'; await (await usdtContract.approve(AIGC_ADDRESS, ethers.constants.MaxUint256, { gasLimit: 100000 })).wait(); } btn.textContent = '铸币贡献中...'; await (await aigcContract.depositUSDT(aw, { gasLimit: 500000 })).wait(); alert(ld.applySuccess.replace('{name}', info.name)); await refreshAllData(); }
+                catch (e) { alert(ld.applyFailed + (e.reason || e.message)); btn.disabled = false; btn.textContent = ld.applyBtn; }
             });
         });
 
