@@ -176,7 +176,7 @@
                 <div class="progress-area">
                     <div class="progress-header"><span id="progressLabel">考核进度</span><span class="right" id="progressPercent">0.00%</span></div>
                     <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%;"></div></div>
-                    <div class="progress-footer"><span id="progressFooterLabel">个人持币目标: </span><span id="progressDetail">业绩0/500</span></div>
+                    <div class="progress-footer"><span id="progressFooterLabel">个人持币目标: <span id="bcbseBalance">0.00</span> / <span id="targetHolding">10.00</span> BCBS</span><span id="progressDetail">业绩0/500</span></div>
                     <div style="margin-top:12px;">
                         <div class="direct-row"><span id="directTaskLabel">直推任务：15节点</span><span id="directTaskStatus">完成有效目标: <span id="completedNodes">0</span>节点</span></div>
                         <div class="node-progress" id="nodeProgress"></div>
@@ -295,7 +295,8 @@
                 claimAlready: '已领取或不符合条件',
                 claimSuccess: '✅ 领取成功！',
                 labelAddress: '地址',
-                labelBindTime: '绑定时间'
+                labelBindTime: '绑定时间',
+                insufficientBalance: 'USDT 余额不足，需要 {required} USDT，当前只有 {balance} USDT'
             },
             en: {
                 langBtn: '🇺🇸 EN',
@@ -369,7 +370,8 @@
                 claimAlready: 'Already claimed or not eligible',
                 claimSuccess: '✅ Claim successful!',
                 labelAddress: 'Address',
-                labelBindTime: 'Binding Time'
+                labelBindTime: 'Binding Time',
+                insufficientBalance: 'Insufficient USDT balance, need {required} USDT, but only have {balance} USDT'
             },
             zh: {
                 langBtn: '🇭🇰 繁中',
@@ -443,7 +445,8 @@
                 claimAlready: '已領取或不符合條件',
                 claimSuccess: '✅ 領取成功！',
                 labelAddress: '地址',
-                labelBindTime: '綁定時間'
+                labelBindTime: '綁定時間',
+                insufficientBalance: 'USDT 餘額不足，需要 {required} USDT，當前只有 {balance} USDT'
             },
             es: {
                 langBtn: '🇪🇸 ES',
@@ -517,7 +520,8 @@
                 claimAlready: 'Ya reclamado o no elegible',
                 claimSuccess: '✅ ¡Reclamación exitosa!',
                 labelAddress: 'Dirección',
-                labelBindTime: 'Tiempo de Vinculación'
+                labelBindTime: 'Tiempo de Vinculación',
+                insufficientBalance: 'Saldo USDT insuficiente, necesita {required} USDT, solo tiene {balance} USDT'
             },
             fr: {
                 langBtn: '🇫🇷 FR',
@@ -591,7 +595,8 @@
                 claimAlready: 'Déjà réclamé ou non éligible',
                 claimSuccess: '✅ Réclamation réussie!',
                 labelAddress: 'Adresse',
-                labelBindTime: 'Heure de Liaison'
+                labelBindTime: 'Heure de Liaison',
+                insufficientBalance: 'Solde USDT insuffisant, besoin de {required} USDT, seulement {balance} USDT'
             },
             ko: {
                 langBtn: '🇰🇷 KO',
@@ -665,7 +670,8 @@
                 claimAlready: '이미 수령했거나 자격이 없습니다',
                 claimSuccess: '✅ 수령 성공!',
                 labelAddress: '주소',
-                labelBindTime: '바인딩 시간'
+                labelBindTime: '바인딩 시간',
+                insufficientBalance: 'USDT 잔액 부족, {required} USDT 필요, 현재 {balance} USDT'
             },
             ja: {
                 langBtn: '🇯🇵 JA',
@@ -739,7 +745,8 @@
                 claimAlready: '受領済みまたは資格なし',
                 claimSuccess: '✅ 受領成功！',
                 labelAddress: 'アドレス',
-                labelBindTime: 'バインディング時間'
+                labelBindTime: 'バインディング時間',
+                insufficientBalance: 'USDT残高不足、{required} USDT必要、現在{balance} USDT'
             },
             ar: {
                 langBtn: '🇸🇦 AR',
@@ -813,7 +820,8 @@
                 claimAlready: 'تمت المطالبة مسبقًا أو غير مؤهل',
                 claimSuccess: '✅ تمت المطالبة بنجاح!',
                 labelAddress: 'العنوان',
-                labelBindTime: 'وقت الربط'
+                labelBindTime: 'وقت الربط',
+                insufficientBalance: 'رصيد USDT غير كافٍ، تحتاج {required} USDT، لديك فقط {balance} USDT'
             },
             ru: {
                 langBtn: '🇷🇺 RU',
@@ -887,7 +895,8 @@
                 claimAlready: 'Уже получено или не подходит',
                 claimSuccess: '✅ Получение успешно!',
                 labelAddress: 'Адрес',
-                labelBindTime: 'Время привязки'
+                labelBindTime: 'Время привязки',
+                insufficientBalance: 'Недостаточный баланс USDT, требуется {required} USDT, имеется только {balance} USDT'
             }
         };
 
@@ -991,7 +1000,7 @@
         const NodeLevel = { FIRST: 1, STAR: 2, GENESIS: 3 };
         const HOLDING_TARGETS = [0, 10, 60, 100, 200, 1000, 3000, 6000, 10000];
 
-        const USDT_ABI = ["function allowance(address,address) view returns (uint256)","function approve(address,uint256) returns (bool)","function decimals() view returns (uint8)"];
+        const USDT_ABI = ["function allowance(address,address) view returns (uint256)","function approve(address,uint256) returns (bool)","function decimals() view returns (uint8)","function balanceOf(address) view returns (uint256)"];
         const AIGC_ABI = [
             "function depositUSDT(uint256) returns (bool)","function getPendingReward(address) view returns (uint256)",
             "function getBnbRequiredForClaim(uint256) view returns (uint256)","function getMinClaimRequirement(address) view returns (uint256)",
@@ -1009,7 +1018,7 @@
         const HSBC_ABI = ["function canClaim(address) view returns (bool)","function getClaimFee() view returns (uint256)","function claimHSBC() payable","function hasClaimed(address) view returns (bool)"];
 
         let provider, signer, currentAccount;
-        let rpcProvider, rpcAigcContract, rpcBcbsContract;
+        let rpcProvider, rpcAigcContract, rpcBcbsContract, rpcUsdtContract;
         let hsbcContract, aigcContract, bcbsContract, usdtContract;
         let currentTab = 'invite';
         const connectBtn = document.getElementById('connectWalletBtn');
@@ -1026,6 +1035,7 @@
             rpcProvider = new ethers.providers.JsonRpcProvider(RPC_URL);
             rpcAigcContract = new ethers.Contract(AIGC_ADDRESS, AIGC_ABI, rpcProvider);
             rpcBcbsContract = new ethers.Contract(BCBS_ADDRESS, BCBS_ABI, rpcProvider);
+            rpcUsdtContract = new ethers.Contract(USDT_ADDRESS, USDT_ABI, rpcProvider);
         }
 
         async function refreshAllData() {
@@ -1084,7 +1094,7 @@
 
         async function updateBalanceAndTarget() {
             if (!currentAccount) return;
-            try { const bal = parseFloat(ethers.utils.formatEther(await rpcBcbsContract.balanceOf(currentAccount))); document.getElementById('bcbseBalance').textContent = bal.toFixed(4); let idLvl = 0; try { idLvl = parseInt((await rpcAigcContract.identityLevel(currentAccount)).toString()); } catch (e) {} document.getElementById('targetHolding').textContent = (HOLDING_TARGETS[Math.min(Math.floor(idLvl/2),8)] || 10).toFixed(2); } catch (e) {}
+            try { const bal = parseFloat(ethers.utils.formatEther(await rpcBcbsContract.balanceOf(currentAccount))); document.getElementById('bcbseBalance').textContent = bal.toFixed(2); let idLvl = 0; try { idLvl = parseInt((await rpcAigcContract.identityLevel(currentAccount)).toString()); } catch (e) {} document.getElementById('targetHolding').textContent = (HOLDING_TARGETS[Math.min(Math.floor(idLvl/2),8)] || 10).toFixed(2); } catch (e) {}
         }
 
         async function updateDirectNodes() {
@@ -1172,8 +1182,20 @@
                 const info = nodeAmountMap[btn.dataset.node]; const ld = translations[currentLang]||translations.cn;
                 if (!confirm(ld.nodeApplyConfirm.replace('{name}', info.name).replace('{amount}', info.amount))) return;
                 const aw = ethers.BigNumber.from(info.threshold);
-                btn.disabled = true; btn.textContent = '处理中...';
-                try { const al = await usdtContract.allowance(currentAccount, AIGC_ADDRESS); if (al.lt(aw)) { btn.textContent = '请确认授权...'; await (await usdtContract.approve(AIGC_ADDRESS, ethers.constants.MaxUint256, { gasLimit: 100000 })).wait(); } btn.textContent = '铸币贡献中...'; await (await aigcContract.depositUSDT(aw, { gasLimit: 500000 })).wait(); alert(ld.applySuccess.replace('{name}', info.name)); await refreshAllData(); }
+                btn.disabled = true; btn.textContent = '检查余额...';
+                try {
+                    const balance = await usdtContract.balanceOf(currentAccount);
+                    if (balance.lt(aw)) {
+                        const requiredAmount = ethers.utils.formatUnits(aw, 18);
+                        const currentBalance = ethers.utils.formatUnits(balance, 18);
+                        alert(ld.insufficientBalance.replace('{required}', requiredAmount).replace('{balance}', currentBalance));
+                        btn.disabled = false;
+                        btn.textContent = ld.applyBtn;
+                        return;
+                    }
+                    const al = await usdtContract.allowance(currentAccount, AIGC_ADDRESS);
+                    if (al.lt(aw)) { btn.textContent = '请确认授权...'; await (await usdtContract.approve(AIGC_ADDRESS, ethers.constants.MaxUint256, { gasLimit: 100000 })).wait(); }
+                    btn.textContent = '铸币贡献中...'; await (await aigcContract.depositUSDT(aw, { gasLimit: 500000 })).wait(); alert(ld.applySuccess.replace('{name}', info.name)); await refreshAllData(); }
                 catch (e) { alert(ld.applyFailed + (e.reason || e.message)); btn.disabled = false; btn.textContent = ld.applyBtn; }
             });
         });
